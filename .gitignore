@@ -9,7 +9,7 @@ Makefile.in
 /config.log
 /config.status
 /configure
-/libskiplist.la
+/libfacts_db.la
 libtool
 *.lo
 stamp-h1
