@@ -20,21 +20,25 @@ typedef struct set {
   long size;
 } s_set;
 
-int  set_open (s_set *s,
-              const char *path);
+int    set_open (s_set *s,
+                 const char *path);
 
-int  set_resize_index (s_set *s);
+int    set_resize_index (s_set *s);
 
-long set_find (s_set *s,
-               void *data,
-               long len);
+void * set_mmap (s_set *s, long index);
 
-long set_append (s_set *s,
+void   set_munmap (s_set *s, long index);
+
+long   set_find (s_set *s,
                  void *data,
                  long len);
 
-int  set_compare_data (s_set *s, long index, void *data, long len);
+long   set_append (s_set *s,
+                   void *data,
+                   long len);
 
-int  set_compare_keys (s_set *s, long i, long j);
+int    set_compare_data (s_set *s, long index, void *data, long len);
+
+int    set_compare_keys (s_set *s, long i, long j);
 
 #endif /* SET_H */

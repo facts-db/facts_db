@@ -86,24 +86,6 @@ void set_munmap (s_set *s, long index)
   }
 }
 
-int set_compare_data (s_set *s, long index, void *data, long len)
-{
-  s_set_index_entry *entry;
-  void *entry_data;
-  int cmp;
-  assert(s);
-  assert(index > 0);
-  entry = &s->index[index];
-  if (entry->d.size < len)
-    return -1;
-  if (entry->d.size > len)
-    return 1;
-  entry_data = set_mmap(s, index);
-  cmp = memcmp(entry_data, data, len);
-  set_munmap(s, index);
-  return cmp;
-}
-
 long set_find (s_set *s, void *data, long len)
 {
   long i;
@@ -150,6 +132,28 @@ long set_append (s_set *s, void *data, long len)
   return set_append_append(s, data, len);
 }
 
+int set_compare_data (s_set *s, long index, void *data, long len)
+{
+  s_set_index_entry *entry;
+  void *entry_data;
+  int cmp;
+  long l;
+  assert(s);
+  assert(index > 0);
+  entry = &s->index[index];
+  l = entry->d.size < len ? entry->d.size : len;
+  entry_data = set_mmap(s, index);
+  cmp = memcmp(entry_data, data, l);
+  set_munmap(s, index);
+  if (cmp == 0) {
+    if (entry->d.size < len)
+      return -1;
+    if (entry->d.size > len)
+      return 1;
+  }
+  return cmp;
+}
+
 int set_compare_keys (s_set *s, long a, long b)
 {
   s_set_index_entry *ea;
@@ -157,6 +161,7 @@ int set_compare_keys (s_set *s, long a, long b)
   void *da;
   void *db;
   int cmp;
+  long l;
   assert(s);
   assert(a >= 0);
   assert(a < s->size);
@@ -166,14 +171,17 @@ int set_compare_keys (s_set *s, long a, long b)
     return 0;
   ea = &s->index[a];
   eb = &s->index[b];
-  if (ea->d.size < eb->d.size)
-    return -1;
-  if (ea->d.size > eb->d.size)
-    return 1;
+  l = ea->d.size < eb->d.size ? ea->d.size : eb->d.size;
   da = set_mmap(s, a);
   db = set_mmap(s, b);
-  cmp = memcmp(da, db, ea->d.size);
+  cmp = memcmp(da, db, l);
   set_munmap(s, a);
   set_munmap(s, b);
+  if (cmp == 0) {
+    if (ea->d.size < eb->d.size)
+      return -1;
+    if (ea->d.size > eb->d.size)
+      return 1;
+  }
   return cmp;
 }
