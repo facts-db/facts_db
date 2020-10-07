@@ -1,6 +1,8 @@
 #ifndef SET_H
 #define SET_H
 
+#include <stdio.h>
+
 typedef struct set_index_entry_on_disk {
   long offset;
   long size;
@@ -22,6 +24,8 @@ typedef struct set {
 
 int    set_open (s_set *s,
                  const char *path);
+
+void   set_close (s_set *s);
 
 int    set_resize_index (s_set *s);
 

@@ -13,8 +13,9 @@ Makefile.in
 libtool
 *.lo
 stamp-h1
-/tests/check_skiplist
 *.core
-/tests/check_skiplist.log
-/tests/check_skiplist.trs
-/tests/test-suite.log
+/tests/check_set
+/tests/check_skiplist
+/tests/fixtures/
+/tests/*.log
+/tests/*.trs
