@@ -25,6 +25,8 @@ typedef struct skiplist {
 #define skiplist_height_table(sl) ((long*) (((s_skiplist*) sl) + 1))
 #define skiplistp(sl) ((sl) && (sl)->type == FORM_SKIPLIST)
 
+void              skiplist_init (s_skiplist *sl, int max_height,
+                                 double spacing);
 s_skiplist *  new_skiplist (int max_height, double spacing);
 int               skiplist_compare_ptr (void *a, void *b);
 unsigned          skiplist_random_height (s_skiplist *sl);

@@ -15,11 +15,9 @@ endif
 lib_LTLIBRARIES += libfacts_db.la
 libfacts_db_la_SOURCES = \
 	set.c \
-	set_skiplist.c \
 	skiplist.c
 include_HEADERS += \
 	set.h \
-	set_skiplist.h \
 	skiplist.h
 
 SUBDIRS = tests benchmark

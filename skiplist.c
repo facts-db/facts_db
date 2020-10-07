@@ -77,17 +77,22 @@ static void skiplist_height_table_ (s_skiplist *sl, double spacing)
         }
 }
 
+void skiplist_init (s_skiplist *sl, int max_height, double spacing)
+{
+        assert(sl);
+        sl->head = new_skiplist_node(NULL, max_height);
+        sl->compare = skiplist_compare_ptr;
+        sl->length = 0;
+        sl->max_height = max_height;
+        skiplist_height_table_(sl, spacing);
+}
+
 s_skiplist * new_skiplist (int max_height, double spacing)
 {
         s_skiplist *sl = malloc(sizeof(s_skiplist) +
                                 max_height * sizeof(long));
-        if (sl) {
-                sl->head = new_skiplist_node(NULL, max_height);
-                sl->compare = skiplist_compare_ptr;
-                sl->length = 0;
-                sl->max_height = max_height;
-                skiplist_height_table_(sl, spacing);
-        }
+        if (sl)
+          skiplist_init(sl, max_height, spacing);
         return sl;
 }
 
