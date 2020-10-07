@@ -10,3 +10,10 @@ bin_PROGRAMS += benchmark_set
 benchmark_set_SOURCES = \
 	benchmark_set.c \
 	$(top_builddir)/set.c
+
+benchmark: benchmark_set
+	time ./benchmark_set create
+	time ./benchmark_set append
+	time ./benchmark_set append2
+
+.PHONY: benchmark

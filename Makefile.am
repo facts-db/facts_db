@@ -18,3 +18,8 @@ libfacts_db_la_SOURCES = \
 	skiplist.c
 
 SUBDIRS = tests benchmark
+
+benchmark:
+	${MAKE} -C benchmark benchmark
+
+.PHONY: benchmark
