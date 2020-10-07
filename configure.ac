@@ -42,5 +42,6 @@ AM_CONDITIONAL([DEBUG], [test x"$debug" = x"true"])
 AC_FUNC_ALLOCA
 
 AC_CONFIG_FILES([Makefile
+                 benchmark/Makefile
                  tests/Makefile])
 AC_OUTPUT

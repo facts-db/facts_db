@@ -17,4 +17,4 @@ libfacts_db_la_SOURCES = \
 	set.c \
 	skiplist.c
 
-SUBDIRS = tests
+SUBDIRS = tests benchmark

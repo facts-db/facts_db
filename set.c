@@ -1,9 +1,9 @@
 
 #include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
+#include "dbg_printf.h"
 #include "set.h"
 
 int set_open (s_set *s, const char *path)
@@ -18,7 +18,8 @@ int set_open (s_set *s, const char *path)
   index_path = alloca(len + 7);
   memcpy(index_path, path, len);
   memcpy(index_path + len, ".index", 7);
-  printf("set_open: path: \"%s\" index path: \"%s\"\n", path, index_path);
+  dbg_printf("set_open: path: \"%s\" index path: \"%s\"\n",
+             path, index_path);
   if (!(s->data_fp = fopen(path, "a+")))
     return -1;
   if (!(s->index_fp = fopen(index_path, "a+"))) {
@@ -46,7 +47,7 @@ int set_open (s_set *s, const char *path)
 
 void set_close (s_set *s)
 {
-  printf("set_close %p\n", (void*) s);
+  dbg_printf("set_close %p\n", (void*) s);
   fclose(s->data_fp);
   s->data_fp = NULL;
   fclose(s->index_fp);
@@ -57,7 +58,7 @@ int set_resize_index (s_set *s)
 {
   unsigned long max;
   s_set_index_entry *index;
-  printf("set_resize_index %p\n", (void*) s);
+  dbg_printf("set_resize_index %p\n", (void*) s);
   assert(s);
   max = s->size + 1024;
   index = realloc(s->index, max * sizeof(s_set_index_entry));
@@ -74,19 +75,19 @@ void * set_mmap (s_set *s, long index)
   assert(s);
   assert(0 <= index);
   assert(index < s->size);
-  printf("set_mmap %p %ld\n", (void*) s, index);
+  dbg_printf("set_mmap %p %ld\n", (void*) s, index);
   entry = &s->index[index];
-  printf(" entry->mmap_count: %d\n", entry->mmap_count);
+  dbg_printf(" entry->mmap_count: %d\n", entry->mmap_count);
   if (!entry->mmap_count) {
     if ((entry->data = mmap(NULL, entry->d.size,
                             PROT_READ, MAP_PRIVATE | MAP_FILE,
                             fileno(s->data_fp),
                             entry->d.offset))
         == MAP_FAILED) {
-      printf("mmap failed");
+      dbg_printf("mmap failed");
       return 0;
     }
-    printf(" mmap entry->data: %p\n", entry->data);
+    dbg_printf(" mmap entry->data: %p\n", entry->data);
   }
   entry->mmap_count++;
   return entry->data;
@@ -98,7 +99,7 @@ void set_munmap (s_set *s, long index)
   assert(s);
   assert(0 <= index);
   assert(index < s->size);
-  printf("set_munmap %p %ld\n", (void*) s, index);
+  dbg_printf("set_munmap %p %ld\n", (void*) s, index);
   entry = &s->index[index];
   if (entry->mmap_count) {
     entry->mmap_count--;
@@ -113,7 +114,7 @@ long set_find (s_set *s, void *data, long len)
   assert(s);
   assert(data);
   assert(len > 0);
-  printf("set_find %p %p %ld\n", (void*) s, data, len);
+  dbg_printf("set_find %p %p %ld\n", (void*) s, data, len);
   for (i = 0; i < s->size; i++)
     if (set_compare_data(s, i, data, len) == 0)
       return i;
@@ -134,7 +135,7 @@ long set_append_append (s_set *s, void *data, long len)
 {
   s_set_index_entry *entry;
   long i = s->size;
-  printf("set_append_append %p %p %ld\n", (void*) s, data, len);
+  dbg_printf("set_append_append %p %p %ld\n", (void*) s, data, len);
   if (s->size == s->max) {
     set_resize_index(s);
     if (s->size == s->max)
@@ -161,7 +162,7 @@ long set_append (s_set *s, void *data, long len)
   assert(s);
   assert(data);
   assert(len > 0);
-  printf("set_append %p %p %ld\n", (void*) s, data, len);
+  dbg_printf("set_append %p %p %ld\n", (void*) s, data, len);
   i = set_find(s, data, len);
   if (i >= 0)
     return i;
@@ -176,19 +177,19 @@ int set_compare_data (s_set *s, long index, void *data, long len)
   long l;
   assert(s);
   assert(index >= 0);
-  printf("set_compare_data %p %ld %p %ld\n", (void*) s, index, data, len);
+  dbg_printf("set_compare_data %p %ld %p %ld\n", (void*) s, index, data, len);
   entry = &s->index[index];
   l = entry->d.size < len ? entry->d.size : len;
   entry_data = set_mmap(s, index);
-  printf("entry_data: %p, data: %p, l: %ld\n", entry_data, data, l);
-  printf("entry_data: %c %c %c %c %c\n", ((char*)entry_data)[0],
+  dbg_printf("entry_data: %p, data: %p, l: %ld\n", entry_data, data, l);
+  dbg_printf("entry_data: %c %c %c %c %c\n", ((char*)entry_data)[0],
          ((char*)entry_data)[1], ((char*)entry_data)[2],
          ((char*)entry_data)[3], ((char*)entry_data)[4]);
-  printf("data: %c %c %c %c %c\n", ((char*)data)[0],
+  dbg_printf("data: %c %c %c %c %c\n", ((char*)data)[0],
          ((char*)data)[1], ((char*)data)[2],
          ((char*)data)[3], ((char*)data)[4]);
   cmp = memcmp(entry_data, data, l);
-  printf("cmp: %d\n", cmp);
+  dbg_printf("cmp: %d\n", cmp);
   set_munmap(s, index);
   if (cmp == 0) {
     if (entry->d.size < len)
@@ -212,7 +213,7 @@ int set_compare_keys (s_set *s, long a, long b)
   assert(a < s->size);
   assert(b >= 0);
   assert(b < s->size);
-  printf("set_compare_keys %p %ld %ld\n", (void*) s, a, b);
+  dbg_printf("set_compare_keys %p %ld %ld\n", (void*) s, a, b);
   if (a == b)
     return 0;
   ea = &s->index[a];

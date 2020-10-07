@@ -184,7 +184,7 @@ s_skiplist_node * skiplist_find (s_skiplist *sl, void *value)
         int level = node->height;
         while (level--) {
                 s_skiplist_node *n = node;
-                int c;
+                int c = -1;
                 while (n && (c = sl->compare(n->value, value)) < 0)
                         n = skiplist_node_next(n, level);
                 if (c == 0)

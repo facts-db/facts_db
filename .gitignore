@@ -4,6 +4,8 @@ Makefile
 Makefile.in
 /aclocal.m4
 /autom4te.cache/
+/benchmark/benchmark_set
+/benchmark/fixtures/
 /build-aux/
 /config.h
 /config.log
