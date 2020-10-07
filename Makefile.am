@@ -7,9 +7,9 @@ include_HEADERS =
 lib_LTLIBRARIES =
 
 if DEBUG
-AM_CFLAGS = -DDEBUG -O0 -ggdb -std=c99 -pedantic -fgnu89-inline
+AM_CFLAGS = -DDEBUG -O0 -ggdb -std=c89 -pedantic -fgnu89-inline
 else
-AM_CFLAGS = -DNDEBUG -O2 -std=c99 -pedantic -fgnu89-inline
+AM_CFLAGS = -DNDEBUG -O2 -std=c89 -pedantic -fgnu89-inline
 endif
 
 lib_LTLIBRARIES += libfacts_db.la

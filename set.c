@@ -55,10 +55,11 @@ void set_close (s_set *s)
 
 int set_resize_index (s_set *s)
 {
-  assert(s);
-  unsigned long max = s->size + 1024;
+  unsigned long max;
   s_set_index_entry *index;
   printf("set_resize_index %p\n", (void*) s);
+  assert(s);
+  max = s->size + 1024;
   index = realloc(s->index, max * sizeof(s_set_index_entry));
   if (!index)
     return -1;
