@@ -16,6 +16,7 @@ lib_LTLIBRARIES += libfacts_db.la
 libfacts_db_la_SOURCES = \
 	set.c \
 	skiplist.c
+libfacts_db_la_LIBADD = -lm
 include_HEADERS += \
 	set.h \
 	skiplist.h

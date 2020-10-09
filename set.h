@@ -41,6 +41,8 @@ new_set_skiplist_ptr_item (void *data, long len);
 
 int set_skiplist_compare (void *a, void *b);
 
+int set_skiplist_save (s_set *s);
+int set_skiplist_restore (s_set *s);
 
 typedef struct set_index_entry_on_disk {
   long offset;
@@ -56,10 +58,11 @@ typedef struct set_index_entry {
 struct set {
   FILE *data_fp;
   FILE *index_fp;
+  FILE *order_fp;
   s_set_index_entry *index;
   long max;
   long size;
-  s_skiplist sl;
+  s_skiplist skiplist;
 };
 
 int    set_open (s_set *s,

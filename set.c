@@ -1,5 +1,6 @@
 
 #include <assert.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
@@ -34,6 +35,7 @@ int set_skiplist_compare (void *a, void *b)
 {
   u_set_skiplist_item *ia;
   u_set_skiplist_item *ib;
+  dbg_printf("set_skiplist_compare %p %p\n", a, b);
   if (a == b)
     return 0;
   if (!a)
@@ -73,9 +75,56 @@ int set_skiplist_compare (void *a, void *b)
   return -1;
 }
 
+int set_skiplist_save (s_set *s)
+{
+  s_skiplist_node *n;
+  assert(s);
+  fseek(s->order_fp, SEEK_SET, 0);
+  ftruncate(fileno(s->order_fp), 0);
+  n = skiplist_node_next(s->skiplist.head, 0);
+  while (n) {
+    long i;
+    u_set_skiplist_item *item = (u_set_skiplist_item*) n->value;
+    assert(item->item.type == SET_SKIPLIST_SET_ITEM);
+    i = item->set_item.index;
+    fwrite(&i, sizeof(i), 1, s->order_fp);
+    n = skiplist_node_next(n, 0);
+  }
+  fflush(s->order_fp);
+  return 0;
+}
+
+int max (int a, int b)
+{
+  if (a < b)
+    return b;
+  return a;
+}
+
+int set_skiplist_restore (s_set *s)
+{
+  int height;
+  long i;
+  assert(s);
+  height = max(16, log(s->size) / log(3.0)) + 1;
+  skiplist_init(&s->skiplist, height, 3.0);
+  s->skiplist.compare = set_skiplist_compare;
+  fseek(s->order_fp, SEEK_SET, 0);
+  for (i = 0; i < s->size; i++) {
+    long index;
+    s_set_skiplist_set_item *item;
+    if (fread(&index, sizeof(index), 1, s->order_fp) != 1)
+      return -1;
+    item = new_set_skiplist_set_item(s, index);
+    skiplist_insert(&s->skiplist, item);
+  }
+  return 0;
+}
+
 int set_open (s_set *s, const char *path)
 {
   char *index_path;
+  char *order_path;
   size_t len;
   long index_size;
   long i;
@@ -85,13 +134,20 @@ int set_open (s_set *s, const char *path)
   index_path = alloca(len + 7);
   memcpy(index_path, path, len);
   memcpy(index_path + len, ".index", 7);
-  dbg_printf("set_open: path: \"%s\" index path: \"%s\"\n",
-             path, index_path);
+  order_path = alloca(len + 7);
+  memcpy(order_path, path, len);
+  memcpy(order_path + len, ".order", 7);
+  dbg_printf("set_open: path: \"%s\" index path: \"%s\" order path: \"%s\"\n",
+             path, index_path, order_path);
+  bzero(s, sizeof(s_set));
   if (!(s->data_fp = fopen(path, "a+")))
     return -1;
   if (!(s->index_fp = fopen(index_path, "a+"))) {
-    fclose(s->data_fp);
-    s->data_fp = 0;
+    set_close(s);
+    return -1;
+  }
+  if (!(s->order_fp = fopen(order_path, "a+"))) {
+    set_close(s);
     return -1;
   }
   index_size = ftell(s->index_fp);
@@ -99,16 +155,19 @@ int set_open (s_set *s, const char *path)
   s->size = index_size / sizeof(s_set_index_entry);
   s->max = s->size + 1024;
   s->index = calloc(s->max, sizeof(s_set_index_entry));
+  if (!s->index) {
+    set_close(s);
+    return -1;
+  }
   fseek(s->index_fp, SEEK_SET, 0);
   for (i = 0; i < s->size; i++)
     fread(&s->index[i].d, sizeof(s_set_index_entry), 1, s->index_fp);
-  if (!s->index) {
-    fclose(s->data_fp);
-    s->data_fp = NULL;
-    fclose(s->index_fp);
-    s->index_fp = NULL;
+  if (set_skiplist_restore(s) != 0)
     return -1;
-  }
+  /*
+  for (i = 0; i < s->size; i++)
+    set_mmap(s, i);
+  */
   return 0;
 }
 
@@ -119,6 +178,8 @@ void set_close (s_set *s)
   s->data_fp = NULL;
   fclose(s->index_fp);
   s->index_fp = NULL;
+  fclose(s->order_fp);
+  s->order_fp = NULL;
 }
 
 int set_resize_index (s_set *s)
@@ -127,7 +188,7 @@ int set_resize_index (s_set *s)
   s_set_index_entry *index;
   dbg_printf("set_resize_index %p\n", (void*) s);
   assert(s);
-  max = s->size + 1024;
+  max = s->size + 1024024;
   index = realloc(s->index, max * sizeof(s_set_index_entry));
   if (!index)
     return -1;
@@ -177,14 +238,23 @@ void set_munmap (s_set *s, long index)
 
 long set_find (s_set *s, void *data, long len)
 {
-  long i;
+  s_set_skiplist_ptr_item ptr_item;
+  s_skiplist_node *node;
   assert(s);
   assert(data);
   assert(len > 0);
   dbg_printf("set_find %p %p %ld\n", (void*) s, data, len);
-  for (i = 0; i < s->size; i++)
-    if (set_compare_data(s, i, data, len) == 0)
-      return i;
+  ptr_item.type = SET_SKIPLIST_PTR_ITEM;
+  ptr_item.data = data;
+  ptr_item.len = len;
+  node = skiplist_find(&s->skiplist, &ptr_item);
+  if (node) {
+    s_set_skiplist_set_item *set_item =
+      (s_set_skiplist_set_item*) node->value;
+    assert(set_item->type == SET_SKIPLIST_SET_ITEM);
+    assert(set_item->set == s);
+    return set_item->index;
+  }
   return -1;
 }
 
@@ -201,6 +271,7 @@ long set_next_offset (s_set *s)
 long set_append_append (s_set *s, void *data, long len)
 {
   s_set_index_entry *entry;
+  s_set_skiplist_set_item *set_item;
   long i = s->size;
   dbg_printf("set_append_append %p %p %ld\n", (void*) s, data, len);
   if (s->size == s->max) {
@@ -208,6 +279,8 @@ long set_append_append (s_set *s, void *data, long len)
     if (s->size == s->max)
       return -1;
   }
+  if (!(set_item = new_set_skiplist_set_item(s, i)))
+    return -1;
   entry = &s->index[i];
   entry->d.offset = set_next_offset(s);
   fseek(s->data_fp, SEEK_SET, entry->d.offset);
@@ -215,11 +288,13 @@ long set_append_append (s_set *s, void *data, long len)
   entry->mmap_count = 0;
   entry->data = 0;
   fwrite(data, len, 1, s->data_fp);
-  fflush(s->data_fp);
   fseek(s->index_fp, SEEK_SET, i * sizeof(s_set_index_entry_on_disk));
   fwrite(&entry->d, sizeof(s_set_index_entry_on_disk), 1, s->index_fp);
+  /*set_skiplist_save(s);*/
+  fflush(s->data_fp);
   fflush(s->index_fp);
   s->size++;
+  skiplist_insert(&s->skiplist, set_item);
   return i;
 }
 

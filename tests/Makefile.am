@@ -2,7 +2,7 @@
 if DEBUG
 AM_CFLAGS = -DDEBUG -O0 -ggdb -std=c99 -pedantic -fgnu89-inline
 else
-AM_CFLAGS = -DNDEBUG -O2 -std=c99 -pedantic -fgnu89-inline
+AM_CFLAGS = -DDEBUG -O2 -std=c99 -pedantic -fgnu89-inline
 endif
 
 TESTS = check_skiplist check_set

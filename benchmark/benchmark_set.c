@@ -23,11 +23,12 @@ void teardown ()
 
 int benchmark_set_create (void)
 {
-  long i = g_count;
+  long i = 1000;
   setup();
   while (i--) {
     unlink("fixtures/create.set");
     unlink("fixtures/create.set.index");
+    unlink("fixtures/create.set.order");
     if (set_open(&g_s, "fixtures/create.set"))
       return 1;
     set_close(&g_s);
@@ -42,6 +43,7 @@ int benchmark_set_append (void)
   setup();
   unlink("fixtures/append.set");
   unlink("fixtures/append.set.index");
+  unlink("fixtures/append.set.order");
   if (set_open(&g_s, "fixtures/append.set") != 0)
     return 1;
   while (i < g_count) {
@@ -62,6 +64,7 @@ int benchmark_set_append2 (void)
   setup();
   unlink("fixtures/append2.set");
   unlink("fixtures/append2.set.index");
+  unlink("fixtures/append2.set.order");
   if (set_open(&g_s, "fixtures/append2.set") != 0)
     return 1;
   while (i < g_count) {
