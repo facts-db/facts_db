@@ -1,4 +1,3 @@
-
 #include <assert.h>
 #include <check.h>
 #include <strings.h>
@@ -8,92 +7,45 @@
 
 s_set g_s;
 
-void setup_create ()
+START_TEST (test_set_init)
 {
-  bzero(&g_s, sizeof(s_set));
-  mkdir("fixtures", 511);
-}
-
-void teardown_create ()
-{
-  bzero(&g_s, sizeof(s_set));
-}
-
-START_TEST (test_set_create)
-{
-  struct stat s;
-  unlink("fixtures/create.set");
-  unlink("fixtures/create.set.index");
-  unlink("fixtures/create.set.order");
-  assert(set_open(&g_s, "fixtures/create.set") == 0);
-  assert(g_s.size == 0);
-  assert(g_s.max > g_s.size);
-  set_close(&g_s);
-  assert(stat("fixtures/create.set", &s) == 0);
-  assert(s.st_size == 0);
-  assert(S_ISREG(s.st_mode));
-  assert(stat("fixtures/create.set.index", &s) == 0);
-  assert(s.st_size == 0);
-  assert(S_ISREG(s.st_mode));
+  set_init(&g_s);
 }
 END_TEST
 
-void setup_append ()
+void setup_insert ()
 {
-  bzero(&g_s, sizeof(s_set));
-  unlink("fixtures/append.set");
-  unlink("fixtures/append.set.index");
-  unlink("fixtures/append.set.order");
-  assert(set_open(&g_s, "fixtures/append.set") == 0);
+  set_init(&g_s);
 }
 
-void teardown_append ()
+void teardown_insert ()
 {
-  bzero(&g_s, sizeof(s_set));
+  set_clear(&g_s);
 }
 
-START_TEST (test_set_append_one)
+START_TEST (test_set_insert_one)
 {
-  struct stat s;
-  assert(set_append(&g_s, "0123456789", 10) == 0);
+  s_item *a;
+  a = set_insert(&g_s, "0123456789", 10);
+  assert(a);
   assert(g_s.size == 1);
-  printf("offset: %ld\n", g_s.index[0].d.offset);
-  assert(g_s.index[0].d.offset == 0);
-  printf("size: %ld\n", g_s.index[0].d.size);
-  assert(g_s.index[0].d.size == 10);
-  assert(set_append(&g_s, "0123456789", 10) == 0);
+  assert(set_insert(&g_s, "0123456789", 10) == a);
   assert(g_s.size == 1);
-  set_close(&g_s);
-  assert(stat("fixtures/append.set", &s) == 0);
-  assert(s.st_size == 10);
-  assert(S_ISREG(s.st_mode));
-  assert(stat("fixtures/append.set.index", &s) == 0);
-  assert(s.st_size == 16);
-  assert(S_ISREG(s.st_mode));
 }
 END_TEST
 
-START_TEST (test_set_append_two)
+START_TEST (test_set_insert_two)
 {
-  long i;
-  struct stat s;
-  assert(set_append(&g_s, "0123456789", 10) == 0);
+  s_item *a;
+  s_item *b;
+  assert(a = set_insert(&g_s, "0123456789", 10));
   assert(g_s.size == 1);
-  assert(set_append(&g_s, "ABCDEFGHIJ", 10) == 1);
+  assert(b = set_insert(&g_s, "ABCDEFGHIJ", 10));
   assert(g_s.size == 2);
-  assert(set_append(&g_s, "0123456789", 10) == 0);
+  assert(set_insert(&g_s, "0123456789", 10) == a);
   assert(g_s.size == 2);
-  i = set_append(&g_s, "ABCDEFGHIJ", 10);
-  printf("%ld\n", i);
-  assert(i == 1);
+  assert(set_insert(&g_s, "ABCDEFGHIJ", 10) == b);
   assert(g_s.size == 2);
-  set_close(&g_s);
-  assert(stat("fixtures/append.set", &s) == 0);
-  assert(s.st_size == 20);
-  assert(S_ISREG(s.st_mode));
-  assert(stat("fixtures/append.set.index", &s) == 0);
-  assert(s.st_size == 32);
-  assert(S_ISREG(s.st_mode));
 }
 END_TEST
 
@@ -155,19 +107,18 @@ END_TEST
 Suite * skiplist_suite(void)
 {
     Suite *s;
-    TCase *tc_create;
-    TCase *tc_append;
+    TCase *tc_init;
+    TCase *tc_insert;
     s = suite_create("Set");
-    tc_create = tcase_create("Create");
-    tcase_add_checked_fixture(tc_create, setup_create, teardown_create);
-    tcase_add_test(tc_create, test_set_create);
-    suite_add_tcase(s, tc_create);
-    tc_append = tcase_create("Append");
-    tcase_add_checked_fixture(tc_append, setup_append, teardown_append);
-    tcase_add_test(tc_append, test_set_append_one);
-    tcase_add_test(tc_append, test_set_append_two);
-    /*tcase_add_test(tc_append, test_set_append_ten);*/
-    suite_add_tcase(s, tc_append);
+    tc_init = tcase_create("Init");
+    tcase_add_test(tc_init, test_set_init);
+    suite_add_tcase(s, tc_init);
+    tc_insert = tcase_create("Insert");
+    tcase_add_checked_fixture(tc_insert, setup_insert, teardown_insert);
+    tcase_add_test(tc_insert, test_set_insert_one);
+    tcase_add_test(tc_insert, test_set_insert_two);
+    /*tcase_add_test(tc_insert, test_set_insert_ten);*/
+    suite_add_tcase(s, tc_insert);
     return s;
 }
 

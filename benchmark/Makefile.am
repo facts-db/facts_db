@@ -14,8 +14,7 @@ benchmark_set_SOURCES = \
 benchmark_set_LDADD = -lm
 
 benchmark: benchmark_set
-	time ./benchmark_set create
-	time ./benchmark_set append
-	time ./benchmark_set append2
+	time ./benchmark_set insert
+	time ./benchmark_set insert2
 
 .PHONY: benchmark

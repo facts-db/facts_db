@@ -34,5 +34,6 @@ s_skiplist_node * skiplist_pred (s_skiplist *sl, void *value);
 s_skiplist_node * skiplist_insert (s_skiplist *sl, void *value);
 void *            skiplist_delete (s_skiplist *sl, void *value);
 s_skiplist_node * skiplist_find (s_skiplist *sl, void *value);
+void              skiplist_delete_all (s_skiplist *sl);
 
 #endif
