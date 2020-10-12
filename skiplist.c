@@ -176,7 +176,7 @@ s_skiplist_node * skiplist_insert (s_skiplist *sl, void *value)
         return n;
 }
 
-void * skiplist_delete (s_skiplist *sl, void *x)
+void * skiplist_remove (s_skiplist *sl, void *x)
 {
         unsigned long level;
         s_skiplist_node *pred;

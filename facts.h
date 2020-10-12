@@ -14,18 +14,22 @@
  *  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef ITEM_H
-#define ITEM_H
+#ifndef FACTS_H
+#define FACTS_H
 
-typedef struct item {
-  void *data;
-  uint64_t len;
-} s_item;
+#include "skiplist.h"
 
-s_item * new_item (void *data,
-                   long len);
+typedef struct facts
+{
+  s_skiplist index_spo;
+  s_skiplist index_pos;
+  s_skiplist index_osp;
+} s_facts;
 
-int          item_compare (void *a,
-                           void *b);
+s_facts * new_facts ();
+void          facts_init   (s_facts *facts);
+s_fact *      facts_add    (s_facts *facts, s_fact *f);
+void          facts_remove (s_facts *facts, s_fact *f);
+s_fact *      facts_get    (s_facts *facts, s_fact *f);
 
 #endif
