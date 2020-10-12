@@ -18,18 +18,8 @@
 #define SET_H
 
 #include <stdio.h>
+#include "item.h"
 #include "skiplist.h"
-
-typedef struct item {
-  void *data;
-  uint64_t len;
-} s_item;
-
-s_item * new_item (void *data,
-                   long len);
-
-int          item_compare (void *a,
-                           void *b);
 
 typedef struct set {
   long size;

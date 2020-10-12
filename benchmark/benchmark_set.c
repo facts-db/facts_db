@@ -9,7 +9,7 @@
 #include "set.h"
 
 s_set g_s;
-long g_count = 1000 * 20;
+long g_count = 1000 * 10;
 
 void setup_insert ()
 {

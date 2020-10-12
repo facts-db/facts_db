@@ -103,7 +103,7 @@ void set_init (s_set *s)
   assert(s);
   dbg_printf("set_init %p\n", (void*) s);
   s->size = 0;
-  skiplist_init(&s->skiplist, 16, 3.0);
+  skiplist_init(&s->skiplist, 20, 2.0);
   s->skiplist.compare = item_compare;
 }
 
@@ -118,7 +118,7 @@ int set_read (s_set *s, const char *path)
   dbg_printf("set_open: path: \"%s\"\n", path);
   assert(s);
   s->size = 0;
-  height = max(16, log(s->size) / log(3.0)) + 1;
+  height = max(20, log(s->size) / log(2.0)) + 1;
   skiplist_init(&s->skiplist, height, 3.0);
   s->skiplist.compare = item_compare;
   if (!(fp = fopen(path, "r")))
