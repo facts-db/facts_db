@@ -26,11 +26,11 @@ int fact_compare_spo (void *a, void *b)
     return 1;
   fa = (s_fact*) a;
   fb = (s_fact*) b;
-  cmp = item_compare(a->s, b->s);
+  cmp = item_compare(fa->s, fb->s);
   if (!cmp)
-    cmp = item_compare(a->p, b->p);
+    cmp = item_compare(fa->p, fb->p);
   if (!cmp)
-    cmp = item_compare(a->o, b->o);
+    cmp = item_compare(fa->o, fb->o);
   return cmp;
 }
 
@@ -47,11 +47,11 @@ int fact_compare_pos (void *a, void *b)
     return 1;
   fa = (s_fact*) a;
   fb = (s_fact*) b;
-  cmp = item_compare(a->p, b->p);
+  cmp = item_compare(fa->p, fb->p);
   if (!cmp)
-    cmp = item_compare(a->o, b->o);
+    cmp = item_compare(fa->o, fb->o);
   if (!cmp)
-    cmp = item_compare(a->s, b->s);
+    cmp = item_compare(fa->s, fb->s);
   return cmp;
 }
 
@@ -68,10 +68,10 @@ int fact_compare_osp (void *a, void *b)
     return 1;
   fa = (s_fact*) a;
   fb = (s_fact*) b;
-  cmp = item_compare(a->o, b->o);
+  cmp = item_compare(fa->o, fb->o);
   if (!cmp)
-    cmp = item_compare(a->s, b->s);
+    cmp = item_compare(fa->s, fb->s);
   if (!cmp)
-    cmp = item_compare(a->p, b->p);
+    cmp = item_compare(fa->p, fb->p);
   return cmp;
 }
