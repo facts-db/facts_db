@@ -15,6 +15,8 @@
  *  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <assert.h>
+#include <stdlib.h>
 #include "facts.h"
 
 s_facts * new_facts ()

@@ -24,10 +24,14 @@ typedef struct skiplist_node {
         unsigned long height;
 } s_skiplist_node;
 
+#define skiplist_node_size(height) \
+        (sizeof(s_skiplist_node) + height * sizeof(void*))
+
 s_skiplist_node * new_skiplist_node (void *value, unsigned long height);
 #define               skiplist_node_links(n) \
         ((s_skiplist_node**) (((s_skiplist_node*) n) + 1))
-#define               skiplist_node_next(n, height) (skiplist_node_links(n)[height])
+#define               skiplist_node_next(n, height) \
+        (skiplist_node_links(n)[height])
 void                  skiplist_node_insert (s_skiplist_node *n,
                                             s_skiplist_node *pred);
 
@@ -50,5 +54,8 @@ s_skiplist_node * skiplist_pred (s_skiplist *sl, void *value);
 s_skiplist_node * skiplist_insert (s_skiplist *sl, void *value);
 void *            skiplist_remove (s_skiplist *sl, void *value);
 s_skiplist_node * skiplist_find (s_skiplist *sl, void *value);
+
+void              skiplist_each (s_skiplist *sl, void *start, void *end,
+                                 int (*fn) (void *));
 
 #endif

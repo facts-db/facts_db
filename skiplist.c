@@ -25,8 +25,7 @@ long int random(void);
 
 s_skiplist_node * new_skiplist_node (void *value, unsigned long height)
 {
-        s_skiplist_node *n = malloc(sizeof(s_skiplist_node) +
-                                    height * sizeof(void*));
+        s_skiplist_node *n = malloc(skiplist_node_size(height));
         if (n) {
                 n->value = value;
                 n->height = height;
@@ -212,4 +211,45 @@ s_skiplist_node * skiplist_find (s_skiplist *sl, void *value)
                         return n;
         }
         return NULL;
+}
+
+s_skiplist_node * skiplist_find_pred (s_skiplist *sl, void *value,
+                                      s_skiplist_node *pred)
+{
+        s_skiplist_node *node = sl->head;
+        unsigned long level = node->height;
+        int c = -1;
+        while (level--) {
+                s_skiplist_node *n = node;
+                while (c && n &&
+                       (c = sl->compare(value, n->value)) > 0) {
+                        node = n;
+                        n = skiplist_node_next(n, level);
+                }
+                if (level < pred->height)
+                        skiplist_node_next(pred, level) = node;
+        }
+        if (c)
+                return NULL;
+        return node;
+}
+
+s_skiplist_node * skiplist_cursor (s_skiplist *sl, void *start)
+{
+        s_skiplist_node *pred = alloca(skiplist_node_size(1));
+        pred->height = 1;
+        bzero(skiplist_node_links(pred), sizeof(void*));
+        skiplist_find_pred(sl, start, pred);
+        return skiplist_node_next(pred, 0);
+}
+
+void skiplist_each (s_skiplist *sl, void *start, void *end,
+                    int (*fn) (void *))
+{
+        s_skiplist_node *n;
+        n = skiplist_cursor(sl, start);
+        while (n && sl->compare(end, n->value) < 0) {
+                fn(n->value);
+                n = skiplist_node_next(n, 0);
+        }
 }

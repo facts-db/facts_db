@@ -17,6 +17,7 @@
 #ifndef FACTS_H
 #define FACTS_H
 
+#include "fact.h"
 #include "skiplist.h"
 
 typedef struct facts
@@ -26,10 +27,23 @@ typedef struct facts
   s_skiplist index_osp;
 } s_facts;
 
+void          facts_init (s_facts *facts);
+
 s_facts * new_facts ();
-void          facts_init   (s_facts *facts);
-s_fact *      facts_add    (s_facts *facts, s_fact *f);
-void          facts_remove (s_facts *facts, s_fact *f);
-s_fact *      facts_get    (s_facts *facts, s_fact *f);
+
+s_fact *      facts_add (s_facts *facts,
+                         s_fact *f);
+
+s_fact *      facts_remove (s_facts *facts,
+                            s_fact *f);
+
+s_fact *      facts_get (s_facts *facts,
+                         s_fact *f);
+
+void          facts_each (s_facts *facts,
+                          s_skiplist *tree,
+                          s_fact *start,
+                          s_fact *end,
+                          f_fact fn);
 
 #endif

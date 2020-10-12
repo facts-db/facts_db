@@ -17,6 +17,8 @@
 #ifndef ITEM_H
 #define ITEM_H
 
+#include <sys/types.h>
+
 typedef struct item {
   void *data;
   uint64_t len;
