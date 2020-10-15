@@ -44,12 +44,30 @@ START_TEST (test_fact_compare_spo)
   assert(fact_compare_spo(NULL, &a) <  0);
   assert(fact_compare_spo(&a, &a)   == 0);
   assert(fact_compare_spo(&a, NULL) >  0);
-  fact_init(&b, "a", "d", "e");
-  assert(fact_compare_spo(&a, &b) < 0);
-  assert(fact_compare_spo(&b, &a) > 0);
+  fact_init(&b, NULL, NULL, NULL);
+  assert(fact_compare_spo(&a, &b) > 0);
+  assert(fact_compare_spo(&b, &a) < 0);
+  fact_init(&b, NULL, NULL, "c");
+  assert(fact_compare_spo(&a, &b) > 0);
+  assert(fact_compare_spo(&b, &a) < 0);
+  fact_init(&b, NULL, "b", "c");
+  assert(fact_compare_spo(&a, &b) > 0);
+  assert(fact_compare_spo(&b, &a) < 0);
   fact_init(&b, "a", "b", NULL);
   assert(fact_compare_spo(&a, &b) > 0);
   assert(fact_compare_spo(&b, &a) < 0);
+  fact_init(&b, "a", "b", "d");
+  assert(fact_compare_spo(&a, &b) < 0);
+  assert(fact_compare_spo(&b, &a) > 0);
+  fact_init(&b, "a", "a", "c");
+  assert(fact_compare_spo(&a, &b) > 0);
+  assert(fact_compare_spo(&b, &a) < 0);
+  fact_init(&b, "a", "d", "c");
+  assert(fact_compare_spo(&a, &b) < 0);
+  assert(fact_compare_spo(&b, &a) > 0);
+  fact_init(&b, "b", "c", "d");
+  assert(fact_compare_spo(&a, &b) < 0);
+  assert(fact_compare_spo(&b, &a) > 0);
 }
 END_TEST
 
