@@ -71,6 +71,76 @@ START_TEST (test_fact_compare_spo)
 }
 END_TEST
 
+START_TEST (test_fact_compare_pos)
+{
+  s_fact a;
+  s_fact b;
+  fact_init(&a, "c", "a", "b");
+  assert(fact_compare_pos(NULL, &a) <  0);
+  assert(fact_compare_pos(&a, &a)   == 0);
+  assert(fact_compare_pos(&a, NULL) >  0);
+  fact_init(&b, NULL, NULL, NULL);
+  assert(fact_compare_pos(&a, &b) > 0);
+  assert(fact_compare_pos(&b, &a) < 0);
+  fact_init(&b, "c", NULL, NULL);
+  assert(fact_compare_pos(&a, &b) > 0);
+  assert(fact_compare_pos(&b, &a) < 0);
+  fact_init(&b, "c", NULL, "b");
+  assert(fact_compare_pos(&a, &b) > 0);
+  assert(fact_compare_pos(&b, &a) < 0);
+  fact_init(&b, NULL, "a", "b");
+  assert(fact_compare_pos(&a, &b) > 0);
+  assert(fact_compare_pos(&b, &a) < 0);
+  fact_init(&b, "d", "a", "b");
+  assert(fact_compare_pos(&a, &b) < 0);
+  assert(fact_compare_pos(&b, &a) > 0);
+  fact_init(&b, "c", "a", "a");
+  assert(fact_compare_pos(&a, &b) > 0);
+  assert(fact_compare_pos(&b, &a) < 0);
+  fact_init(&b, "c", "a", "d");
+  assert(fact_compare_pos(&a, &b) < 0);
+  assert(fact_compare_pos(&b, &a) > 0);
+  fact_init(&b, "d", "b", "c");
+  assert(fact_compare_pos(&a, &b) < 0);
+  assert(fact_compare_pos(&b, &a) > 0);
+}
+END_TEST
+
+START_TEST (test_fact_compare_osp)
+{
+  s_fact a;
+  s_fact b;
+  fact_init(&a, "b", "c", "a");
+  assert(fact_compare_osp(NULL, &a) <  0);
+  assert(fact_compare_osp(&a, &a)   == 0);
+  assert(fact_compare_osp(&a, NULL) >  0);
+  fact_init(&b, NULL, NULL, NULL);
+  assert(fact_compare_osp(&a, &b) > 0);
+  assert(fact_compare_osp(&b, &a) < 0);
+  fact_init(&b, NULL, "c", NULL);
+  assert(fact_compare_osp(&a, &b) > 0);
+  assert(fact_compare_osp(&b, &a) < 0);
+  fact_init(&b, "b", "c", NULL);
+  assert(fact_compare_osp(&a, &b) > 0);
+  assert(fact_compare_osp(&b, &a) < 0);
+  fact_init(&b, "b", NULL, "a");
+  assert(fact_compare_osp(&a, &b) > 0);
+  assert(fact_compare_osp(&b, &a) < 0);
+  fact_init(&b, "b", "d", "a");
+  assert(fact_compare_osp(&a, &b) < 0);
+  assert(fact_compare_osp(&b, &a) > 0);
+  fact_init(&b, "a", "c", "a");
+  assert(fact_compare_osp(&a, &b) > 0);
+  assert(fact_compare_osp(&b, &a) < 0);
+  fact_init(&b, "d", "c", "a");
+  assert(fact_compare_osp(&a, &b) < 0);
+  assert(fact_compare_osp(&b, &a) > 0);
+  fact_init(&b, "c", "d", "b");
+  assert(fact_compare_osp(&a, &b) < 0);
+  assert(fact_compare_osp(&b, &a) > 0);
+}
+END_TEST
+
 Suite * fact_suite(void)
 {
     Suite *s;
@@ -83,6 +153,8 @@ Suite * fact_suite(void)
     suite_add_tcase(s, tc_init);
     tc_compare = tcase_create("Compare");
     tcase_add_test(tc_compare, test_fact_compare_spo);
+    tcase_add_test(tc_compare, test_fact_compare_pos);
+    tcase_add_test(tc_compare, test_fact_compare_osp);
     suite_add_tcase(s, tc_compare);
     return s;
 }
