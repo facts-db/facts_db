@@ -29,6 +29,7 @@ typedef int (*f_fact) (s_fact *f);
 
 void         fact_init (s_fact *f, const char *s, const char *p, const char *o);
 s_fact * new_fact (const char *s, const char *p, const char *o);
+void  delete_fact (s_fact *f);
 int          fact_compare_spo (void *a, void *b);
 int          fact_compare_pos (void *a, void *b);
 int          fact_compare_osp (void *a, void *b);

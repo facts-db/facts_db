@@ -16,6 +16,9 @@ libtool
 *.lo
 stamp-h1
 *.core
+*.gcda
+*.gcno
+*.gcov
 /tests/check_fact
 /tests/check_skiplist
 /tests/fixtures/

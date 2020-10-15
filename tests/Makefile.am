@@ -5,6 +5,8 @@ else
 AM_CFLAGS = -DDEBUG -O2 -std=c99 -pedantic -fgnu89-inline
 endif
 
+AM_CFLAGS += -fprofile-arcs -ftest-coverage
+
 TESTS = check_fact check_skiplist
 check_PROGRAMS = check_fact check_skiplist
 

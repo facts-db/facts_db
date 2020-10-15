@@ -26,13 +26,13 @@ START_TEST (test_new_fact)
   assert(!f->s);
   assert(!f->p);
   assert(!f->o);
-  free(f);
+  delete_fact(f);
   f = new_fact("a", "b", "c");
   assert(f);
   assert(f->s);
   assert(f->p);
   assert(f->o);
-  free(f);
+  delete_fact(f);
 }
 END_TEST
 
@@ -44,6 +44,9 @@ START_TEST (test_fact_compare_spo)
   assert(fact_compare_spo(NULL, &a) <  0);
   assert(fact_compare_spo(&a, &a)   == 0);
   assert(fact_compare_spo(&a, NULL) >  0);
+  fact_init(&b, "a", "b", "c");
+  assert(fact_compare_spo(&a, &b) == 0);
+  assert(fact_compare_spo(&b, &a) == 0);
   fact_init(&b, NULL, NULL, NULL);
   assert(fact_compare_spo(&a, &b) > 0);
   assert(fact_compare_spo(&b, &a) < 0);
@@ -51,6 +54,9 @@ START_TEST (test_fact_compare_spo)
   assert(fact_compare_spo(&a, &b) > 0);
   assert(fact_compare_spo(&b, &a) < 0);
   fact_init(&b, NULL, "b", "c");
+  assert(fact_compare_spo(&a, &b) > 0);
+  assert(fact_compare_spo(&b, &a) < 0);
+  fact_init(&b, "a", NULL, "c");
   assert(fact_compare_spo(&a, &b) > 0);
   assert(fact_compare_spo(&b, &a) < 0);
   fact_init(&b, "a", "b", NULL);
@@ -79,6 +85,9 @@ START_TEST (test_fact_compare_pos)
   assert(fact_compare_pos(NULL, &a) <  0);
   assert(fact_compare_pos(&a, &a)   == 0);
   assert(fact_compare_pos(&a, NULL) >  0);
+  fact_init(&b, "c", "a", "b");
+  assert(fact_compare_pos(&a, &b) == 0);
+  assert(fact_compare_pos(&b, &a) == 0);
   fact_init(&b, NULL, NULL, NULL);
   assert(fact_compare_pos(&a, &b) > 0);
   assert(fact_compare_pos(&b, &a) < 0);
@@ -86,6 +95,9 @@ START_TEST (test_fact_compare_pos)
   assert(fact_compare_pos(&a, &b) > 0);
   assert(fact_compare_pos(&b, &a) < 0);
   fact_init(&b, "c", NULL, "b");
+  assert(fact_compare_pos(&a, &b) > 0);
+  assert(fact_compare_pos(&b, &a) < 0);
+  fact_init(&b, "c", "a", NULL);
   assert(fact_compare_pos(&a, &b) > 0);
   assert(fact_compare_pos(&b, &a) < 0);
   fact_init(&b, NULL, "a", "b");
@@ -114,6 +126,9 @@ START_TEST (test_fact_compare_osp)
   assert(fact_compare_osp(NULL, &a) <  0);
   assert(fact_compare_osp(&a, &a)   == 0);
   assert(fact_compare_osp(&a, NULL) >  0);
+  fact_init(&b, "b", "c", "a");
+  assert(fact_compare_osp(&a, &b) == 0);
+  assert(fact_compare_osp(&b, &a) == 0);
   fact_init(&b, NULL, NULL, NULL);
   assert(fact_compare_osp(&a, &b) > 0);
   assert(fact_compare_osp(&b, &a) < 0);
@@ -121,6 +136,9 @@ START_TEST (test_fact_compare_osp)
   assert(fact_compare_osp(&a, &b) > 0);
   assert(fact_compare_osp(&b, &a) < 0);
   fact_init(&b, "b", "c", NULL);
+  assert(fact_compare_osp(&a, &b) > 0);
+  assert(fact_compare_osp(&b, &a) < 0);
+  fact_init(&b, NULL, "c", "a");
   assert(fact_compare_osp(&a, &b) > 0);
   assert(fact_compare_osp(&b, &a) < 0);
   fact_init(&b, "b", NULL, "a");
