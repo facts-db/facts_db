@@ -19,6 +19,7 @@
 
 #include "fact.h"
 #include "skiplist.h"
+#include "spec.h"
 
 typedef struct facts
 {
@@ -27,23 +28,46 @@ typedef struct facts
   s_skiplist index_osp;
 } s_facts;
 
-void          facts_init (s_facts *facts);
+void              facts_init (s_facts *facts);
 
-s_facts * new_facts ();
+s_facts *     new_facts ();
 
-s_fact *      facts_add (s_facts *facts,
-                         s_fact *f);
+s_fact *          facts_add_fact (s_facts *facts,
+                                  s_fact *f);
 
-s_fact *      facts_remove (s_facts *facts,
-                            s_fact *f);
+s_fact *          facts_remove_fact (s_facts *facts,
+                                     s_fact *f);
 
-s_fact *      facts_get (s_facts *facts,
-                         s_fact *f);
+s_fact *          facts_get_fact (s_facts *facts,
+                                  s_fact *f);
 
-void          facts_each (s_facts *facts,
-                          s_skiplist *tree,
-                          s_fact *start,
-                          s_fact *end,
-                          f_fact fn);
+unsigned long     facts_count (s_facts *facts);
+
+typedef struct facts_iterator {
+  s_skiplist_node *node;
+  s_fact *start;
+  s_fact *end;
+} s_facts_iterator;
+
+void              facts_iterator (s_facts *facts,
+                                  s_facts_iterator *iter,
+                                  s_skiplist *tree,
+                                  s_fact *start,
+                                  s_fact *end);
+
+s_fact *          facts_iterator_next (s_facts_iterator *iter);
+
+void              facts_with_3 (s_facts *facts,
+                                s_facts_iterator *iter,
+                                const char *s,
+                                const char *p,
+                                const char *o);
+
+void              facts_with_0 (s_facts *facts,
+                                s_facts_iterator *iter);
+
+void              facts_with (s_facts *facts,
+                              s_facts_iterator *iter,
+                              p_spec spec);
 
 #endif

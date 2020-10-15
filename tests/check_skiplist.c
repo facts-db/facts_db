@@ -27,7 +27,7 @@ void teardown_pred ()
         g_sl = NULL;
 }
 
-void setup_deletes ()
+void setup_remove ()
 {
         g_sl = new_skiplist(5, 4);
         skiplist_insert(g_sl, (void*) 1);
@@ -42,7 +42,7 @@ void setup_deletes ()
         skiplist_insert(g_sl, (void*) 10);
 }
 
-void teardown_deletes ()
+void teardown_remove ()
 {
         g_sl = NULL;
 }
@@ -178,40 +178,40 @@ START_TEST (test_skiplist_pred_after_last)
 }
 END_TEST
 
-START_TEST (test_skiplist_delete_first)
+START_TEST (test_skiplist_remove_first)
 {
         assert(g_sl->length == 10);
-        assert((void*) 1 == skiplist_delete(g_sl, (void*) 1));
+        assert((void*) 1 == skiplist_remove(g_sl, (void*) 1));
         assert(g_sl->length == 9);
 }
 END_TEST
 
-START_TEST (test_skiplist_delete_last)
+START_TEST (test_skiplist_remove_last)
 {
-        assert((void*) 10 == skiplist_delete(g_sl, (void*) 10));
+        assert((void*) 10 == skiplist_remove(g_sl, (void*) 10));
         assert(g_sl->length == 9);
 }
 END_TEST
 
-START_TEST (test_skiplist_delete_middle)
+START_TEST (test_skiplist_remove_middle)
 {
-        assert((void*) 5 == skiplist_delete(g_sl, (void*) 5));
+        assert((void*) 5 == skiplist_remove(g_sl, (void*) 5));
         assert(g_sl->length == 9);
 }
 END_TEST
 
-START_TEST (test_skiplist_delete_all)
+START_TEST (test_skiplist_remove_all)
 {
-        assert((void*) 1 == skiplist_delete(g_sl, (void*) 1));
-        assert((void*) 2 == skiplist_delete(g_sl, (void*) 2));
-        assert((void*) 3 == skiplist_delete(g_sl, (void*) 3));
-        assert((void*) 4 == skiplist_delete(g_sl, (void*) 4));
-        assert((void*) 5 == skiplist_delete(g_sl, (void*) 5));
-        assert((void*) 6 == skiplist_delete(g_sl, (void*) 6));
-        assert((void*) 7 == skiplist_delete(g_sl, (void*) 7));
-        assert((void*) 8 == skiplist_delete(g_sl, (void*) 8));
-        assert((void*) 9 == skiplist_delete(g_sl, (void*) 9));
-        assert((void*) 10 == skiplist_delete(g_sl, (void*) 10));
+        assert((void*) 1 == skiplist_remove(g_sl, (void*) 1));
+        assert((void*) 2 == skiplist_remove(g_sl, (void*) 2));
+        assert((void*) 3 == skiplist_remove(g_sl, (void*) 3));
+        assert((void*) 4 == skiplist_remove(g_sl, (void*) 4));
+        assert((void*) 5 == skiplist_remove(g_sl, (void*) 5));
+        assert((void*) 6 == skiplist_remove(g_sl, (void*) 6));
+        assert((void*) 7 == skiplist_remove(g_sl, (void*) 7));
+        assert((void*) 8 == skiplist_remove(g_sl, (void*) 8));
+        assert((void*) 9 == skiplist_remove(g_sl, (void*) 9));
+        assert((void*) 10 == skiplist_remove(g_sl, (void*) 10));
         assert(g_sl->length == 0);
 }
 END_TEST
@@ -222,7 +222,7 @@ Suite * skiplist_suite(void)
     TCase *tc_core;
     TCase *tc_inserts;
     TCase *tc_pred;
-    TCase *tc_deletes;
+    TCase *tc_remove;
     s = suite_create("Skiplist");
     tc_core = tcase_create("Core");
     tcase_add_test(tc_core, test_skiplist_create);
@@ -240,13 +240,13 @@ Suite * skiplist_suite(void)
     tcase_add_test(tc_pred, test_skiplist_pred_last);
     tcase_add_test(tc_pred, test_skiplist_pred_after_last);
     suite_add_tcase(s, tc_pred);
-    tc_deletes = tcase_create("Deletes");
-    tcase_add_checked_fixture(tc_deletes, setup_deletes, teardown_deletes);
-    tcase_add_test(tc_deletes, test_skiplist_delete_first);
-    tcase_add_test(tc_deletes, test_skiplist_delete_last);
-    tcase_add_test(tc_deletes, test_skiplist_delete_middle);
-    tcase_add_test(tc_deletes, test_skiplist_delete_all);
-    suite_add_tcase(s, tc_deletes);
+    tc_remove = tcase_create("Remove");
+    tcase_add_checked_fixture(tc_remove, setup_remove, teardown_remove);
+    tcase_add_test(tc_remove, test_skiplist_remove_first);
+    tcase_add_test(tc_remove, test_skiplist_remove_last);
+    tcase_add_test(tc_remove, test_skiplist_remove_middle);
+    tcase_add_test(tc_remove, test_skiplist_remove_all);
+    suite_add_tcase(s, tc_remove);
     return s;
 }
 

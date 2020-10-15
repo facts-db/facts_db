@@ -19,14 +19,6 @@
 #include <stdlib.h>
 #include "facts.h"
 
-s_facts * new_facts ()
-{
-  s_facts *facts = malloc(sizeof(s_facts));
-  if (facts)
-    facts_init(facts);
-  return facts;
-}
-
 void facts_init (s_facts *facts)
 {
   assert(facts);
@@ -38,12 +30,20 @@ void facts_init (s_facts *facts)
   facts->index_osp.compare = fact_compare_osp;
 }
 
-s_fact * facts_add (s_facts *facts, s_fact *f)
+s_facts * new_facts ()
+{
+  s_facts *facts = malloc(sizeof(s_facts));
+  if (facts)
+    facts_init(facts);
+  return facts;
+}
+
+s_fact * facts_add_fact (s_facts *facts, s_fact *f)
 {
   s_fact *found;
   assert(facts);
   assert(f);
-  if ((found = facts_get(facts, f)))
+  if ((found = facts_get_fact(facts, f)))
     return found;
   skiplist_insert(&facts->index_spo, f);
   skiplist_insert(&facts->index_pos, f);
@@ -51,7 +51,7 @@ s_fact * facts_add (s_facts *facts, s_fact *f)
   return f;
 }
 
-s_fact * facts_remove (s_facts *facts, s_fact *f)
+s_fact * facts_remove_fact (s_facts *facts, s_fact *f)
 {
   assert(facts);
   assert(f);
@@ -63,7 +63,7 @@ s_fact * facts_remove (s_facts *facts, s_fact *f)
   return NULL;
 }
 
-s_fact * facts_get (s_facts *facts, s_fact *f)
+s_fact * facts_get_fact (s_facts *facts, s_fact *f)
 {
   s_skiplist_node *node;
   assert(facts);
@@ -72,4 +72,10 @@ s_fact * facts_get (s_facts *facts, s_fact *f)
   if (node)
     return (s_fact*) node->value;
   return NULL;
+}
+
+unsigned long facts_count (s_facts *facts)
+{
+  assert(facts);
+  return facts->index_spo.length;
 }

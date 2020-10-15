@@ -14,45 +14,38 @@
  *  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef SET_H
-#define SET_H
 
+#include <assert.h>
 #include <stdio.h>
-#include "item.h"
-#include "skiplist.h"
+#include "spec.h"
 
-typedef struct set {
-  long size;
-  s_skiplist skiplist;
-} s_set;
+void spec_iterator (s_spec_iterator *iter, p_spec spec)
+{
+  assert(iter);
+  assert(spec);
+  iter->spec = spec;
+  iter->s = spec[0];
+  iter->pos = 1;
+}
 
-void     set_init (s_set *s);
-
-void     set_clear (s_set *s);
-
-int      set_read (s_set *s,
-                 const char *path);
-
-int      set_write (s_set *s,
-                  const char *path);
-
-s_item * set_find (s_set *s,
-                   void *data,
-                   long len);
-
-s_item * set_insert (s_set *s,
-                     void *data,
-                     long len);
-
-typedef int (*f_item) (s_item *i);
-
-void     set_each (s_set *s,
-                   f_item fn);
-
-typedef int (*f_item_index) (s_item *i,
-                             unsigned long index);
-
-void     set_each_index (s_set *s,
-                         f_item_index fn);
-
-#endif /* SET_H */
+s_fact * spec_iterator_next (s_spec_iterator *iter)
+{
+  const char *p;
+  const char *o;
+  assert(iter);
+  if (!iter->s)
+    return NULL;
+  p = iter->spec[iter->pos];
+  if (p) {
+    o = iter->spec[iter->pos + 1];
+    if (!o) {
+      fprintf(stderr, "spec_iterator_next: NULL object\n");
+      return NULL;
+    }
+    iter->pos += 2;
+    return new_fact(iter->s, p, o);
+  }
+  iter->s = iter->spec[iter->pos + 1];
+  iter->pos += 2;
+  return spec_iterator_next(iter);
+}

@@ -16,7 +16,7 @@ libtool
 *.lo
 stamp-h1
 *.core
-/tests/check_set
+/tests/check_fact
 /tests/check_skiplist
 /tests/fixtures/
 /tests/*.log

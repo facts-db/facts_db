@@ -6,15 +6,4 @@ else
 AM_CFLAGS = -DNDEBUG -O2 -std=c89 -pedantic -fgnu89-inline
 endif
 
-bin_PROGRAMS += benchmark_set
-benchmark_set_SOURCES = \
-	benchmark_set.c \
-	$(top_builddir)/set.c \
-	$(top_builddir)/skiplist.c
-benchmark_set_LDADD = -lm
-
-benchmark: benchmark_set
-	time ./benchmark_set insert
-	time ./benchmark_set insert2
-
 .PHONY: benchmark

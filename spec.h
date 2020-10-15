@@ -14,23 +14,32 @@
  *  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef FACT_H
-#define FACT_H
+#ifndef SPEC_H
+#define SPEC_H
 
-#include "item.h"
+#include "fact.h"
 
-typedef struct fact {
+typedef const char **p_spec;
+
+/* facts specification
+   ===================
+
+   A spec has the following pattern :
+    (subject (predicate object)+ NULL)+ NULL
+   For instance one fact {s1, p1.1, o1.1} has the spec :
+     s1 p1.1 o1.1 NULL NULL
+   And four facts of two subjects, each having two properties yield this
+   spec :
+     s1 p1.1 o1.1 p1.2 o1.2 NULL s2 p2.1 o2.1 p2.2 o2.2 NULL NULL
+*/
+
+typedef struct spec_iterator {
+  p_spec spec;
   const char *s;
-  const char *p;
-  const char *o;
-} s_fact;
+  unsigned long pos;
+} s_spec_iterator;
 
-typedef int (*f_fact) (s_fact *f);
-
-void         fact_init (s_fact *f, const char *s, const char *p, const char *o);
-s_fact * new_fact (const char *s, const char *p, const char *o);
-int          fact_compare_spo (void *a, void *b);
-int          fact_compare_pos (void *a, void *b);
-int          fact_compare_osp (void *a, void *b);
+void spec_iterator (s_spec_iterator *iter, p_spec spec);
+s_fact * spec_iterator_next (s_spec_iterator *iter);
 
 #endif
