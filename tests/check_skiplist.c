@@ -1,11 +1,25 @@
 
 #include <assert.h>
 #include <check.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "skiplist.h"
 
 s_skiplist *g_sl = NULL;
 
-START_TEST (test_skiplist_create)
+START_TEST (test_skiplist_init_destroy)
+{
+        unsigned long max_height = 5;
+        s_skiplist *sl = alloca(skiplist_size(max_height));
+        skiplist_init(sl, max_height, 4);
+        assert(sl->length == 0);
+        assert(sl->head);
+        assert(sl->max_height == max_height);
+        skiplist_destroy(sl);
+}
+END_TEST
+
+START_TEST (test_skiplist_new_delete)
 {
         s_skiplist *sl = new_skiplist(5, 4);
         assert(sl && sl->length == 0);
@@ -234,7 +248,8 @@ Suite * skiplist_suite(void)
     TCase *tc_remove;
     s = suite_create("Skiplist");
     tc_core = tcase_create("Core");
-    tcase_add_test(tc_core, test_skiplist_create);
+    tcase_add_test(tc_core, test_skiplist_new_delete);
+    tcase_add_test(tc_core, test_skiplist_init_destroy);
     suite_add_tcase(s, tc_core);
     tc_inserts = tcase_create("Inserts");
     tcase_add_checked_fixture(tc_inserts, setup_inserts, teardown_inserts);

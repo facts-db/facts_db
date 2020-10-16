@@ -35,9 +35,8 @@ void skiplist_node_init (s_skiplist_node *n,
 s_skiplist_node * new_skiplist_node (void *value, unsigned long height)
 {
         s_skiplist_node *n = malloc(skiplist_node_size(height));
-        if (n) {
+        if (n)
                 skiplist_node_init(n, value, height);
-        }
         return n;
 }
 
@@ -121,8 +120,7 @@ void skiplist_destroy (s_skiplist *sl)
 
 s_skiplist * new_skiplist (int max_height, double spacing)
 {
-        s_skiplist *sl = malloc(sizeof(s_skiplist) +
-                                max_height * sizeof(long));
+        s_skiplist *sl = malloc(skiplist_size(max_height));
         if (sl)
           skiplist_init(sl, max_height, spacing);
         return sl;
@@ -130,13 +128,7 @@ s_skiplist * new_skiplist (int max_height, double spacing)
 
 void delete_skiplist (s_skiplist *sl)
 {
-        s_skiplist_node *n;
-        assert(sl);
-        assert(sl->head);
-        while ((n = skiplist_node_next(sl->head, 0)))
-                skiplist_remove(sl, n->value);
-        delete_skiplist_node(sl->head);
-        sl->head = NULL;
+        skiplist_destroy(sl);
         free(sl);
 }
 

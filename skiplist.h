@@ -52,6 +52,9 @@ typedef struct skiplist {
         unsigned long max_height;
 } s_skiplist;
 
+#define skiplist_size(max_height) \
+        (sizeof(s_skiplist) + max_height * sizeof(long))
+
 #define skiplist_height_table(sl) \
         ((long*) (((s_skiplist*) sl) + 1))
 
