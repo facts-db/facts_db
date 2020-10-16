@@ -86,10 +86,6 @@ void *            skiplist_remove (s_skiplist *sl,
 s_skiplist_node * skiplist_find (s_skiplist *sl,
                                  void *value);
 
-s_skiplist_node * skiplist_find_pred (s_skiplist *sl,
-                                      void *value,
-                                      s_skiplist_node *pred);
-
 void              skiplist_each (s_skiplist *sl,
                                  void *start,
                                  void *end,
