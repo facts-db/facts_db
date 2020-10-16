@@ -101,10 +101,19 @@ void teardown_pred ()
 
 START_TEST (test_skiplist_pred_before_first)
 {
-        s_skiplist_node *pred = skiplist_pred(g_sl, (void*) 1);
+        s_skiplist_node *pred;
+        s_skiplist_node *pred2;
+        s_skiplist_node *n;
         unsigned long level;
-        for (level = 0; level < pred->height; level++)
+        pred = skiplist_pred(g_sl, (void*) 1);
+        pred2 = new_skiplist_node(g_sl, pred->height);
+        n = skiplist_find_pred(g_sl, (void*) 1, pred2);
+        for (level = 0; level < pred->height; level++) {
                 assert(skiplist_node_next(pred, level) == g_sl->head);
+                assert(skiplist_node_next(pred2, level) == g_sl->head);
+        }
+        delete_skiplist_node(pred);
+        delete_skiplist_node(pred2);
 }
 END_TEST
 
@@ -126,6 +135,7 @@ START_TEST (test_skiplist_pred_first)
                 assert(skiplist_node_next(p, level));
                 assert(skiplist_node_next(p, level)->value == (void*) 2);
         }
+        delete_skiplist_node(pred);
 }
 END_TEST
 
@@ -149,6 +159,7 @@ START_TEST (test_skiplist_pred_last)
                 assert(skiplist_node_next(p, level));
                 assert(skiplist_node_next(p, level)->value == (void*) 3);
         }
+        delete_skiplist_node(pred);
 }
 END_TEST
 
@@ -170,6 +181,7 @@ START_TEST (test_skiplist_pred_after_last)
                 assert(p->value == (void*) 3);
                 assert(skiplist_node_next(p, level) == 0);
         }
+        delete_skiplist_node(pred);
 }
 END_TEST
 
