@@ -41,11 +41,19 @@ s_facts * new_facts ()
 s_fact * facts_add_fact (s_facts *facts, s_fact *f)
 {
   s_fact *found;
+  unsigned long height;
+  s_skiplist_node *pred;
+  s_skiplist_node *n;
   assert(facts);
   assert(f);
-  if ((found = facts_get_fact(facts, f)))
+  height = skiplist_random_height(&facts->index_spo);
+  pred = alloca(skiplist_node_size(height));
+  skiplist_node_init(pred, NULL, height);
+  if ((found = facts_get_fact_pred(facts, f, pred)))
     return found;
-  skiplist_insert(&facts->index_spo, f);
+  n = new_skiplist_node(f, height);
+  assert(n);
+  skiplist_node_insert(n, pred);
   skiplist_insert(&facts->index_pos, f);
   skiplist_insert(&facts->index_osp, f);
   return f;
@@ -69,6 +77,19 @@ s_fact * facts_get_fact (s_facts *facts, s_fact *f)
   assert(facts);
   assert(f);
   node = skiplist_find(&facts->index_spo, f);
+  if (node)
+    return (s_fact*) node->value;
+  return NULL;
+}
+
+s_fact * facts_get_fact_pred (s_facts *facts,
+                              s_fact *f,
+                              s_skiplist_node *pred)
+{
+  s_skiplist_node *node;
+  assert(facts);
+  assert(f);
+  node = skiplist_find_pred(&facts->index_spo, f, pred);
   if (node)
     return (s_fact*) node->value;
   return NULL;

@@ -186,6 +186,14 @@ START_TEST (test_skiplist_remove_first)
 }
 END_TEST
 
+START_TEST (test_skiplist_remove_nonexistent)
+{
+        assert(g_sl->length == 10);
+        assert(NULL == skiplist_remove(g_sl, (void*) 1000));
+        assert(g_sl->length == 10);
+}
+END_TEST
+
 START_TEST (test_skiplist_remove_last)
 {
         assert((void*) 10 == skiplist_remove(g_sl, (void*) 10));
@@ -242,6 +250,7 @@ Suite * skiplist_suite(void)
     suite_add_tcase(s, tc_pred);
     tc_remove = tcase_create("Remove");
     tcase_add_checked_fixture(tc_remove, setup_remove, teardown_remove);
+    tcase_add_test(tc_remove, test_skiplist_remove_nonexistent);
     tcase_add_test(tc_remove, test_skiplist_remove_first);
     tcase_add_test(tc_remove, test_skiplist_remove_last);
     tcase_add_test(tc_remove, test_skiplist_remove_middle);

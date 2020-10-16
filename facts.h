@@ -41,6 +41,10 @@ s_fact *          facts_remove_fact (s_facts *facts,
 s_fact *          facts_get_fact (s_facts *facts,
                                   s_fact *f);
 
+s_fact *          facts_get_fact_pred (s_facts *facts,
+                                       s_fact *f,
+                                       s_skiplist_node *pred);
+
 unsigned long     facts_count (s_facts *facts);
 
 typedef struct facts_iterator {

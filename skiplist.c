@@ -23,21 +23,22 @@
 
 long int random(void);
 
+void skiplist_node_init (s_skiplist_node *n,
+                         void *value,
+                         unsigned long height)
+{
+        n->value = value;
+        n->height = height;
+        bzero(skiplist_node_links(n), height * sizeof(void*));
+}
+
 s_skiplist_node * new_skiplist_node (void *value, unsigned long height)
 {
         s_skiplist_node *n = malloc(skiplist_node_size(height));
         if (n) {
-                n->value = value;
-                n->height = height;
-                bzero(skiplist_node_links(n), height * sizeof(void*));
+                skiplist_node_init(n, value, height);
         }
         return n;
-}
-
-s_skiplist_node * skiplist_node_next_ (s_skiplist_node *n,
-                                       unsigned long height)
-{
-        return skiplist_node_links(n)[height];
 }
 
 /*
