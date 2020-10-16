@@ -34,6 +34,8 @@ void                  skiplist_node_init (s_skiplist_node *n,
 s_skiplist_node * new_skiplist_node (void *value,
                                      unsigned long height);
 
+void           delete_skiplist_node (s_skiplist_node *n);
+
 #define               skiplist_node_links(n) \
         ((s_skiplist_node**) (((s_skiplist_node*) n) + 1))
 
@@ -57,8 +59,12 @@ void              skiplist_init (s_skiplist *sl,
                                  int max_height,
                                  double spacing);
 
+void              skiplist_destroy (s_skiplist *sl);
+
 s_skiplist *  new_skiplist (int max_height,
                             double spacing);
+
+void       delete_skiplist (s_skiplist *sl);
 
 int               skiplist_compare_ptr (void *a,
                                         void *b);

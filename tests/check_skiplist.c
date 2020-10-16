@@ -5,6 +5,14 @@
 
 s_skiplist *g_sl = NULL;
 
+START_TEST (test_skiplist_create)
+{
+        s_skiplist *sl = new_skiplist(5, 4);
+        assert(sl && sl->length == 0);
+        delete_skiplist(sl);
+}
+END_TEST
+
 void setup_inserts ()
 {
         g_sl = new_skiplist(5, 4);
@@ -12,47 +20,8 @@ void setup_inserts ()
 
 void teardown_inserts ()
 {
-        g_sl = NULL;
+        delete_skiplist(g_sl);
 }
-
-void setup_pred ()
-{
-        g_sl = new_skiplist(5, 4);
-        skiplist_insert(g_sl, (void*) 2);
-        skiplist_insert(g_sl, (void*) 3);
-}
-
-void teardown_pred ()
-{
-        g_sl = NULL;
-}
-
-void setup_remove ()
-{
-        g_sl = new_skiplist(5, 4);
-        skiplist_insert(g_sl, (void*) 1);
-        skiplist_insert(g_sl, (void*) 2);
-        skiplist_insert(g_sl, (void*) 3);
-        skiplist_insert(g_sl, (void*) 4);
-        skiplist_insert(g_sl, (void*) 5);
-        skiplist_insert(g_sl, (void*) 6);
-        skiplist_insert(g_sl, (void*) 7);
-        skiplist_insert(g_sl, (void*) 8);
-        skiplist_insert(g_sl, (void*) 9);
-        skiplist_insert(g_sl, (void*) 10);
-}
-
-void teardown_remove ()
-{
-        g_sl = NULL;
-}
-
-START_TEST (test_skiplist_create)
-{
-        s_skiplist *sl = new_skiplist(5, 4);
-        assert(sl && sl->length == 0);
-}
-END_TEST
 
 START_TEST (test_skiplist_insert_one)
 {
@@ -103,6 +72,18 @@ START_TEST (test_skiplist_insert_ten)
         assert(skiplist_find(g_sl, (void*) 11) == 0);
 }
 END_TEST
+
+void setup_pred ()
+{
+        g_sl = new_skiplist(5, 4);
+        skiplist_insert(g_sl, (void*) 2);
+        skiplist_insert(g_sl, (void*) 3);
+}
+
+void teardown_pred ()
+{
+        delete_skiplist(g_sl);
+}
 
 START_TEST (test_skiplist_pred_before_first)
 {
@@ -177,6 +158,26 @@ START_TEST (test_skiplist_pred_after_last)
         }
 }
 END_TEST
+
+void setup_remove ()
+{
+        g_sl = new_skiplist(5, 4);
+        skiplist_insert(g_sl, (void*) 1);
+        skiplist_insert(g_sl, (void*) 2);
+        skiplist_insert(g_sl, (void*) 3);
+        skiplist_insert(g_sl, (void*) 4);
+        skiplist_insert(g_sl, (void*) 5);
+        skiplist_insert(g_sl, (void*) 6);
+        skiplist_insert(g_sl, (void*) 7);
+        skiplist_insert(g_sl, (void*) 8);
+        skiplist_insert(g_sl, (void*) 9);
+        skiplist_insert(g_sl, (void*) 10);
+}
+
+void teardown_remove ()
+{
+        delete_skiplist(g_sl);
+}
 
 START_TEST (test_skiplist_remove_first)
 {

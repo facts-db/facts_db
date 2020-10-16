@@ -41,6 +41,11 @@ s_skiplist_node * new_skiplist_node (void *value, unsigned long height)
         return n;
 }
 
+void delete_skiplist_node (s_skiplist_node *n)
+{
+        free(n);
+}
+
 /*
   Random height
   -------------
@@ -103,6 +108,17 @@ void skiplist_init (s_skiplist *sl, int max_height, double spacing)
         skiplist_height_table_(sl, spacing);
 }
 
+void skiplist_destroy (s_skiplist *sl)
+{
+        s_skiplist_node *n;
+        assert(sl);
+        assert(sl->head);
+        while ((n = skiplist_node_next(sl->head, 0)))
+                skiplist_remove(sl, n->value);
+        delete_skiplist_node(sl->head);
+        sl->head = NULL;
+}
+
 s_skiplist * new_skiplist (int max_height, double spacing)
 {
         s_skiplist *sl = malloc(sizeof(s_skiplist) +
@@ -110,6 +126,18 @@ s_skiplist * new_skiplist (int max_height, double spacing)
         if (sl)
           skiplist_init(sl, max_height, spacing);
         return sl;
+}
+
+void delete_skiplist (s_skiplist *sl)
+{
+        s_skiplist_node *n;
+        assert(sl);
+        assert(sl->head);
+        while ((n = skiplist_node_next(sl->head, 0)))
+                skiplist_remove(sl, n->value);
+        delete_skiplist_node(sl->head);
+        sl->head = NULL;
+        free(sl);
 }
 
 int skiplist_compare_ptr (void *a, void *b)
