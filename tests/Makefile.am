@@ -9,6 +9,7 @@ AM_CFLAGS += -fprofile-arcs -ftest-coverage
 
 TESTS = check_fact check_skiplist
 check_PROGRAMS = check_fact check_skiplist
+CLEANFILES = *.gcda *.gcno
 
 check_fact_SOURCES = \
 	check_fact.c \
