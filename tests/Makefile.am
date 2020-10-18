@@ -17,6 +17,9 @@ check_fact_SOURCES = \
 check_fact_CFLAGS = @CHECK_CFLAGS@ ${AM_CFLAGS}
 check_fact_LDADD = @CHECK_LIBS@
 
+fact.c.gcov:
+	gcov check_fact-fact.c
+
 check_facts_SOURCES = \
 	check_facts.c \
 	$(top_builddir)/fact.c \
@@ -25,8 +28,18 @@ check_facts_SOURCES = \
 check_facts_CFLAGS = @CHECK_CFLAGS@ ${AM_CFLAGS}
 check_facts_LDADD = @CHECK_LIBS@
 
+facts.c.gcov:
+	gcov check_facts-facts.c
+
 check_skiplist_SOURCES = \
 	check_skiplist.c \
 	$(top_builddir)/skiplist.c
 check_skiplist_CFLAGS = @CHECK_CFLAGS@ ${AM_CFLAGS}
 check_skiplist_LDADD = @CHECK_LIBS@
+
+skiplist.c.gcov:
+	gcov check_skiplist-skiplist.c
+
+gcov: fact.c.gcov facts.c.gcov skiplist.c.gcov
+
+.PHONY: gcov fact.c.gcov facts.c.gcov skiplist.c.gcov
