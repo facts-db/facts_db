@@ -86,9 +86,7 @@ void *            skiplist_remove (s_skiplist *sl,
 s_skiplist_node * skiplist_find (s_skiplist *sl,
                                  void *value);
 
-void              skiplist_each (s_skiplist *sl,
-                                 void *start,
-                                 void *end,
-                                 int (*fn) (void *));
+s_skiplist_node * skiplist_cursor (s_skiplist *sl,
+                                   void *start);
 
 #endif

@@ -149,7 +149,7 @@ s_skiplist_node * skiplist_pred (s_skiplist *sl, void *value)
         s_skiplist_node *node = sl->head;
         assert(pred);
         while (level--) {
-                s_skiplist_node *n = skiplist_node_next(node, level);
+                s_skiplist_node *n = node;
                 while (n && sl->compare(value, n->value) > 0) {
                         node = n;
                         n = skiplist_node_next(node, level);
@@ -240,6 +240,8 @@ s_skiplist_node * skiplist_cursor (s_skiplist *sl, void *start)
         s_skiplist_node *n;
         pred = skiplist_pred(sl, start);
         n = skiplist_node_next(pred, 0);
+        if (n)
+                n = skiplist_node_next(n, 0);
         delete_skiplist_node(pred);
         return n;
 }
