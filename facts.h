@@ -23,14 +23,18 @@
 
 typedef struct facts
 {
-  s_skiplist index_spo;
-  s_skiplist index_pos;
-  s_skiplist index_osp;
+  s_skiplist *index_spo;
+  s_skiplist *index_pos;
+  s_skiplist *index_osp;
 } s_facts;
 
 void              facts_init (s_facts *facts);
 
+void              facts_destroy (s_facts *facts);
+
 s_facts *     new_facts ();
+
+void       delete_facts (s_facts *facts);
 
 s_fact *          facts_add_fact (s_facts *facts,
                                   s_fact *f);
