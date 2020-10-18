@@ -20,6 +20,7 @@ stamp-h1
 *.gcno
 *.gcov
 /tests/check_fact
+/tests/check_facts
 /tests/check_skiplist
 /tests/fixtures/
 /tests/*.log

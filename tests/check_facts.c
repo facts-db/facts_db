@@ -207,13 +207,13 @@ START_TEST (test_facts_remove_fact_ten)
 }
 END_TEST
 
-Suite * fact_suite(void)
+Suite * facts_suite(void)
 {
     Suite *s;
     TCase *tc_init;
     TCase *tc_add_fact;
     TCase *tc_remove_fact;
-    s = suite_create("Fact");
+    s = suite_create("Facts");
     tc_init = tcase_create("Init");
     tcase_add_test(tc_init, test_facts_init_destroy);
     tcase_add_test(tc_init, test_facts_new_delete);
@@ -241,7 +241,7 @@ int main(void)
     Suite *s;
     SRunner *sr;
 
-    s = fact_suite();
+    s = facts_suite();
     sr = srunner_create(s);
 
     srunner_run_all(sr, CK_NORMAL);
