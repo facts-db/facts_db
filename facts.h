@@ -23,9 +23,9 @@
 
 typedef struct facts
 {
-  s_skiplist *index_spo;
-  s_skiplist *index_pos;
-  s_skiplist *index_osp;
+        s_skiplist *index_spo;
+        s_skiplist *index_pos;
+        s_skiplist *index_osp;
 } s_facts;
 
 void              facts_init (s_facts *facts);
@@ -52,9 +52,9 @@ s_fact *          facts_get_fact_pred (s_facts *facts,
 unsigned long     facts_count (s_facts *facts);
 
 typedef struct facts_iterator {
-  s_skiplist_node *node;
-  s_fact *start;
-  s_fact *end;
+        s_skiplist_node *node;
+        s_fact *start;
+        s_fact *end;
 } s_facts_iterator;
 
 void              facts_iterator (s_facts *facts,
