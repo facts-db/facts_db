@@ -53,75 +53,75 @@ void teardown_add_fact ()
 
 START_TEST (test_facts_add_fact_one)
 {
-        s_fact *a = new_fact("a", "b", "c");
-        s_fact *aa = new_fact("a", "b", "c");
+        s_fact a = {"a", "b", "c"};
+        s_fact aa = {"a", "b", "c"};
         s_fact *ia;
         ck_assert(facts_count(g_f) == 0);
-        ck_assert((ia = facts_add_fact(g_f, a)));
+        ck_assert((ia = facts_add_fact(g_f, &a)));
         ck_assert(facts_count(g_f) == 1);
-        ck_assert(ia == facts_add_fact(g_f, a));
+        ck_assert(ia == facts_add_fact(g_f, &a));
         ck_assert(facts_count(g_f) == 1);
-        ck_assert(ia == facts_add_fact(g_f, aa));
+        ck_assert(ia == facts_add_fact(g_f, &aa));
         ck_assert(facts_count(g_f) == 1);
 }
 END_TEST
 
 START_TEST (test_facts_add_fact_two)
 {
-        s_fact *a  = new_fact("a", "b", "c");
-        s_fact *aa = new_fact("a", "b", "c");
-        s_fact *b  = new_fact("b", "c", "d");
-        s_fact *bb = new_fact("b", "c", "d");
+        s_fact a  = {"a", "b", "c"};
+        s_fact aa = {"a", "b", "c"};
+        s_fact b  = {"b", "c", "d"};
+        s_fact bb = {"b", "c", "d"};
         s_fact *ia;
         s_fact *ib;
         ck_assert(facts_count(g_f) == 0);
-        ck_assert((ia = facts_add_fact(g_f, a)));
+        ck_assert((ia = facts_add_fact(g_f, &a)));
         ck_assert(facts_count(g_f) == 1);
-        ck_assert((ib = facts_add_fact(g_f, b)));
+        ck_assert((ib = facts_add_fact(g_f, &b)));
         ck_assert(facts_count(g_f) == 2);
-        ck_assert(facts_add_fact(g_f, a) == ia);
+        ck_assert(facts_add_fact(g_f, &a) == ia);
         ck_assert(facts_count(g_f) == 2);
-        ck_assert(facts_add_fact(g_f, b) == ib);
+        ck_assert(facts_add_fact(g_f, &b) == ib);
         ck_assert(facts_count(g_f) == 2);
-        ck_assert(facts_add_fact(g_f, aa) == ia);
+        ck_assert(facts_add_fact(g_f, &aa) == ia);
         ck_assert(facts_count(g_f) == 2);
-        ck_assert(facts_add_fact(g_f, bb) == ib);
+        ck_assert(facts_add_fact(g_f, &bb) == ib);
         ck_assert(facts_count(g_f) == 2);
 }
 END_TEST
 
 START_TEST (test_facts_add_fact_ten)
 {
-        s_fact *a = new_fact("a", "b", "c");
-        s_fact *b = new_fact("b", "c", "d");
-        s_fact *c = new_fact("c", "d", "e");
-        s_fact *d = new_fact("d", "e", "f");
-        s_fact *e = new_fact("e", "f", "g");
-        s_fact *f = new_fact("f", "g", "h");
-        s_fact *g = new_fact("g", "h", "i");
-        s_fact *h = new_fact("h", "i", "j");
-        s_fact *i = new_fact("i", "j", "k");
-        s_fact *j = new_fact("j", "k", "l");
+        s_fact a = {"a", "b", "c"};
+        s_fact b = {"b", "c", "d"};
+        s_fact c = {"c", "d", "e"};
+        s_fact d = {"d", "e", "f"};
+        s_fact e = {"e", "f", "g"};
+        s_fact f = {"f", "g", "h"};
+        s_fact g = {"g", "h", "i"};
+        s_fact h = {"h", "i", "j"};
+        s_fact i = {"i", "j", "k"};
+        s_fact j = {"j", "k", "l"};
         ck_assert(facts_count(g_f) == 0);
-        ck_assert(facts_add_fact(g_f, a));
+        ck_assert(facts_add_fact(g_f, &a));
         ck_assert(facts_count(g_f) == 1);
-        ck_assert(facts_add_fact(g_f, b));
+        ck_assert(facts_add_fact(g_f, &b));
         ck_assert(facts_count(g_f) == 2);
-        ck_assert(facts_add_fact(g_f, c));
+        ck_assert(facts_add_fact(g_f, &c));
         ck_assert(facts_count(g_f) == 3);
-        ck_assert(facts_add_fact(g_f, d));
+        ck_assert(facts_add_fact(g_f, &d));
         ck_assert(facts_count(g_f) == 4);
-        ck_assert(facts_add_fact(g_f, e));
+        ck_assert(facts_add_fact(g_f, &e));
         ck_assert(facts_count(g_f) == 5);
-        ck_assert(facts_add_fact(g_f, f));
+        ck_assert(facts_add_fact(g_f, &f));
         ck_assert(facts_count(g_f) == 6);
-        ck_assert(facts_add_fact(g_f, g));
+        ck_assert(facts_add_fact(g_f, &g));
         ck_assert(facts_count(g_f) == 7);
-        ck_assert(facts_add_fact(g_f, h));
+        ck_assert(facts_add_fact(g_f, &h));
         ck_assert(facts_count(g_f) == 8);
-        ck_assert(facts_add_fact(g_f, i));
+        ck_assert(facts_add_fact(g_f, &i));
         ck_assert(facts_count(g_f) == 9);
-        ck_assert(facts_add_fact(g_f, j));
+        ck_assert(facts_add_fact(g_f, &j));
         ck_assert(facts_count(g_f) == 10);
 }
 END_TEST
