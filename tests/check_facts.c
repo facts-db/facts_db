@@ -126,19 +126,83 @@ START_TEST (test_facts_add_fact_ten)
 }
 END_TEST
 
+void setup_add_spo ()
+{
+        g_f = new_facts();
+}
+
+void teardown_add_spo ()
+{
+        delete_facts(g_f);
+        g_f = NULL;
+}
+
+START_TEST (test_facts_add_spo_one)
+{
+        s_fact *ia;
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert((ia = facts_add_spo(g_f, "a", "b", "c")));
+        ck_assert(facts_count(g_f) == 1);
+        ck_assert(ia == facts_add_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_count(g_f) == 1);
+}
+END_TEST
+
+START_TEST (test_facts_add_spo_two)
+{
+        s_fact *ia;
+        s_fact *ib;
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert((ia = facts_add_spo(g_f, "a", "b", "c")));
+        ck_assert(facts_count(g_f) == 1);
+        ck_assert((ib = facts_add_spo(g_f, "b", "c", "d")));
+        ck_assert(facts_count(g_f) == 2);
+        ck_assert(facts_add_spo(g_f, "a", "b", "c") == ia);
+        ck_assert(facts_count(g_f) == 2);
+        ck_assert(facts_add_spo(g_f, "b", "c", "d") == ib);
+        ck_assert(facts_count(g_f) == 2);
+}
+END_TEST
+
+START_TEST (test_facts_add_spo_ten)
+{
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(facts_add_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_count(g_f) == 1);
+        ck_assert(facts_add_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_count(g_f) == 2);
+        ck_assert(facts_add_spo(g_f, "c", "d", "e"));
+        ck_assert(facts_count(g_f) == 3);
+        ck_assert(facts_add_spo(g_f, "d", "e", "f"));
+        ck_assert(facts_count(g_f) == 4);
+        ck_assert(facts_add_spo(g_f, "e", "f", "g"));
+        ck_assert(facts_count(g_f) == 5);
+        ck_assert(facts_add_spo(g_f, "f", "g", "h"));
+        ck_assert(facts_count(g_f) == 6);
+        ck_assert(facts_add_spo(g_f, "g", "h", "i"));
+        ck_assert(facts_count(g_f) == 7);
+        ck_assert(facts_add_spo(g_f, "h", "i", "j"));
+        ck_assert(facts_count(g_f) == 8);
+        ck_assert(facts_add_spo(g_f, "i", "j", "k"));
+        ck_assert(facts_count(g_f) == 9);
+        ck_assert(facts_add_spo(g_f, "j", "k", "l"));
+        ck_assert(facts_count(g_f) == 10);
+}
+END_TEST
+
 void setup_remove_fact ()
 {
         g_f = new_facts();
-        facts_add_fact(g_f, new_fact("a", "b", "c"));
-        facts_add_fact(g_f, new_fact("b", "c", "d"));
-        facts_add_fact(g_f, new_fact("c", "d", "e"));
-        facts_add_fact(g_f, new_fact("d", "e", "f"));
-        facts_add_fact(g_f, new_fact("e", "f", "g"));
-        facts_add_fact(g_f, new_fact("f", "g", "h"));
-        facts_add_fact(g_f, new_fact("g", "h", "i"));
-        facts_add_fact(g_f, new_fact("h", "i", "j"));
-        facts_add_fact(g_f, new_fact("i", "j", "k"));
-        facts_add_fact(g_f, new_fact("j", "k", "l"));
+        facts_add_spo(g_f, "a", "b", "c");
+        facts_add_spo(g_f, "b", "c", "d");
+        facts_add_spo(g_f, "c", "d", "e");
+        facts_add_spo(g_f, "d", "e", "f");
+        facts_add_spo(g_f, "e", "f", "g");
+        facts_add_spo(g_f, "f", "g", "h");
+        facts_add_spo(g_f, "g", "h", "i");
+        facts_add_spo(g_f, "h", "i", "j");
+        facts_add_spo(g_f, "i", "j", "k");
+        facts_add_spo(g_f, "j", "k", "l");
 }
 
 void teardown_remove_fact ()
@@ -210,12 +274,85 @@ START_TEST (test_facts_remove_fact_ten)
 }
 END_TEST
 
+void setup_remove_spo ()
+{
+        g_f = new_facts();
+        facts_add_spo(g_f, "a", "b", "c");
+        facts_add_spo(g_f, "b", "c", "d");
+        facts_add_spo(g_f, "c", "d", "e");
+        facts_add_spo(g_f, "d", "e", "f");
+        facts_add_spo(g_f, "e", "f", "g");
+        facts_add_spo(g_f, "f", "g", "h");
+        facts_add_spo(g_f, "g", "h", "i");
+        facts_add_spo(g_f, "h", "i", "j");
+        facts_add_spo(g_f, "i", "j", "k");
+        facts_add_spo(g_f, "j", "k", "l");
+}
+
+void teardown_remove_spo ()
+{
+        delete_facts(g_f);
+        g_f = NULL;
+}
+
+START_TEST (test_facts_remove_spo_one)
+{
+        ck_assert(facts_count(g_f) == 10);
+        ck_assert(facts_remove_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_count(g_f) == 9);
+        ck_assert(!facts_remove_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_count(g_f) == 9);
+}
+END_TEST
+
+START_TEST (test_facts_remove_spo_two)
+{
+        ck_assert(facts_count(g_f) == 10);
+        ck_assert(facts_remove_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_count(g_f) == 9);
+        ck_assert(facts_remove_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_count(g_f) == 8);
+        ck_assert(!facts_remove_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_count(g_f) == 8);
+        ck_assert(!facts_remove_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_count(g_f) == 8);
+}
+END_TEST
+
+START_TEST (test_facts_remove_spo_ten)
+{
+        ck_assert(facts_count(g_f) == 10);
+        ck_assert(facts_remove_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_count(g_f) == 9);
+        ck_assert(facts_remove_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_count(g_f) == 8);
+        ck_assert(facts_remove_spo(g_f, "c", "d", "e"));
+        ck_assert(facts_count(g_f) == 7);
+        ck_assert(facts_remove_spo(g_f, "d", "e", "f"));
+        ck_assert(facts_count(g_f) == 6);
+        ck_assert(facts_remove_spo(g_f, "e", "f", "g"));
+        ck_assert(facts_count(g_f) == 5);
+        ck_assert(facts_remove_spo(g_f, "f", "g", "h"));
+        ck_assert(facts_count(g_f) == 4);
+        ck_assert(facts_remove_spo(g_f, "g", "h", "i"));
+        ck_assert(facts_count(g_f) == 3);
+        ck_assert(facts_remove_spo(g_f, "h", "i", "j"));
+        ck_assert(facts_count(g_f) == 2);
+        ck_assert(facts_remove_spo(g_f, "i", "j", "k"));
+        ck_assert(facts_count(g_f) == 1);
+        ck_assert(facts_remove_spo(g_f, "j", "k", "l"));
+        ck_assert(facts_count(g_f) == 0);
+}
+END_TEST
+
 Suite * facts_suite(void)
 {
     Suite *s;
     TCase *tc_init;
     TCase *tc_add_fact;
+    TCase *tc_add_spo;
     TCase *tc_remove_fact;
+    TCase *tc_remove_spo;
     s = suite_create("Facts");
     tc_init = tcase_create("Init");
     tcase_add_test(tc_init, test_facts_init_destroy);
@@ -228,6 +365,13 @@ Suite * facts_suite(void)
     tcase_add_test(tc_add_fact, test_facts_add_fact_two);
     tcase_add_test(tc_add_fact, test_facts_add_fact_ten);
     suite_add_tcase(s, tc_add_fact);
+    tc_add_spo = tcase_create("Add SPO");
+    tcase_add_checked_fixture(tc_add_spo, setup_add_spo,
+                              teardown_add_spo);
+    tcase_add_test(tc_add_spo, test_facts_add_spo_one);
+    tcase_add_test(tc_add_spo, test_facts_add_spo_two);
+    tcase_add_test(tc_add_spo, test_facts_add_spo_ten);
+    suite_add_tcase(s, tc_add_spo);
     tc_remove_fact = tcase_create("Remove fact");
     tcase_add_checked_fixture(tc_remove_fact, setup_remove_fact,
                               teardown_remove_fact);
@@ -235,6 +379,13 @@ Suite * facts_suite(void)
     tcase_add_test(tc_remove_fact, test_facts_remove_fact_two);
     tcase_add_test(tc_remove_fact, test_facts_remove_fact_ten);
     suite_add_tcase(s, tc_remove_fact);
+    tc_remove_spo = tcase_create("Remove SPO");
+    tcase_add_checked_fixture(tc_remove_spo, setup_remove_spo,
+                              teardown_remove_spo);
+    tcase_add_test(tc_remove_spo, test_facts_remove_spo_one);
+    tcase_add_test(tc_remove_spo, test_facts_remove_spo_two);
+    tcase_add_test(tc_remove_spo, test_facts_remove_spo_ten);
+    suite_add_tcase(s, tc_remove_spo);
     return s;
 }
 
