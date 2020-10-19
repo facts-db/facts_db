@@ -55,12 +55,13 @@ START_TEST (test_facts_add_fact_one)
 {
         s_fact *a = new_fact("a", "b", "c");
         s_fact *aa = new_fact("a", "b", "c");
+        s_fact *ia;
         ck_assert(facts_count(g_f) == 0);
-        ck_assert(facts_add_fact(g_f, a) == a);
+        ck_assert((ia = facts_add_fact(g_f, a)));
         ck_assert(facts_count(g_f) == 1);
-        ck_assert(facts_add_fact(g_f, a) == a);
+        ck_assert(ia == facts_add_fact(g_f, a));
         ck_assert(facts_count(g_f) == 1);
-        ck_assert(facts_add_fact(g_f, aa) == a);
+        ck_assert(ia == facts_add_fact(g_f, aa));
         ck_assert(facts_count(g_f) == 1);
 }
 END_TEST
@@ -71,18 +72,20 @@ START_TEST (test_facts_add_fact_two)
         s_fact *aa = new_fact("a", "b", "c");
         s_fact *b  = new_fact("b", "c", "d");
         s_fact *bb = new_fact("b", "c", "d");
+        s_fact *ia;
+        s_fact *ib;
         ck_assert(facts_count(g_f) == 0);
-        ck_assert(facts_add_fact(g_f, a) == a);
+        ck_assert((ia = facts_add_fact(g_f, a)));
         ck_assert(facts_count(g_f) == 1);
-        ck_assert(facts_add_fact(g_f, b) == b);
+        ck_assert((ib = facts_add_fact(g_f, b)));
         ck_assert(facts_count(g_f) == 2);
-        ck_assert(facts_add_fact(g_f, a) == a);
+        ck_assert(facts_add_fact(g_f, a) == ia);
         ck_assert(facts_count(g_f) == 2);
-        ck_assert(facts_add_fact(g_f, b) == b);
+        ck_assert(facts_add_fact(g_f, b) == ib);
         ck_assert(facts_count(g_f) == 2);
-        ck_assert(facts_add_fact(g_f, aa) == a);
+        ck_assert(facts_add_fact(g_f, aa) == ia);
         ck_assert(facts_count(g_f) == 2);
-        ck_assert(facts_add_fact(g_f, bb) == b);
+        ck_assert(facts_add_fact(g_f, bb) == ib);
         ck_assert(facts_count(g_f) == 2);
 }
 END_TEST
@@ -100,25 +103,25 @@ START_TEST (test_facts_add_fact_ten)
         s_fact *i = new_fact("i", "j", "k");
         s_fact *j = new_fact("j", "k", "l");
         ck_assert(facts_count(g_f) == 0);
-        ck_assert(facts_add_fact(g_f, a) == a);
+        ck_assert(facts_add_fact(g_f, a));
         ck_assert(facts_count(g_f) == 1);
-        ck_assert(facts_add_fact(g_f, b) == b);
+        ck_assert(facts_add_fact(g_f, b));
         ck_assert(facts_count(g_f) == 2);
-        ck_assert(facts_add_fact(g_f, c) == c);
+        ck_assert(facts_add_fact(g_f, c));
         ck_assert(facts_count(g_f) == 3);
-        ck_assert(facts_add_fact(g_f, d) == d);
+        ck_assert(facts_add_fact(g_f, d));
         ck_assert(facts_count(g_f) == 4);
-        ck_assert(facts_add_fact(g_f, e) == e);
+        ck_assert(facts_add_fact(g_f, e));
         ck_assert(facts_count(g_f) == 5);
-        ck_assert(facts_add_fact(g_f, f) == f);
+        ck_assert(facts_add_fact(g_f, f));
         ck_assert(facts_count(g_f) == 6);
-        ck_assert(facts_add_fact(g_f, g) == g);
+        ck_assert(facts_add_fact(g_f, g));
         ck_assert(facts_count(g_f) == 7);
-        ck_assert(facts_add_fact(g_f, h) == h);
+        ck_assert(facts_add_fact(g_f, h));
         ck_assert(facts_count(g_f) == 8);
-        ck_assert(facts_add_fact(g_f, i) == i);
+        ck_assert(facts_add_fact(g_f, i));
         ck_assert(facts_count(g_f) == 9);
-        ck_assert(facts_add_fact(g_f, j) == j);
+        ck_assert(facts_add_fact(g_f, j));
         ck_assert(facts_count(g_f) == 10);
 }
 END_TEST
@@ -150,7 +153,7 @@ START_TEST (test_facts_remove_fact_one)
         ck_assert(facts_count(g_f) == 10);
         ck_assert(facts_remove_fact(g_f, a));
         ck_assert(facts_count(g_f) == 9);
-        ck_assert(facts_remove_fact(g_f, a) == NULL);
+        ck_assert(!facts_remove_fact(g_f, a));
         ck_assert(facts_count(g_f) == 9);
 }
 END_TEST
@@ -164,9 +167,9 @@ START_TEST (test_facts_remove_fact_two)
         ck_assert(facts_count(g_f) == 9);
         ck_assert(facts_remove_fact(g_f, b));
         ck_assert(facts_count(g_f) == 8);
-        ck_assert(facts_remove_fact(g_f, a) == NULL);
+        ck_assert(!facts_remove_fact(g_f, a));
         ck_assert(facts_count(g_f) == 8);
-        ck_assert(facts_remove_fact(g_f, b) == NULL);
+        ck_assert(!facts_remove_fact(g_f, b));
         ck_assert(facts_count(g_f) == 8);
 }
 END_TEST

@@ -10,6 +10,7 @@ AM_CFLAGS += -fprofile-arcs -ftest-coverage
 TESTS = check_fact check_skiplist check_facts
 check_PROGRAMS = check_fact check_facts check_skiplist
 CLEANFILES = *.gcda *.gcno
+GCOV =
 
 check_fact_SOURCES = \
 	check_fact.c \
@@ -19,6 +20,7 @@ check_fact_LDADD = @CHECK_LIBS@
 
 fact.c.gcov:
 	gcov check_fact-fact.c
+GCOV += fact.c.gcov
 
 check_facts_SOURCES = \
 	check_facts.c \
@@ -30,6 +32,7 @@ check_facts_LDADD = @CHECK_LIBS@
 
 facts.c.gcov:
 	gcov check_facts-facts.c
+GCOV += facts.c.gcov
 
 check_skiplist_SOURCES = \
 	check_skiplist.c \
@@ -39,7 +42,8 @@ check_skiplist_LDADD = @CHECK_LIBS@
 
 skiplist.c.gcov:
 	gcov check_skiplist-skiplist.c
+GCOV += skiplist.c.gcov
 
-gcov: fact.c.gcov facts.c.gcov skiplist.c.gcov
+gcov: ${GCOV}
 
-.PHONY: gcov fact.c.gcov facts.c.gcov skiplist.c.gcov
+.PHONY: gcov ${GCOV}

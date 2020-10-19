@@ -39,8 +39,18 @@ void       delete_facts (s_facts *facts);
 s_fact *          facts_add_fact (s_facts *facts,
                                   s_fact *f);
 
-s_fact *          facts_remove_fact (s_facts *facts,
+s_fact *          facts_add_spo (s_facts *facts,
+                                 const char *s,
+                                 const char *p,
+                                 const char *o);
+
+int               facts_remove_fact (s_facts *facts,
                                      s_fact *f);
+
+int               facts_remove_spo (s_facts *facts,
+                                    const char *s,
+                                    const char *p,
+                                    const char *o);
 
 s_fact *          facts_get_fact (s_facts *facts,
                                   s_fact *f);

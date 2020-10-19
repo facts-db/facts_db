@@ -57,26 +57,59 @@ void delete_facts (s_facts *facts)
 s_fact * facts_add_fact (s_facts *facts, s_fact *f)
 {
         s_fact *found;
+        s_fact *new;
         assert(facts);
         assert(f);
         if ((found = facts_get_fact(facts, f)))
                 return found;
-        skiplist_insert(facts->index_spo, f);
-        skiplist_insert(facts->index_pos, f);
-        skiplist_insert(facts->index_osp, f);
-        return f;
+        new = new_fact(f->s, f->p, f->o);
+        assert(new);
+        skiplist_insert(facts->index_spo, new);
+        skiplist_insert(facts->index_pos, new);
+        skiplist_insert(facts->index_osp, new);
+        return new;
 }
 
-s_fact * facts_remove_fact (s_facts *facts, s_fact *f)
+s_fact * facts_add_spo (s_facts *facts, const char *s,
+                        const char *p, const char *o)
 {
+        s_fact f;
         assert(facts);
-        assert(f);
-        if ((f = skiplist_remove(facts->index_spo, f))) {
-                skiplist_remove(facts->index_pos, f);
-                skiplist_remove(facts->index_osp, f);
-                return f;
+        assert(s);
+        assert(p);
+        assert(o);
+        f.s = s;
+        f.p = p;
+        f.o = o;
+        return facts_add_fact(facts, &f);
+}
+
+int facts_remove_fact (s_facts *facts, s_fact *f)
+{
+        s_fact *found;
+        assert(facts);
+        found = skiplist_remove(facts->index_spo, f);
+        if (found) {
+                skiplist_remove(facts->index_pos, found);
+                skiplist_remove(facts->index_osp, found);
+                delete_fact(found);
+                return 1;
         }
-        return NULL;
+        return 0;
+}
+
+int facts_remove_spo (s_facts *facts, const char *s,
+                      const char *p, const char *o)
+{
+        s_fact f;
+        assert(facts);
+        assert(s);
+        assert(p);
+        assert(o);
+        f.s = s;
+        f.p = p;
+        f.o = o;
+        return facts_remove_fact(facts, &f);
 }
 
 s_fact * facts_get_fact (s_facts *facts, s_fact *f)
