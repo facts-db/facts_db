@@ -264,11 +264,12 @@ void skiplist_cursor_init (s_skiplist *sl, s_skiplist_cursor *c,
 s_skiplist_node * skiplist_cursor_next (s_skiplist_cursor *c)
 {
         assert(c);
-        if (!c->n)
-                return NULL;
-        assert(c->sl);
-        c->n = skiplist_node_next(c->n, 0);
-        if (c->n && c->end && c->sl->compare(c->n->value, c->end) > 0)
-                c->n = NULL;
+        if (c->n) {
+                assert(c->sl);
+                c->n = skiplist_node_next(c->n, 0);
+                if (c->n && c->end &&
+                    c->sl->compare(c->n->value, c->end) > 0)
+                        c->n = NULL;
+        }
         return c->n;
 }
