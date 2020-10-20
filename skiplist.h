@@ -89,4 +89,17 @@ s_skiplist_node * skiplist_find (s_skiplist *sl,
 s_skiplist_node * skiplist_cursor (s_skiplist *sl,
                                    void *start);
 
+typedef struct skiplist_cursor {
+        s_skiplist *sl;
+        s_skiplist_node *n;
+        void *end;
+} s_skiplist_cursor;
+
+void              skiplist_cursor_init (s_skiplist *sl,
+                           s_skiplist_cursor *c,
+                           void *start,
+                           void *end);
+
+s_skiplist_node * skiplist_cursor_next (s_skiplist_cursor *c);
+
 #endif

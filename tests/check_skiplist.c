@@ -25,9 +25,9 @@ s_skiplist *g_sl = NULL;
 START_TEST (test_skiplist_init_destroy)
 {
         unsigned long i;
-        unsigned long max_height = 5;
+        unsigned long max_height = 4;
         s_skiplist *sl = alloca(skiplist_size(max_height));
-        skiplist_init(sl, max_height, 4);
+        skiplist_init(sl, max_height, 2);
         ck_assert(sl->length == 0);
         ck_assert(sl->head);
         for (i = 0; i < max_height; i++)
@@ -40,8 +40,8 @@ END_TEST
 START_TEST (test_skiplist_new_delete)
 {
         unsigned long i;
-        unsigned long max_height = 5;
-        s_skiplist *sl = new_skiplist(max_height, 4);
+        unsigned long max_height = 4;
+        s_skiplist *sl = new_skiplist(max_height, 2);
         ck_assert(sl && sl->length == 0);
         for (i = 0; i < max_height; i++)
                 ck_assert(skiplist_node_next(sl->head, i) == NULL);
@@ -51,7 +51,7 @@ END_TEST
 
 void setup_inserts ()
 {
-        g_sl = new_skiplist(5, 4);
+        g_sl = new_skiplist(4, 2);
 }
 
 void teardown_inserts ()
@@ -111,7 +111,7 @@ END_TEST
 
 void setup_pred ()
 {
-        g_sl = new_skiplist(5, 4);
+        g_sl = new_skiplist(4, 2);
         skiplist_insert(g_sl, (void*) 2);
         skiplist_insert(g_sl, (void*) 3);
 }
@@ -123,7 +123,7 @@ void teardown_pred ()
 
 START_TEST (test_skiplist_pred_empty)
 {
-        s_skiplist *sl = new_skiplist(5, 4);
+        s_skiplist *sl = new_skiplist(4, 2);
         s_skiplist_node *pred;
         unsigned long level;
         ck_assert(sl);
@@ -218,7 +218,7 @@ END_TEST
 
 void setup_remove ()
 {
-        g_sl = new_skiplist(5, 4);
+        g_sl = new_skiplist(4, 2);
         skiplist_insert(g_sl, (void*) 1);
         skiplist_insert(g_sl, (void*) 2);
         skiplist_insert(g_sl, (void*) 3);
@@ -282,9 +282,9 @@ START_TEST (test_skiplist_remove_all)
 }
 END_TEST
 
-void setup_iter ()
+void setup_cursor ()
 {
-        g_sl = new_skiplist(5, 4);
+        g_sl = new_skiplist(4, 2);
         skiplist_insert(g_sl, (void*) 2);
         skiplist_insert(g_sl, (void*) 4);
         skiplist_insert(g_sl, (void*) 6);
@@ -292,14 +292,14 @@ void setup_iter ()
         skiplist_insert(g_sl, (void*) 10);
 }
 
-void teardown_iter ()
+void teardown_cursor ()
 {
         delete_skiplist(g_sl);
 }
 
-START_TEST (test_skiplist_iter_empty)
+START_TEST (test_skiplist_cursor_empty)
 {
-        s_skiplist *sl = new_skiplist(5, 4);
+        s_skiplist *sl = new_skiplist(4, 2);
         ck_assert(sl);
         ck_assert(sl->length == 0);
         ck_assert(!skiplist_cursor(sl, (void*) 1));
@@ -307,7 +307,7 @@ START_TEST (test_skiplist_iter_empty)
 }
 END_TEST
 
-START_TEST (test_skiplist_iter_start)
+START_TEST (test_skiplist_cursor_start)
 {
         s_skiplist_node *n;
         n = skiplist_cursor(g_sl, (void*) 0);
@@ -322,7 +322,7 @@ START_TEST (test_skiplist_iter_start)
 }
 END_TEST
 
-START_TEST (test_skiplist_iter_middle)
+START_TEST (test_skiplist_cursor_middle)
 {
         s_skiplist_node *n;
         n = skiplist_cursor(g_sl, (void*) 2);
@@ -343,7 +343,7 @@ START_TEST (test_skiplist_iter_middle)
 }
 END_TEST
 
-START_TEST (test_skiplist_iter_end)
+START_TEST (test_skiplist_cursor_end)
 {
         s_skiplist_node *n;
         n = skiplist_cursor(g_sl, (void*) 9);
@@ -357,6 +357,109 @@ START_TEST (test_skiplist_iter_end)
 }
 END_TEST
 
+void setup_iter ()
+{
+        g_sl = new_skiplist(4, 2);
+        skiplist_insert(g_sl, (void*) 2);
+        skiplist_insert(g_sl, (void*) 4);
+        skiplist_insert(g_sl, (void*) 6);
+        skiplist_insert(g_sl, (void*) 8);
+        skiplist_insert(g_sl, (void*) 10);
+}
+
+void teardown_iter ()
+{
+        delete_skiplist(g_sl);
+}
+
+START_TEST (test_skiplist_iter_empty)
+{
+        s_skiplist *sl = new_skiplist(4, 2);
+        s_skiplist_cursor c;
+        ck_assert(sl);
+        ck_assert(sl->length == 0);
+        skiplist_cursor_init(sl, &c, (void*) 1, NULL);
+        ck_assert(!skiplist_cursor_next(&c));
+        delete_skiplist(sl);
+}
+END_TEST
+
+START_TEST (test_skiplist_iter_start)
+{
+        s_skiplist_cursor c;
+        s_skiplist_node *n;
+        skiplist_cursor_init(g_sl, &c, (void*) 0, NULL);
+        n = skiplist_cursor_next(&c);
+        ck_assert(n);
+        ck_assert(n->value == (void*) 2);
+        skiplist_cursor_init(g_sl, &c, (void*) 1, NULL);
+        n = skiplist_cursor_next(&c);
+        ck_assert(n);
+        ck_assert(n->value == (void*) 2);
+        skiplist_cursor_init(g_sl, &c, (void*) 2, NULL);
+        n = skiplist_cursor_next(&c);
+        ck_assert(n);
+        ck_assert(n->value == (void*) 2);
+        skiplist_cursor_init(g_sl, &c, (void*) 2, (void*) 2);
+        n = skiplist_cursor_next(&c);
+        ck_assert(n);
+        ck_assert(n->value == (void*) 2);
+        n = skiplist_cursor_next(&c);
+        ck_assert(!n);
+        n = skiplist_cursor_next(&c);
+        ck_assert(!n);
+}
+END_TEST
+
+START_TEST (test_skiplist_iter_middle)
+{
+        s_skiplist_cursor c;
+        s_skiplist_node *n;
+        skiplist_cursor_init(g_sl, &c, (void*) 2, NULL);
+        n = skiplist_cursor_next(&c);
+        ck_assert(n);
+        ck_assert(n->value == (void*) 2);
+        skiplist_cursor_init(g_sl, &c, (void*) 3, NULL);
+        n = skiplist_cursor_next(&c);
+        ck_assert(n);
+        ck_assert(n->value == (void*) 4);
+        skiplist_cursor_init(g_sl, &c, (void*) 4, NULL);
+        n = skiplist_cursor_next(&c);
+        ck_assert(n);
+        ck_assert(n->value == (void*) 4);
+        skiplist_cursor_init(g_sl, &c, (void*) 5, NULL);
+        n = skiplist_cursor_next(&c);
+        ck_assert(n);
+        ck_assert(n->value == (void*) 6);
+        skiplist_cursor_init(g_sl, &c, (void*) 6, (void*) 6);
+        n = skiplist_cursor_next(&c);
+        ck_assert(n);
+        ck_assert(n->value == (void*) 6);
+        n = skiplist_cursor_next(&c);
+        ck_assert(!n);
+        n = skiplist_cursor_next(&c);
+        ck_assert(!n);
+}
+END_TEST
+
+START_TEST (test_skiplist_iter_end)
+{
+        s_skiplist_cursor c;
+        s_skiplist_node *n;
+        skiplist_cursor_init(g_sl, &c, (void*) 9, NULL);
+        n = skiplist_cursor_next(&c);
+        ck_assert(n);
+        ck_assert(n->value == (void*) 10);
+        skiplist_cursor_init(g_sl, &c, (void*) 10, NULL);
+        n = skiplist_cursor_next(&c);
+        ck_assert(n);
+        ck_assert(n->value == (void*) 10);
+        skiplist_cursor_init(g_sl, &c, (void*) 11, NULL);
+        n = skiplist_cursor_next(&c);
+        ck_assert(!n);
+}
+END_TEST
+
 Suite * skiplist_suite(void)
 {
     Suite *s;
@@ -364,6 +467,7 @@ Suite * skiplist_suite(void)
     TCase *tc_inserts;
     TCase *tc_pred;
     TCase *tc_remove;
+    TCase *tc_cursor;
     TCase *tc_iter;
     s = suite_create("Skiplist");
     tc_core = tcase_create("Core");
@@ -392,6 +496,13 @@ Suite * skiplist_suite(void)
     tcase_add_test(tc_remove, test_skiplist_remove_middle);
     tcase_add_test(tc_remove, test_skiplist_remove_all);
     suite_add_tcase(s, tc_remove);
+    tc_cursor = tcase_create("Cursor");
+    tcase_add_checked_fixture(tc_cursor, setup_cursor, teardown_cursor);
+    tcase_add_test(tc_cursor, test_skiplist_cursor_empty);
+    tcase_add_test(tc_cursor, test_skiplist_cursor_start);
+    tcase_add_test(tc_cursor, test_skiplist_cursor_middle);
+    tcase_add_test(tc_cursor, test_skiplist_cursor_end);
+    suite_add_tcase(s, tc_cursor);
     tc_iter = tcase_create("Iter");
     tcase_add_checked_fixture(tc_iter, setup_iter, teardown_iter);
     tcase_add_test(tc_iter, test_skiplist_iter_empty);

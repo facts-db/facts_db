@@ -238,10 +238,37 @@ s_skiplist_node * skiplist_cursor (s_skiplist *sl, void *start)
 {
         s_skiplist_node *pred;
         s_skiplist_node *n;
+        assert(sl);
         pred = skiplist_pred(sl, start);
         n = skiplist_node_next(pred, 0);
-        if (n)
-                n = skiplist_node_next(n, 0);
+        assert(n);
+        n = skiplist_node_next(n, 0);
         delete_skiplist_node(pred);
         return n;
+}
+
+void skiplist_cursor_init (s_skiplist *sl, s_skiplist_cursor *c,
+                           void *start, void *end)
+{
+        s_skiplist_node *pred;
+        assert(sl);
+        assert(c);
+        pred = skiplist_pred(sl, start);
+        c->sl = sl;
+        c->n = skiplist_node_next(pred, 0);
+        c->end = end;
+        assert(c->n);
+        delete_skiplist_node(pred);
+}
+
+s_skiplist_node * skiplist_cursor_next (s_skiplist_cursor *c)
+{
+        assert(c);
+        if (!c->n)
+                return NULL;
+        assert(c->sl);
+        c->n = skiplist_node_next(c->n, 0);
+        if (c->n && c->end && c->sl->compare(c->n->value, c->end) > 0)
+                c->n = NULL;
+        return c->n;
 }
