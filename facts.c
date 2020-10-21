@@ -128,3 +128,137 @@ unsigned long facts_count (s_facts *facts)
         assert(facts);
         return facts->index_spo->length;
 }
+
+void facts_cursor_init (s_facts *facts,
+                        s_facts_cursor *c,
+                        s_skiplist *tree,
+                        s_fact *start,
+                        s_fact *end)
+{
+        s_skiplist_node *pred;
+        assert(facts);
+        assert(c);
+        assert(tree);
+        pred = skiplist_pred(tree, start);
+        assert(pred);
+        c->tree = tree;
+        c->node = skiplist_node_next(pred, 0);
+        if (start)
+                c->start = *start;
+        else {
+                c->start.s = P_FIRST;
+                c->start.p = P_FIRST;
+                c->start.o = P_FIRST;
+        }
+        if (end)
+                c->end = *end;
+        else {
+                c->end.s = P_LAST;
+                c->end.p = P_LAST;
+                c->end.o = P_LAST;
+        }
+        delete_skiplist_node(pred);
+        c->var_s = NULL;
+        c->var_p = NULL;
+        c->var_o = NULL;
+}
+
+s_fact * facts_cursor_next (s_facts_cursor *c)
+{
+        assert(c);
+        if (c->node) {
+                c->node = skiplist_node_next(c->node, 0);
+                if (c->node &&
+                    c->tree->compare(c->node->value, &c->end) > 0)
+                        c->node = NULL;
+        }
+        if (c->node) {
+                s_fact *f = (s_fact*) c->node->value;
+                if (c->var_s)
+                        *c->var_s = f->s;
+                if (c->var_p)
+                        *c->var_p = f->p;
+                if (c->var_o)
+                        *c->var_o = f->o;
+                return f;
+        }
+        return NULL;
+}
+
+void facts_with_3 (s_facts *facts, s_facts_cursor *c, const char *s,
+                   const char *p, const char *o)
+{
+        s_fact f;
+        assert(facts);
+        assert(c);
+        assert(s);
+        assert(p);
+        assert(o);
+        f.s = s;
+        f.p = p;
+        f.o = o;
+        facts_cursor_init(facts, c, facts->index_spo, &f, &f);
+}
+
+void facts_with_0 (s_facts *facts, s_facts_cursor *c,
+                   const char **var_s, const char **var_p,
+                   const char **var_o)
+{
+        assert(facts);
+        assert(c);
+        facts_cursor_init(facts, c, facts->index_spo, NULL, NULL);
+        c->var_s = var_s;
+        c->var_p = var_p;
+        c->var_o = var_o;
+}
+
+void facts_with_1_2 (s_facts *facts, s_facts_cursor *c, const char *s,
+                     const char *p, const char *o, const char **var_s,
+                     const char **var_p, const char **var_o)
+{
+        s_fact start;
+        s_fact end;
+        s_skiplist *tree;
+        assert(facts);
+        assert(c);
+        assert(s);
+        assert(p);
+        assert(o);
+        assert(var_s || var_p || var_o);
+        start.s = var_s ? P_FIRST : s;
+        start.p = var_p ? P_FIRST : p;
+        start.o = var_o ? P_FIRST : o;
+        end.s = var_s ? P_LAST : s;
+        end.p = var_p ? P_LAST : p;
+        end.o = var_o ? P_LAST : o;
+        tree = (!var_s && var_o) ? facts->index_spo :
+                !var_p ? facts->index_pos :
+                facts->index_osp;
+        facts_cursor_init(facts, c, tree, &start, &end);
+}
+
+void facts_with_spo (s_facts *facts,
+                     s_binding *bindings,
+                     s_facts_cursor *c,
+                     const char *s,
+                     const char *p,
+                     const char *o)
+{
+        const char **var_s;
+        const char **var_p;
+        const char **var_o;
+        assert(facts);
+        assert(c);
+        assert(s);
+        assert(p);
+        assert(o);
+        var_s = (s[0] == '?') ? bindings_get(bindings, s) : NULL;
+        var_p = (p[0] == '?') ? bindings_get(bindings, p) : NULL;
+        var_o = (o[0] == '?') ? bindings_get(bindings, o) : NULL;
+        if (var_s && var_p && var_o)
+                facts_with_0(facts, c, var_s, var_p, var_o);
+        else if (!(var_s || var_p || var_o))
+                facts_with_3(facts, c, s, p, o);
+        else
+                facts_with_1_2(facts, c, s, p, o, var_s, var_p, var_o);
+}

@@ -14,12 +14,14 @@ endif
 
 lib_LTLIBRARIES += libfacts_db.la
 libfacts_db_la_SOURCES = \
+	binding.c \
 	fact.c \
 	facts.c \
 	skiplist.c \
 	spec.c
 libfacts_db_la_LIBADD = -lm
 include_HEADERS += \
+	binding.h \
 	fact.h \
 	facts.h \
 	skiplist.h \

@@ -24,6 +24,7 @@ GCOV += fact.c.gcov
 
 check_facts_SOURCES = \
 	check_facts.c \
+	$(top_builddir)/binding.c \
 	$(top_builddir)/fact.c \
 	$(top_builddir)/facts.c \
 	$(top_builddir)/skiplist.c

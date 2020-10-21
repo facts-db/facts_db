@@ -17,6 +17,7 @@
 #ifndef FACTS_H
 #define FACTS_H
 
+#include "binding.h"
 #include "fact.h"
 #include "skiplist.h"
 #include "spec.h"
@@ -55,37 +56,52 @@ int               facts_remove_spo (s_facts *facts,
 s_fact *          facts_get_fact (s_facts *facts,
                                   s_fact *f);
 
-s_fact *          facts_get_fact_pred (s_facts *facts,
-                                       s_fact *f,
-                                       s_skiplist_node *pred);
-
 unsigned long     facts_count (s_facts *facts);
 
-typedef struct facts_iterator {
+typedef struct facts_cursor {
+        s_skiplist *tree;
         s_skiplist_node *node;
-        s_fact *start;
-        s_fact *end;
-} s_facts_iterator;
+        s_fact start;
+        s_fact end;
+        const char **var_s;
+        const char **var_p;
+        const char **var_o;
+} s_facts_cursor;
 
-void              facts_iterator (s_facts *facts,
-                                  s_facts_iterator *iter,
-                                  s_skiplist *tree,
-                                  s_fact *start,
-                                  s_fact *end);
+void              facts_cursor_init (s_facts *facts,
+                                     s_facts_cursor *c,
+                                     s_skiplist *tree,
+                                     s_fact *start,
+                                     s_fact *end);
 
-s_fact *          facts_iterator_next (s_facts_iterator *iter);
+s_fact *          facts_cursor_next (s_facts_cursor *c);
 
 void              facts_with_3 (s_facts *facts,
-                                s_facts_iterator *iter,
+                                s_facts_cursor *c,
                                 const char *s,
                                 const char *p,
                                 const char *o);
 
 void              facts_with_0 (s_facts *facts,
-                                s_facts_iterator *iter);
+                                s_facts_cursor *c,
+                                const char **var_s,
+                                const char **var_p,
+                                const char **var_o);
 
-void              facts_with (s_facts *facts,
-                              s_facts_iterator *iter,
-                              p_spec spec);
+void              facts_with_1_2 (s_facts *facts,
+                                  s_facts_cursor *c,
+                                  const char *s,
+                                  const char *p,
+                                  const char *o,
+                                  const char **var_s,
+                                  const char **var_p,
+                                  const char **var_o);
+
+void              facts_with_spo (s_facts *facts,
+                                  s_binding *bindings,
+                                  s_facts_cursor *c,
+                                  const char *s,
+                                  const char *p,
+                                  const char *o);
 
 #endif
