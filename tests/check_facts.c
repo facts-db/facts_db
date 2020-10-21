@@ -527,6 +527,57 @@ START_TEST (test_facts_with_spo_p)
 }
 END_TEST
 
+START_TEST (test_facts_with_spo_o)
+{
+        s_fact f;
+        const char *o;
+        s_binding bindings[] = {
+                {"?o", &o},
+                {NULL, NULL} };
+        s_facts_cursor c;
+        ck_assert(facts_count(g_f) == 5);
+        facts_with_spo(g_f, bindings, &c, "a", "a", "?o");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "a", "b", "?o");
+        fact_init(&f, "a", "b", "c");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!strcmp(f.o, o));
+        fact_init(&f, "a", "b", "d");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!strcmp(f.o, o));
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "a", "c", "?o");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "a", "e", "?o");
+        fact_init(&f, "a", "e", "d");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!strcmp(f.o, o));
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "a", "f", "?o");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "b", "c", "?o");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "g", "a", "?o");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "g", "b", "?o");
+        fact_init(&f, "g", "b", "c");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!strcmp(f.o, o));
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "g", "c", "?o");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "h", "a", "?o");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "h", "i", "?o");
+        fact_init(&f, "h", "i", "c");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!strcmp(f.o, o));
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "i", "j", "?p");
+        ck_assert(!facts_cursor_next(&c));
+}
+END_TEST
+
 Suite * facts_suite(void)
 {
     Suite *s;
@@ -576,6 +627,7 @@ Suite * facts_suite(void)
     tcase_add_test(tc_with_spo, test_facts_with_spo_3);
     tcase_add_test(tc_with_spo, test_facts_with_spo_s);
     tcase_add_test(tc_with_spo, test_facts_with_spo_p);
+    tcase_add_test(tc_with_spo, test_facts_with_spo_o);
     suite_add_tcase(s, tc_with_spo);
     return s;
 }
