@@ -235,6 +235,9 @@ void facts_with_1_2 (s_facts *facts, s_facts_cursor *c, const char *s,
                 !var_p ? facts->index_pos :
                 facts->index_osp;
         facts_cursor_init(facts, c, tree, &start, &end);
+        c->var_s = var_s;
+        c->var_p = var_p;
+        c->var_o = var_o;
 }
 
 void facts_with_spo (s_facts *facts,
