@@ -666,6 +666,54 @@ START_TEST (test_facts_with_spo_po)
 }
 END_TEST
 
+START_TEST (test_facts_with_spo_os)
+{
+        s_fact f;
+        const char *o;
+        const char *s;
+        s_binding bindings[] = {
+                {"?o", &o},
+                {"?s", &s},
+                {NULL, NULL} };
+        s_facts_cursor c;
+        ck_assert(facts_count(g_f) == 5);
+        facts_with_spo(g_f, bindings, &c, "?s", "a", "?o");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "?s", "b", "?o");
+        fact_init(&f, "a", "b", "c");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!strcmp(f.o, o));
+        ck_assert(!strcmp(f.s, s));
+        fact_init(&f, "g", "b", "c");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!strcmp(f.o, o));
+        ck_assert(!strcmp(f.s, s));
+        fact_init(&f, "a", "b", "d");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!strcmp(f.o, o));
+        ck_assert(!strcmp(f.s, s));
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "?s", "c", "?o");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "?s", "e", "?o");
+        fact_init(&f, "a", "e", "d");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!strcmp(f.o, o));
+        ck_assert(!strcmp(f.s, s));
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "?s", "f", "?o");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "?s", "i", "?o");
+        fact_init(&f, "h", "i", "c");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!strcmp(f.o, o));
+        ck_assert(!strcmp(f.s, s));
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, bindings, &c, "?s", "j", "?o");
+        ck_assert(!facts_cursor_next(&c));
+}
+END_TEST
+
 Suite * facts_suite(void)
 {
     Suite *s;
@@ -718,6 +766,7 @@ Suite * facts_suite(void)
     tcase_add_test(tc_with_spo, test_facts_with_spo_o);
     tcase_add_test(tc_with_spo, test_facts_with_spo_sp);
     tcase_add_test(tc_with_spo, test_facts_with_spo_po);
+    tcase_add_test(tc_with_spo, test_facts_with_spo_os);
     suite_add_tcase(s, tc_with_spo);
     return s;
 }
