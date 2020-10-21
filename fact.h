@@ -17,6 +17,9 @@
 #ifndef FACT_H
 #define FACT_H
 
+#define P_FIRST ((void*) 0)
+#define P_LAST  ((void*) -1)
+
 typedef struct fact {
   const char *s;
   const char *p;

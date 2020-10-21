@@ -57,27 +57,27 @@ int fact_compare_spo (void *a, void *b)
         fb = (s_fact*) b;
         if (fa->s == fb->s)
                 cmp = 0;
-        else if (!fa->s)
+        else if (fa->s == P_FIRST || fb->s == P_LAST)
                 cmp = -1;
-        else if (!fb->s)
+        else if (fa->s == P_LAST || fb->s == P_FIRST)
                 cmp = 1;
         else
                 cmp = strcmp(fa->s, fb->s);
         if (!cmp) {
                 if (fa->p == fb->p)
                         cmp = 0;
-                else if (!fa->p)
+                else if (fa->p == P_FIRST || fb->p == P_LAST)
                         cmp = -1;
-                else if (!fb->p)
+                else if (fa->p == P_LAST || fb->p == P_FIRST)
                         cmp = 1;
                 else
                         cmp = strcmp(fa->p, fb->p);
                 if (!cmp) {
                         if (fa->o == fb->o)
                                 cmp = 0;
-                        else if (!fa->o)
+                        else if (fa->o == P_FIRST || fb->o == P_LAST)
                                 cmp = -1;
-                        else if (!fb->o)
+                        else if (fa->o == P_LAST || fb->o == P_FIRST)
                                 cmp = 1;
                         else
                                 cmp = strcmp(fa->o, fb->o);
@@ -101,27 +101,27 @@ int fact_compare_pos (void *a, void *b)
         fb = (s_fact*) b;
         if (fa->p == fb->p)
                 cmp = 0;
-        else if (!fa->p)
+        else if (fa->p == P_FIRST || fb->p == P_LAST)
                 cmp = -1;
-        else if (!fb->p)
+        else if (fa->p == P_LAST || fb->p == P_FIRST)
                 cmp = 1;
         else
                 cmp = strcmp(fa->p, fb->p);
         if (!cmp) {
                 if (fa->o == fb->o)
                         cmp = 0;
-                else if (!fa->o)
+                else if (fa->o == P_FIRST || fb->o == P_LAST)
                         cmp = -1;
-                else if (!fb->o)
+                else if (fa->o == P_LAST || fb->o == P_FIRST)
                         cmp = 1;
                 else
                         cmp = strcmp(fa->o, fb->o);
                 if (!cmp) {
                         if (fa->s == fb->s)
                                 cmp = 0;
-                        else if (!fa->s)
+                        else if (fa->s == P_FIRST || fb->s == P_LAST)
                                 cmp = -1;
-                        else if (!fb->s)
+                        else if (fa->s == P_LAST || fb->s == P_FIRST)
                                 cmp = 1;
                         else
                                 cmp = strcmp(fa->s, fb->s);
@@ -145,27 +145,27 @@ int fact_compare_osp (void *a, void *b)
         fb = (s_fact*) b;
         if (fa->o == fb->o)
                 cmp = 0;
-        else if (!fa->o)
+        else if (fa->o == P_FIRST || fb->o == P_LAST)
                 cmp = -1;
-        else if (!fb->o)
+        else if (fa->o == P_LAST || fb->o == P_FIRST)
                 cmp = 1;
         else
                 cmp = strcmp(fa->o, fb->o);
         if (!cmp) {
                 if (fa->s == fb->s)
                         cmp = 0;
-                else if (!fa->s)
+                else if (fa->s == P_FIRST || fb->s == P_LAST)
                         cmp = -1;
-                else if (!fb->s)
+                else if (fa->s == P_LAST || fb->s == P_FIRST)
                         cmp = 1;
                 else
                         cmp = strcmp(fa->s, fb->s);
                 if (!cmp) {
                         if (fa->p == fb->p)
                                 cmp = 0;
-                        else if (!fa->p)
+                        else if (fa->p == P_FIRST || fb->p == P_LAST)
                                 cmp = -1;
-                        else if (!fb->p)
+                        else if (fa->p == P_LAST || fb->p == P_FIRST)
                                 cmp = 1;
                         else
                                 cmp = strcmp(fa->p, fb->p);
