@@ -33,13 +33,16 @@ typedef const char **p_spec;
      s1 p1.1 o1.1 p1.2 o1.2 NULL s2 p2.1 o2.1 p2.2 o2.2 NULL NULL
 */
 
-typedef struct spec_iterator {
-  p_spec spec;
-  const char *s;
-  unsigned long pos;
-} s_spec_iterator;
+typedef struct spec_cursor {
+        p_spec spec;
+        const char *s;
+        unsigned long pos;
+} s_spec_cursor;
 
-void spec_iterator (s_spec_iterator *iter, p_spec spec);
-s_fact * spec_iterator_next (s_spec_iterator *iter);
+void spec_cursor_init (s_spec_cursor *c,
+                       p_spec spec);
+
+int  spec_cursor_next (s_spec_cursor *c,
+                       s_fact *f);
 
 #endif

@@ -19,33 +19,37 @@
 #include <stdio.h>
 #include "spec.h"
 
-void spec_iterator (s_spec_iterator *iter, p_spec spec)
+void spec_cursor_init (s_spec_cursor *c, p_spec spec)
 {
-  assert(iter);
-  assert(spec);
-  iter->spec = spec;
-  iter->s = spec[0];
-  iter->pos = 1;
+        assert(c);
+        assert(spec);
+        c->spec = spec;
+        c->s = spec[0];
+        c->pos = 1;
 }
 
-s_fact * spec_iterator_next (s_spec_iterator *iter)
+int spec_cursor_next (s_spec_cursor *c, s_fact *f)
 {
-  const char *p;
-  const char *o;
-  assert(iter);
-  if (!iter->s)
-    return NULL;
-  p = iter->spec[iter->pos];
-  if (p) {
-    o = iter->spec[iter->pos + 1];
-    if (!o) {
-      fprintf(stderr, "spec_iterator_next: NULL object\n");
-      return NULL;
-    }
-    iter->pos += 2;
-    return new_fact(iter->s, p, o);
-  }
-  iter->s = iter->spec[iter->pos + 1];
-  iter->pos += 2;
-  return spec_iterator_next(iter);
+        const char *p;
+        const char *o;
+        assert(c);
+        assert(f);
+        if (!c->s)
+                return 0;
+        p = c->spec[c->pos];
+        if (p) {
+                o = c->spec[c->pos + 1];
+                if (!o) {
+                        fprintf(stderr, "spec_cursor_next: NULL object\n");
+                        return 0;
+                }
+                c->pos += 2;
+                f->s = c->s;
+                f->p = p;
+                f->o = o;
+                return 1;
+        }
+        c->s = c->spec[c->pos + 1];
+        c->pos += 2;
+        return spec_cursor_next(c, f);
 }
