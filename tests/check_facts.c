@@ -362,6 +362,12 @@ void teardown_with_spo ()
         g_f = NULL;
 }
 
+int fact_equal (s_fact *f, const char *s, const char *p, const char *o)
+{
+        return (!strcmp(f->s, s) && !strcmp(f->p, p) &&
+                !strcmp(f->o, o));
+}
+
 START_TEST (test_facts_with_spo_0)
 {
         s_fact f;
@@ -377,16 +383,22 @@ START_TEST (test_facts_with_spo_0)
         facts_with_spo(g_f, bindings, &c, "?s", "?p", "?o");
         fact_init(&f, "a", "b", "c");
         ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(fact_equal(&f, s, p, o));
         fact_init(&f, "a", "b", "d");
         ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(fact_equal(&f, s, p, o));
         fact_init(&f, "a", "e", "d");
         ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(fact_equal(&f, s, p, o));
         fact_init(&f, "a", "e", "f");
         ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(fact_equal(&f, s, p, o));
         fact_init(&f, "i", "j", "k");
         ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(fact_equal(&f, s, p, o));
         fact_init(&f, "j", "k", "l");
         ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(fact_equal(&f, s, p, o));
         ck_assert(!facts_cursor_next(&c));
 }
 END_TEST
