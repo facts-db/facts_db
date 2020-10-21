@@ -345,6 +345,96 @@ START_TEST (test_facts_remove_spo_ten)
 }
 END_TEST
 
+void setup_with_spo ()
+{
+        g_f = new_facts();
+        facts_add_spo(g_f, "a", "b", "c");
+        facts_add_spo(g_f, "a", "b", "d");
+        facts_add_spo(g_f, "a", "e", "d");
+        facts_add_spo(g_f, "a", "e", "f");
+        facts_add_spo(g_f, "i", "j", "k");
+        facts_add_spo(g_f, "j", "k", "l");
+}
+
+void teardown_with_spo ()
+{
+        delete_facts(g_f);
+        g_f = NULL;
+}
+
+START_TEST (test_facts_with_spo_0)
+{
+        s_fact f;
+        const char *s;
+        const char *p;
+        const char *o;
+        s_binding bindings[] = {
+                {"?s", &s},
+                {"?p", &p},
+                {"?o", &o} };
+        s_facts_cursor c;
+        ck_assert(facts_count(g_f) == 6);
+        facts_with_spo(g_f, bindings, &c, "?s", "?p", "?o");
+        fact_init(&f, "a", "b", "c");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        fact_init(&f, "a", "b", "d");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        fact_init(&f, "a", "e", "d");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        fact_init(&f, "a", "e", "f");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        fact_init(&f, "i", "j", "k");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        fact_init(&f, "j", "k", "l");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!facts_cursor_next(&c));
+}
+END_TEST
+
+START_TEST (test_facts_with_spo_3)
+{
+        s_fact f;
+        s_facts_cursor c;
+        ck_assert(facts_count(g_f) == 6);
+        facts_with_spo(g_f, NULL, &c, "a", "a", "a");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, NULL, &c, "a", "b", "a");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, NULL, &c, "a", "b", "c");
+        fact_init(&f, "a", "b", "c");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, NULL, &c, "a", "b", "d");
+        fact_init(&f, "a", "b", "d");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, NULL, &c, "a", "b", "e");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, NULL, &c, "a", "e", "d");
+        fact_init(&f, "a", "e", "d");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, NULL, &c, "a", "e", "f");
+        fact_init(&f, "a", "e", "f");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, NULL, &c, "a", "e", "g");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, NULL, &c, "a", "f", "f");
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, NULL, &c, "i", "j", "k");
+        fact_init(&f, "i", "j", "k");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, NULL, &c, "j", "k", "l");
+        fact_init(&f, "j", "k", "l");
+        ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
+        ck_assert(!facts_cursor_next(&c));
+        facts_with_spo(g_f, NULL, &c, "k", "l", "m");
+        ck_assert(!facts_cursor_next(&c));
+}
+END_TEST
+
 Suite * facts_suite(void)
 {
     Suite *s;
@@ -353,6 +443,7 @@ Suite * facts_suite(void)
     TCase *tc_add_spo;
     TCase *tc_remove_fact;
     TCase *tc_remove_spo;
+    TCase *tc_with_spo;
     s = suite_create("Facts");
     tc_init = tcase_create("Init");
     tcase_add_test(tc_init, test_facts_init_destroy);
@@ -386,6 +477,12 @@ Suite * facts_suite(void)
     tcase_add_test(tc_remove_spo, test_facts_remove_spo_two);
     tcase_add_test(tc_remove_spo, test_facts_remove_spo_ten);
     suite_add_tcase(s, tc_remove_spo);
+    tc_with_spo = tcase_create("With SPO");
+    tcase_add_checked_fixture(tc_with_spo, setup_with_spo,
+                              teardown_with_spo);
+    tcase_add_test(tc_with_spo, test_facts_with_spo_0);
+    tcase_add_test(tc_with_spo, test_facts_with_spo_3);
+    suite_add_tcase(s, tc_with_spo);
     return s;
 }
 
