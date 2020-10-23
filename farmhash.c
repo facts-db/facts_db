@@ -87,8 +87,8 @@
 
 #define PERMUTE3(a, b, c)                                                      \
   do {                                                                         \
-    swap32(a, b);                                                              \
-    swap32(a, c);                                                              \
+    swap32_(a, b);                                                              \
+    swap32_(a, c);                                                              \
   } while (0)
 
 static inline uint32_t bswap32(const uint32_t x) {
@@ -155,7 +155,7 @@ static inline __m128i fetch128(const char* s) {
 
 #endif
 
-static inline void swap32(uint32_t* a, uint32_t* b) {
+static inline void swap32_(uint32_t* a, uint32_t* b) {
   uint32_t t;
 
   t = *a;
@@ -163,7 +163,7 @@ static inline void swap32(uint32_t* a, uint32_t* b) {
   *b = t;
 }
 
-static inline void swap64(uint64_t* a, uint64_t* b) {
+static inline void swap64_(uint64_t* a, uint64_t* b) {
   uint64_t t;
 
   t = *a;
@@ -433,7 +433,7 @@ uint64_t farmhash64_na(const char *s, size_t len) {
     z = ror64(z + w.a, 33) * k1;
     v = weak_farmhash_na_len_32_with_seeds(s, v.b * k1, x + w.a);
     w = weak_farmhash_na_len_32_with_seeds(s + 32, z + w.b, y + fetch64(s + 16));
-    swap64(&z, &x);
+    swap64_(&z, &x);
     s += 64;
   } while (s != end);
   uint64_t mul = k1 + ((z & 0xff) << 1);
@@ -449,7 +449,7 @@ uint64_t farmhash64_na(const char *s, size_t len) {
   z = ror64(z + w.a, 33) * mul;
   v = weak_farmhash_na_len_32_with_seeds(s, v.b * mul, x + w.a);
   w = weak_farmhash_na_len_32_with_seeds(s + 32, z + w.b, y + fetch64(s + 16));
-  swap64(&z, &x);
+  swap64_(&z, &x);
   return farmhash_len_16_mul(farmhash_len_16_mul(v.a, w.a, mul) + smix(y) * k0 + z,
                    farmhash_len_16_mul(v.b, w.b, mul) + x,
                    mul);
@@ -522,7 +522,7 @@ uint64_t farmhash64_uo_with_seeds(const char *s, size_t len,
     z += w.b;
     w.b += z;
     z *= 9;
-    swap64(&u, &y);
+    swap64_(&u, &y);
 
     z += a0 + a6;
     v.a += a2;
@@ -539,7 +539,7 @@ uint64_t farmhash64_uo_with_seeds(const char *s, size_t len,
     w.b += x - y;
     x += w.b;
     w.b = ror64(w.b, 34);
-    swap64(&u, &z);
+    swap64_(&u, &z);
     s += 64;
   } while (s != end);
   // Make s point to the last 64 bytes of input.
@@ -1489,7 +1489,7 @@ uint128_t farmhash128_cc_city_with_seed(const char *s, size_t len, uint128_t see
     z = ror64(z + w.a, 33) * k1;
     v = weak_farmhash_cc_len_32_with_seeds(s, v.b * k1, x + w.a);
     w = weak_farmhash_cc_len_32_with_seeds(s + 32, z + w.b, y + fetch64(s + 16));
-    swap64(&z, &x);
+    swap64_(&z, &x);
     s += 64;
     x = ror64(x + y + v.a + fetch64(s + 8), 37) * k1;
     y = ror64(y + v.b + fetch64(s + 48), 42) * k1;
@@ -1498,7 +1498,7 @@ uint128_t farmhash128_cc_city_with_seed(const char *s, size_t len, uint128_t see
     z = ror64(z + w.a, 33) * k1;
     v = weak_farmhash_cc_len_32_with_seeds(s, v.b * k1, x + w.a);
     w = weak_farmhash_cc_len_32_with_seeds(s + 32, z + w.b, y + fetch64(s + 16));
-    swap64(&z, &x);
+    swap64_(&z, &x);
     s += 64;
     len -= 128;
   } while (likely(len >= 128));
