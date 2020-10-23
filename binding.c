@@ -15,6 +15,8 @@
  *  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <assert.h>
+#include <stdio.h>
 #include <string.h>
 #include "binding.h"
 
@@ -26,5 +28,7 @@ const char ** bindings_get (s_binding *bindings, const char *name)
                                 return bindings->value;
                         bindings++;
                 }
-        return NULL;        
+        fprintf(stderr, "bindings_get: unknown binding: %s\n", name);
+        assert(0);
+        return NULL;
 }

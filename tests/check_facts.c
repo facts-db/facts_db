@@ -573,7 +573,7 @@ START_TEST (test_facts_with_spo_o)
         ck_assert(fact_compare_spo(&f, facts_cursor_next(&c)) == 0);
         ck_assert(!strcmp(f.o, o));
         ck_assert(!facts_cursor_next(&c));
-        facts_with_spo(g_f, bindings, &c, "i", "j", "?p");
+        facts_with_spo(g_f, bindings, &c, "i", "j", "?o");
         ck_assert(!facts_cursor_next(&c));
 }
 END_TEST

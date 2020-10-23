@@ -35,6 +35,10 @@ facts.c.gcov:
 	gcov check_facts-facts.c
 GCOV += facts.c.gcov
 
+binding.c.gcov:
+	gcov check_facts-binding.c
+GCOV += binding.c.gcov
+
 check_skiplist_SOURCES = \
 	check_skiplist.c \
 	$(top_builddir)/skiplist.c
