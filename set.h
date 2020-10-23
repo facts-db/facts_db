@@ -35,14 +35,17 @@ typedef struct set {
         size_t collisions;
 } s_set;
 
-void        set_init (s_set *set,
-                      size_t max);
+void         set_init (s_set *set,
+                       size_t max);
 
-void        set_destroy (s_set *set);
+void         set_destroy (s_set *set);
 
-s_set * new_set (size_t max);
+s_set *  new_set (size_t max);
 
-void delete_set (s_set *set);
+void  delete_set (s_set *set);
+
+size_t       set_hash (void *data,
+                       size_t len);
 
 s_set_item * set_add (s_set *set,
                       void *data,

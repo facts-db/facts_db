@@ -80,6 +80,11 @@ void delete_set (s_set *set)
         }
 }
 
+size_t set_hash (void *data, size_t len)
+{
+        return farmhash(data, len);
+}
+
 static s_set_item * set_add_collision (s_set *set, void *data,
                                        size_t len, size_t hash,
                                        s_set_item *i)
@@ -121,7 +126,7 @@ s_set_item * set_add_h (s_set *set, void *data, size_t len, size_t hash)
         return i;
 }
 
-int set_remove_first (s_set_item *i)
+static int set_remove_first (s_set *set, s_set_item *i)
 {
         s_set_item *j = i->next;
         if (j) {
@@ -137,10 +142,12 @@ int set_remove_first (s_set_item *i)
                 i->hash = 0;
                 i->next = 0;
         }
+        set->count--;
         return 1;
 }
 
-int set_remove_linked (s_set_item *item, s_set_item *i)
+static int set_remove_linked (s_set *set, s_set_item *item,
+                              s_set_item *i)
 {
         s_set_item **j = &i->next;
         while (*j && *j != item)
@@ -150,6 +157,8 @@ int set_remove_linked (s_set_item *item, s_set_item *i)
         i = *j;
         *j = (*j)->next;
         free(i);
+        set->count--;
+        set->collisions--;
         return 1;
 }
 
@@ -160,9 +169,9 @@ int set_remove (s_set *set, s_set_item *item)
         assert(item);
         i = set->items + (item->hash % set->max);
         if (i == item)
-                return set_remove_first(i);
+                return set_remove_first(set, i);
         else
-                return set_remove_linked(item, i);
+                return set_remove_linked(set, item, i);
 }
 
 s_set_item * set_get (s_set *set, void *data, size_t len)
