@@ -17,6 +17,7 @@ libfacts_db_la_SOURCES = \
 	binding.c \
 	fact.c \
 	facts.c \
+	farmhash.c \
 	skiplist.c \
 	spec.c
 libfacts_db_la_LIBADD = -lm
@@ -24,6 +25,7 @@ include_HEADERS += \
 	binding.h \
 	fact.h \
 	facts.h \
+	farmhash.h \
 	skiplist.h \
 	spec.h
 
