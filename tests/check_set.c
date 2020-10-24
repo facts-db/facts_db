@@ -545,6 +545,113 @@ START_TEST (test_set_resize_two)
 }
 END_TEST
 
+void setup_cursor ()
+{
+        set_init(&g_set, 6);
+}
+
+void teardown_cursor ()
+{
+        set_destroy(&g_set);
+}
+
+START_TEST (test_set_cursor_empty)
+{
+        s_set_cursor c;
+        ck_assert(g_set.count == 0);
+        set_cursor_init(&g_set, &c);
+        ck_assert(c.count == 0);
+        ck_assert(!set_cursor_next(&c));
+        ck_assert(!set_cursor_next(&c));
+}
+END_TEST
+
+START_TEST (test_set_cursor_one)
+{
+        s_set_cursor c;
+        s_set_item *ia;
+        ck_assert(g_set.count == 0);
+        ck_assert((ia = set_add(&g_set, "a", 1)));
+        ck_assert(g_set.count == 1);
+        set_cursor_init(&g_set, &c);
+        ck_assert(c.count == 0);
+        ck_assert(ia == set_cursor_next(&c));
+        ck_assert(c.count == 1);
+        ck_assert(!set_cursor_next(&c));
+        ck_assert(!set_cursor_next(&c));
+}
+END_TEST
+
+START_TEST (test_set_cursor_two)
+{
+        s_set_cursor c;
+        ck_assert(g_set.count == 0);
+        ck_assert(set_add(&g_set, "a", 1));
+        ck_assert(g_set.count == 1);
+        ck_assert(set_add(&g_set, "b", 1));
+        ck_assert(g_set.count == 2);
+        set_cursor_init(&g_set, &c);
+        ck_assert(c.count == 0);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 1);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 2);
+        ck_assert(!set_cursor_next(&c));
+        ck_assert(!set_cursor_next(&c));
+}
+END_TEST
+
+START_TEST (test_set_cursor_ten)
+{
+        s_set_cursor c;
+        ck_assert(g_set.count == 0);
+        ck_assert(set_add(&g_set, "a", 1));
+        ck_assert(g_set.count == 1);
+        ck_assert(set_add(&g_set, "b", 1));
+        ck_assert(g_set.count == 2);
+        ck_assert(set_add(&g_set, "c", 1));
+        ck_assert(g_set.count == 3);
+        ck_assert(set_add(&g_set, "d", 1));
+        ck_assert(g_set.count == 4);
+        ck_assert(set_add(&g_set, "e", 1));
+        ck_assert(g_set.count == 5);
+        ck_assert(set_add(&g_set, "f", 1));
+        ck_assert(g_set.count == 6);
+        ck_assert(set_add(&g_set, "g", 1));
+        ck_assert(g_set.count == 7);
+        ck_assert(set_add(&g_set, "h", 1));
+        ck_assert(g_set.count == 8);
+        ck_assert(set_add(&g_set, "i", 1));
+        ck_assert(g_set.count == 9);
+        ck_assert(set_add(&g_set, "j", 1));
+        ck_assert(g_set.count == 10);
+        set_cursor_init(&g_set, &c);
+        ck_assert(c.count == 0);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 1);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 2);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 3);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 4);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 5);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 6);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 7);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 8);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 9);
+        ck_assert(set_cursor_next(&c));
+        ck_assert(c.count == 10);
+        ck_assert(!set_cursor_next(&c));
+        ck_assert(!set_cursor_next(&c));
+}
+END_TEST
+
 Suite * set_suite(void)
 {
     Suite *s;
@@ -552,6 +659,7 @@ Suite * set_suite(void)
     TCase *tc_add;
     TCase *tc_remove;
     TCase *tc_resize;
+    TCase *tc_cursor;
     s = suite_create("Set");
     tc_init = tcase_create("Init");
     tcase_add_test(tc_init, test_set_init_destroy);
@@ -576,6 +684,13 @@ Suite * set_suite(void)
     tcase_add_test(tc_resize, test_set_resize_one);
     tcase_add_test(tc_resize, test_set_resize_two);
     suite_add_tcase(s, tc_resize);
+    tc_cursor = tcase_create("Cursor");
+    tcase_add_checked_fixture(tc_cursor, setup_cursor, teardown_cursor);
+    tcase_add_test(tc_cursor, test_set_cursor_empty);
+    tcase_add_test(tc_cursor, test_set_cursor_one);
+    tcase_add_test(tc_cursor, test_set_cursor_two);
+    tcase_add_test(tc_cursor, test_set_cursor_ten);
+    suite_add_tcase(s, tc_cursor);
     return s;
 }
 

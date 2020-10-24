@@ -123,6 +123,7 @@ s_set_item * set_add_h (s_set *set, void *data, size_t len, size_t hash)
         i->len = len;
         i->data = data;
         i->hash = hash;
+        i->next = NULL;
         set->count++;
         return i;
 }
@@ -244,4 +245,44 @@ void set_resize (s_set *set, size_t max)
         set->items = n.items;
         set->count = n.count;
         set->collisions = n.collisions;
+}
+
+void set_cursor_init (s_set *set, s_set_cursor *c)
+{
+        assert(set);
+        assert(set->max > 0);
+        assert(c);
+        c->set = set;
+        c->i = 0;
+        c->item = set->items;
+        c->count = 0;
+}
+
+static s_set_item * set_cursor_next_index (s_set_cursor *c)
+{
+        assert(c);
+        assert(c->set);
+        while (c->i < c->set->max && (!c->item || !c->item->len)) {
+                c->item = c->set->items + c->i;
+                c->i++;
+        }
+        if (c->item && c->item->len) {
+                c->count++;
+                return c->item;
+        }
+        return NULL;
+}
+
+s_set_item * set_cursor_next (s_set_cursor *c)
+{
+        assert(c);
+        if (c->count == c->set->count)
+                return NULL;
+        if (!c->item)
+                return set_cursor_next_index(c);
+        c->item = c->item->next;
+        if (!c->item)
+                return set_cursor_next_index(c);
+        c->count++;
+        return c->item;
 }
