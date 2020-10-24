@@ -41,6 +41,7 @@ void set_init (s_set *set, size_t max)
         set->max = max;
         set->items = calloc(max, sizeof(s_set_item));
         set->count = 0;
+        set->collisions = 0;
 }
 
 void set_destroy (s_set *set)
@@ -135,6 +136,7 @@ static int set_remove_first (s_set *set, s_set_item *i)
                 i->hash = j->hash;
                 i->next = j->next;
                 free(j);
+                set->collisions--;
         }
         else {
                 i->len = 0;
@@ -166,7 +168,8 @@ int set_remove (s_set *set, s_set_item *item)
 {
         s_set_item *i;
         assert(set);
-        assert(item);
+        if (!item)
+                return 0;
         i = set->items + (item->hash % set->max);
         if (i == item)
                 return set_remove_first(set, i);

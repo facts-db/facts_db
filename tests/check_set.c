@@ -219,11 +219,153 @@ START_TEST (test_set_add_ten)
 }
 END_TEST
 
+void setup_remove ()
+{
+        set_init(&g_set, 10);
+        set_add(&g_set, "a", 1);
+        set_add(&g_set, "b", 1);
+        set_add(&g_set, "c", 1);
+        set_add(&g_set, "d", 1);
+        set_add(&g_set, "e", 1);
+        set_add(&g_set, "f", 1);
+        set_add(&g_set, "g", 1);
+        set_add(&g_set, "h", 1);
+        set_add(&g_set, "i", 1);
+        set_add(&g_set, "j", 1);
+}
+
+void teardown_remove ()
+{
+        set_destroy(&g_set);
+}
+
+START_TEST (test_set_remove_one)
+{
+        ck_assert(g_set.count == 10);
+        ck_assert(set_remove(&g_set, set_get(&g_set, "a", 1)));
+        ck_assert(g_set.count == 9);
+        ck_assert(!set_get(&g_set, "a", 1));
+        ck_assert(set_get(&g_set, "b", 1));
+        ck_assert(set_get(&g_set, "c", 1));
+        ck_assert(set_get(&g_set, "d", 1));
+        ck_assert(set_get(&g_set, "e", 1));
+        ck_assert(set_get(&g_set, "f", 1));
+        ck_assert(set_get(&g_set, "g", 1));
+        ck_assert(set_get(&g_set, "h", 1));
+        ck_assert(set_get(&g_set, "i", 1));
+        ck_assert(set_get(&g_set, "j", 1));
+        ck_assert(!set_get(&g_set, "k", 1));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "a", 1)));
+        ck_assert(g_set.count == 9);
+        ck_assert(!set_get(&g_set, "a", 1));
+        ck_assert(set_get(&g_set, "b", 1));
+        ck_assert(set_get(&g_set, "c", 1));
+        ck_assert(set_get(&g_set, "d", 1));
+        ck_assert(set_get(&g_set, "e", 1));
+        ck_assert(set_get(&g_set, "f", 1));
+        ck_assert(set_get(&g_set, "g", 1));
+        ck_assert(set_get(&g_set, "h", 1));
+        ck_assert(set_get(&g_set, "i", 1));
+        ck_assert(set_get(&g_set, "j", 1));
+        ck_assert(!set_get(&g_set, "k", 1));
+}
+END_TEST
+
+
+START_TEST (test_set_remove_two)
+{
+        ck_assert(g_set.count == 10);
+        ck_assert(set_remove(&g_set, set_get(&g_set, "a", 1)));
+        ck_assert(g_set.count == 9);
+        ck_assert(set_remove(&g_set, set_get(&g_set, "b", 1)));
+        ck_assert(g_set.count == 8);
+        ck_assert(!set_get(&g_set, "a", 1));
+        ck_assert(!set_get(&g_set, "b", 1));
+        ck_assert(set_get(&g_set, "c", 1));
+        ck_assert(set_get(&g_set, "d", 1));
+        ck_assert(set_get(&g_set, "e", 1));
+        ck_assert(set_get(&g_set, "f", 1));
+        ck_assert(set_get(&g_set, "g", 1));
+        ck_assert(set_get(&g_set, "h", 1));
+        ck_assert(set_get(&g_set, "i", 1));
+        ck_assert(set_get(&g_set, "j", 1));
+        ck_assert(!set_get(&g_set, "k", 1));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "a", 1)));
+        ck_assert(g_set.count == 8);
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "b", 1)));
+        ck_assert(g_set.count == 8);
+        ck_assert(!set_get(&g_set, "a", 1));
+        ck_assert(!set_get(&g_set, "b", 1));
+        ck_assert(set_get(&g_set, "c", 1));
+        ck_assert(set_get(&g_set, "d", 1));
+        ck_assert(set_get(&g_set, "e", 1));
+        ck_assert(set_get(&g_set, "f", 1));
+        ck_assert(set_get(&g_set, "g", 1));
+        ck_assert(set_get(&g_set, "h", 1));
+        ck_assert(set_get(&g_set, "i", 1));
+        ck_assert(set_get(&g_set, "j", 1));
+        ck_assert(!set_get(&g_set, "k", 1));
+}
+END_TEST
+
+START_TEST (test_set_remove_ten)
+{
+        ck_assert(g_set.count == 10);
+        ck_assert(set_remove(&g_set, set_get(&g_set, "a", 1)));
+        ck_assert(set_remove(&g_set, set_get(&g_set, "b", 1)));
+        ck_assert(set_remove(&g_set, set_get(&g_set, "c", 1)));
+        ck_assert(set_remove(&g_set, set_get(&g_set, "d", 1)));
+        ck_assert(set_remove(&g_set, set_get(&g_set, "e", 1)));
+        ck_assert(set_remove(&g_set, set_get(&g_set, "f", 1)));
+        ck_assert(set_remove(&g_set, set_get(&g_set, "g", 1)));
+        ck_assert(set_remove(&g_set, set_get(&g_set, "h", 1)));
+        ck_assert(set_remove(&g_set, set_get(&g_set, "i", 1)));
+        ck_assert(set_remove(&g_set, set_get(&g_set, "j", 1)));
+        ck_assert(g_set.count == 0);
+        ck_assert(g_set.collisions == 0);
+        ck_assert(!set_get(&g_set, "a", 1));
+        ck_assert(!set_get(&g_set, "b", 1));
+        ck_assert(!set_get(&g_set, "c", 1));
+        ck_assert(!set_get(&g_set, "d", 1));
+        ck_assert(!set_get(&g_set, "e", 1));
+        ck_assert(!set_get(&g_set, "f", 1));
+        ck_assert(!set_get(&g_set, "g", 1));
+        ck_assert(!set_get(&g_set, "h", 1));
+        ck_assert(!set_get(&g_set, "i", 1));
+        ck_assert(!set_get(&g_set, "j", 1));
+        ck_assert(!set_get(&g_set, "k", 1));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "a", 1)));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "b", 1)));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "c", 1)));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "d", 1)));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "e", 1)));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "f", 1)));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "g", 1)));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "h", 1)));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "i", 1)));
+        ck_assert(!set_remove(&g_set, set_get(&g_set, "j", 1)));
+        ck_assert(g_set.count == 0);
+        ck_assert(g_set.collisions == 0);
+        ck_assert(!set_get(&g_set, "a", 1));
+        ck_assert(!set_get(&g_set, "b", 1));
+        ck_assert(!set_get(&g_set, "c", 1));
+        ck_assert(!set_get(&g_set, "d", 1));
+        ck_assert(!set_get(&g_set, "e", 1));
+        ck_assert(!set_get(&g_set, "f", 1));
+        ck_assert(!set_get(&g_set, "g", 1));
+        ck_assert(!set_get(&g_set, "h", 1));
+        ck_assert(!set_get(&g_set, "i", 1));
+        ck_assert(!set_get(&g_set, "j", 1));
+        ck_assert(!set_get(&g_set, "k", 1));
+}
+END_TEST
+
 Suite * set_suite(void)
 {
     Suite *s;
     TCase *tc_init;
     TCase *tc_add;
+    TCase *tc_remove;
     s = suite_create("Set");
     tc_init = tcase_create("Init");
     tcase_add_test(tc_init, test_set_init_destroy);
@@ -235,6 +377,12 @@ Suite * set_suite(void)
     tcase_add_test(tc_add, test_set_add_two);
     tcase_add_test(tc_add, test_set_add_ten);
     suite_add_tcase(s, tc_add);
+    tc_remove = tcase_create("Remove");
+    tcase_add_checked_fixture(tc_remove, setup_remove, teardown_remove);
+    tcase_add_test(tc_remove, test_set_remove_one);
+    tcase_add_test(tc_remove, test_set_remove_two);
+    tcase_add_test(tc_remove, test_set_remove_ten);
+    suite_add_tcase(s, tc_remove);
     return s;
 }
 
