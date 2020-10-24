@@ -73,4 +73,7 @@ s_set_item * set_get_hash (s_set *set,
 
 s_set_item * set_get_hash_next (s_set_item *item);
 
+void         set_resize (s_set *set,
+                         size_t max);
+
 #endif
