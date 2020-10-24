@@ -7,8 +7,8 @@ endif
 
 AM_CFLAGS += -fprofile-arcs -ftest-coverage
 
-TESTS = check_fact check_skiplist check_facts
-check_PROGRAMS = check_fact check_facts check_skiplist
+TESTS = check_fact check_skiplist check_facts check_set
+check_PROGRAMS = check_fact check_facts check_set check_skiplist
 CLEANFILES = *.gcda *.gcno
 GCOV =
 
@@ -38,6 +38,17 @@ GCOV += facts.c.gcov
 binding.c.gcov:
 	gcov check_facts-binding.c
 GCOV += binding.c.gcov
+
+check_set_SOURCES = \
+	check_set.c \
+	$(top_builddir)/farmhash.c \
+	$(top_builddir)/set.c
+check_set_CFLAGS = @CHECK_CFLAGS@ ${AM_CFLAGS}
+check_set_LDADD = @CHECK_LIBS@
+
+set.c.gcov:
+	gcov check_set-set.c
+GCOV += set.c.gcov
 
 check_skiplist_SOURCES = \
 	check_skiplist.c \

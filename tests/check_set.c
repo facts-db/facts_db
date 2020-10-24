@@ -1,124 +1,198 @@
-#include <assert.h>
+/*
+ *  facts_db - in-memory graph database
+ *  Copyright 2020 Thomas de Grivel <thoxdg@gmail.com>
+ *
+ *  Permission to use, copy, modify, and distribute this software for any
+ *  purpose with or without fee is hereby granted, provided that the above
+ *  copyright notice and this permission notice appear in all copies.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ *  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ *  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ *  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ *  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ *  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ *  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 #include <check.h>
-#include <strings.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include <stdlib.h>
 #include "set.h"
 
-s_set g_s;
+s_set g_set;
 
-START_TEST (test_set_init)
+START_TEST (test_set_init_destroy)
 {
-  set_init(&g_s);
+        size_t max = 10;
+        set_init(&g_set, max);
+        ck_assert(g_set.max == max);
+        ck_assert(g_set.count == 0);
+        ck_assert(g_set.collisions == 0);
+        set_destroy(&g_set);
+        max = 100;
+        set_init(&g_set, max);
+        ck_assert(g_set.max == max);
+        ck_assert(g_set.count == 0);
+        ck_assert(g_set.collisions == 0);
+        set_destroy(&g_set);
+        max = 1000;
+        set_init(&g_set, max);
+        ck_assert(g_set.max == max);
+        ck_assert(g_set.count == 0);
+        ck_assert(g_set.collisions == 0);
+        set_destroy(&g_set);
+        max = 10000;
+        set_init(&g_set, max);
+        ck_assert(g_set.max == max);
+        ck_assert(g_set.count == 0);
+        ck_assert(g_set.collisions == 0);
+        set_destroy(&g_set);
+        max = 100000;
+        set_init(&g_set, max);
+        ck_assert(g_set.max == max);
+        ck_assert(g_set.count == 0);
+        ck_assert(g_set.collisions == 0);
+        set_destroy(&g_set);
+        max = 1000000;
+        set_init(&g_set, max);
+        ck_assert(g_set.max == max);
+        ck_assert(g_set.count == 0);
+        ck_assert(g_set.collisions == 0);
+        set_destroy(&g_set);
 }
 END_TEST
 
-void setup_insert ()
+START_TEST (test_set_new_delete)
 {
-  set_init(&g_s);
+        size_t max;
+        s_set *set;
+        max = 10;
+        set = new_set(max);
+        ck_assert(set);
+        ck_assert(set->max == max);
+        ck_assert(set->count == 0);
+        ck_assert(set->collisions == 0);
+        delete_set(set);
+        max = 100;
+        set = new_set(max);
+        ck_assert(set);
+        ck_assert(set->max == max);
+        ck_assert(set->count == 0);
+        ck_assert(set->collisions == 0);
+        delete_set(set);
+        max = 1000;
+        set = new_set(max);
+        ck_assert(set);
+        ck_assert(set->max == max);
+        ck_assert(set->count == 0);
+        ck_assert(set->collisions == 0);
+        delete_set(set);
+        max = 10000;
+        set = new_set(max);
+        ck_assert(set);
+        ck_assert(set->max == max);
+        ck_assert(set->count == 0);
+        ck_assert(set->collisions == 0);
+        delete_set(set);
+        max = 100000;
+        set = new_set(max);
+        ck_assert(set);
+        ck_assert(set->max == max);
+        ck_assert(set->count == 0);
+        ck_assert(set->collisions == 0);
+        delete_set(set);
+        max = 1000000;
+        set = new_set(max);
+        ck_assert(set);
+        ck_assert(set->max == max);
+        ck_assert(set->count == 0);
+        ck_assert(set->collisions == 0);
+        delete_set(set);
+}
+END_TEST
+
+void setup_add ()
+{
+        set_init(&g_set, 10);
 }
 
-void teardown_insert ()
+void teardown_add ()
 {
-  set_clear(&g_s);
+        set_destroy(&g_set);
 }
 
-START_TEST (test_set_insert_one)
+START_TEST (test_set_add_one)
 {
-  s_item *a;
-  a = set_insert(&g_s, "0123456789", 10);
-  assert(a);
-  assert(g_s.size == 1);
-  assert(set_insert(&g_s, "0123456789", 10) == a);
-  assert(g_s.size == 1);
+        s_set_item *ia;
+        ck_assert(g_set.count == 0);
+        ck_assert((ia = set_add(&g_set, "a", 1)));
+        ck_assert(g_set.count == 1);
+        ck_assert(ia == set_add(&g_set, "a", 1));
+        ck_assert(g_set.count == 1);
+        ck_assert(ia == set_get(&g_set, "a", 1));
 }
 END_TEST
 
-START_TEST (test_set_insert_two)
+START_TEST (test_set_add_two)
 {
-  s_item *a;
-  s_item *b;
-  assert(a = set_insert(&g_s, "0123456789", 10));
-  assert(g_s.size == 1);
-  assert(b = set_insert(&g_s, "ABCDEFGHIJ", 10));
-  assert(g_s.size == 2);
-  assert(set_insert(&g_s, "0123456789", 10) == a);
-  assert(g_s.size == 2);
-  assert(set_insert(&g_s, "ABCDEFGHIJ", 10) == b);
-  assert(g_s.size == 2);
+        s_set_item *ia;
+        s_set_item *ib;
+        ck_assert(g_set.count == 0);
+        ck_assert((ia = set_add(&g_set, "a", 1)));
+        ck_assert(g_set.count == 1);
+        ck_assert((ib = set_add(&g_set, "b", 1)));
+        ck_assert(g_set.count == 2);
+        ck_assert(ia == set_add(&g_set, "a", 1));
+        ck_assert(g_set.count == 2);
+        ck_assert(ib == set_add(&g_set, "b", 1));
+        ck_assert(g_set.count == 2);
+        ck_assert(ia == set_get(&g_set, "a", 1));
+        ck_assert(ib == set_get(&g_set, "b", 1));
 }
 END_TEST
 
-/*
-START_TEST (test_set_append_ten)
+START_TEST (test_set_add_ten)
 {
-  struct stat s;
-  assert(set_append(&g_s, "0123456789", 10) == 0);
-  assert(g_s.size == 1);
-  assert(set_append(&g_s, "1123456789", 10) == 1);
-  assert(g_s.size == 2);
-  assert(set_append(&g_s, "2123456789", 10) == 2);
-  assert(g_s.size == 3);
-  assert(set_append(&g_s, "3123456789", 10) == 3);
-  assert(g_s.size == 4);
-  assert(set_append(&g_s, "4123456789", 10) == 4);
-  assert(g_s.size == 5);
-  assert(set_append(&g_s, "5123456789", 10) == 5);
-  assert(g_s.size == 6);
-  assert(set_append(&g_s, "6123456789", 10) == 6);
-  assert(g_s.size == 7);
-  assert(set_append(&g_s, "7123456789", 10) == 7);
-  assert(g_s.size == 8);
-  assert(set_append(&g_s, "8123456789", 10) == 8);
-  assert(g_s.size == 9);
-  assert(set_append(&g_s, "9123456789", 10) == 9);
-  assert(g_s.size == 10);
-  assert(set_append(&g_s, "0123456789", 10) == 0);
-  assert(g_s.size == 10);
-  assert(set_append(&g_s, "1123456789", 10) == 1);
-  assert(g_s.size == 10);
-  assert(set_append(&g_s, "2123456789", 10) == 2);
-  assert(g_s.size == 10);
-  assert(set_append(&g_s, "3123456789", 10) == 3);
-  assert(g_s.size == 10);
-  assert(set_append(&g_s, "4123456789", 10) == 4);
-  assert(g_s.size == 10);
-  assert(set_append(&g_s, "5123456789", 10) == 5);
-  assert(g_s.size == 10);
-  assert(set_append(&g_s, "6123456789", 10) == 6);
-  assert(g_s.size == 10);
-  assert(set_append(&g_s, "7123456789", 10) == 7);
-  assert(g_s.size == 10);
-  assert(set_append(&g_s, "8123456789", 10) == 8);
-  assert(g_s.size == 10);
-  assert(set_append(&g_s, "9123456789", 10) == 9);
-  assert(g_s.size == 10);
-  set_close(&g_s);
-  assert(stat("fixtures/append.set", &s) == 0);
-  assert(s.st_size == 100);
-  assert(S_ISREG(s.st_mode));
-  assert(stat("fixtures/append.set.index", &s) == 0);
-  assert(s.st_size == 160);
-  assert(S_ISREG(s.st_mode));
+        ck_assert(g_set.count == 0);
+        ck_assert(set_add(&g_set, "a", 1));
+        ck_assert(g_set.count == 1);
+        ck_assert(set_add(&g_set, "b", 1));
+        ck_assert(g_set.count == 2);
+        ck_assert(set_add(&g_set, "c", 1));
+        ck_assert(g_set.count == 3);
+        ck_assert(set_add(&g_set, "d", 1));
+        ck_assert(g_set.count == 4);
+        ck_assert(set_add(&g_set, "e", 1));
+        ck_assert(g_set.count == 5);
+        ck_assert(set_add(&g_set, "f", 1));
+        ck_assert(g_set.count == 6);
+        ck_assert(set_add(&g_set, "g", 1));
+        ck_assert(g_set.count == 7);
+        ck_assert(set_add(&g_set, "h", 1));
+        ck_assert(g_set.count == 8);
+        ck_assert(set_add(&g_set, "i", 1));
+        ck_assert(g_set.count == 9);
+        ck_assert(set_add(&g_set, "j", 1));
+        ck_assert(g_set.count == 10);
 }
 END_TEST
-*/
 
-Suite * skiplist_suite(void)
+Suite * set_suite(void)
 {
     Suite *s;
     TCase *tc_init;
-    TCase *tc_insert;
+    TCase *tc_add;
     s = suite_create("Set");
     tc_init = tcase_create("Init");
-    tcase_add_test(tc_init, test_set_init);
+    tcase_add_test(tc_init, test_set_init_destroy);
+    tcase_add_test(tc_init, test_set_new_delete);
     suite_add_tcase(s, tc_init);
-    tc_insert = tcase_create("Insert");
-    tcase_add_checked_fixture(tc_insert, setup_insert, teardown_insert);
-    tcase_add_test(tc_insert, test_set_insert_one);
-    tcase_add_test(tc_insert, test_set_insert_two);
-    /*tcase_add_test(tc_insert, test_set_insert_ten);*/
-    suite_add_tcase(s, tc_insert);
+    tc_add = tcase_create("Add");
+    tcase_add_checked_fixture(tc_add, setup_add, teardown_add);
+    tcase_add_test(tc_add, test_set_add_one);
+    tcase_add_test(tc_add, test_set_add_two);
+    tcase_add_test(tc_add, test_set_add_ten);
+    suite_add_tcase(s, tc_add);
     return s;
 }
 
@@ -128,7 +202,7 @@ int main(void)
     Suite *s;
     SRunner *sr;
 
-    s = skiplist_suite();
+    s = set_suite();
     sr = srunner_create(s);
 
     srunner_run_all(sr, CK_NORMAL);
