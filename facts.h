@@ -19,23 +19,31 @@
 
 #include "binding.h"
 #include "fact.h"
+#include "set.h"
 #include "skiplist.h"
 #include "spec.h"
 
+#define FACTS_SET_INITIAL_SIZE 1000000
+#define FACTS_SKIPLIST_SPACING 2.0
+
 typedef struct facts
 {
+        s_set set;
         s_skiplist *index_spo;
         s_skiplist *index_pos;
         s_skiplist *index_osp;
 } s_facts;
 
-void              facts_init (s_facts *facts);
+void              facts_init (s_facts *facts, unsigned long max);
 
 void              facts_destroy (s_facts *facts);
 
-s_facts *     new_facts ();
+s_facts *     new_facts (unsigned long max);
 
 void       delete_facts (s_facts *facts);
+
+const char *      facts_intern (s_facts *facts,
+                                const char *string);
 
 s_fact *          facts_add_fact (s_facts *facts,
                                   s_fact *f);

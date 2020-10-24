@@ -16,19 +16,24 @@
  */
 
 #include <assert.h>
+#include <math.h>
 #include <stdlib.h>
+#include <string.h>
 #include "facts.h"
 
-void facts_init (s_facts *facts)
+void facts_init (s_facts *facts, unsigned long max)
 {
+        unsigned long height;
         assert(facts);
-        facts->index_spo = new_skiplist(20, 2.0);
+        set_init(&facts->set, max);
+        height = log(max) / log(FACTS_SKIPLIST_SPACING);
+        facts->index_spo = new_skiplist(height, FACTS_SKIPLIST_SPACING);
         assert(facts->index_spo);
         facts->index_spo->compare = fact_compare_spo;
-        facts->index_pos = new_skiplist(20, 2.0);
+        facts->index_pos = new_skiplist(height, FACTS_SKIPLIST_SPACING);
         assert(facts->index_pos);
         facts->index_pos->compare = fact_compare_pos;
-        facts->index_osp = new_skiplist(20, 2.0);
+        facts->index_osp = new_skiplist(height, FACTS_SKIPLIST_SPACING);
         assert(facts->index_osp);
         facts->index_osp->compare = fact_compare_osp;
 }
@@ -38,13 +43,14 @@ void facts_destroy (s_facts *facts)
         delete_skiplist(facts->index_spo);
         delete_skiplist(facts->index_pos);
         delete_skiplist(facts->index_osp);
+        set_destroy(&facts->set);
 }
 
-s_facts * new_facts ()
+s_facts * new_facts (unsigned long max)
 {
         s_facts *facts = malloc(sizeof(s_facts));
         if (facts)
-                facts_init(facts);
+                facts_init(facts, max);
         return facts;
 }
 
@@ -54,15 +60,52 @@ void delete_facts (s_facts *facts)
         free(facts);
 }
 
+const char * facts_intern (s_facts *facts, const char *string)
+{
+        s_set_item *i;
+        size_t len;
+        assert(facts);
+        assert(string);
+        len = strlen(string);
+        i = set_get(&facts->set, string, len);
+        if (!i) {
+                char *data = malloc(len + 1);
+                memcpy(data, string, len + 1);
+                i = set_add(&facts->set, data, len);
+        }
+        assert(i);
+        i->usage++;
+        return i->data;
+}
+
+void facts_unintern (s_facts *facts, const char *string)
+{
+        s_set_item *i;
+        size_t len;
+        assert(facts);
+        assert(string);
+        len = strlen(string);
+        i = set_get(&facts->set, string, len);
+        if (i) {
+                i->usage--;
+                if (!i->usage)
+                        set_remove(&facts->set, i);
+        }
+}
+
 s_fact * facts_add_fact (s_facts *facts, s_fact *f)
 {
+        s_fact intern;
         s_fact *found;
         s_fact *new;
         assert(facts);
         assert(f);
-        if ((found = facts_get_fact(facts, f)))
+        intern.s = facts_intern(facts, f->s);
+        intern.p = facts_intern(facts, f->p);
+        intern.o = facts_intern(facts, f->o);
+        if ((found = facts_get_fact(facts, &intern)))
                 return found;
-        new = new_fact(f->s, f->p, f->o);
+        new = new_fact(intern.s, intern.p, intern.o);
         assert(new);
         skiplist_insert(facts->index_spo, new);
         skiplist_insert(facts->index_pos, new);
@@ -92,6 +135,9 @@ int facts_remove_fact (s_facts *facts, s_fact *f)
         if (found) {
                 skiplist_remove(facts->index_pos, found);
                 skiplist_remove(facts->index_osp, found);
+                facts_unintern(facts, found->s);
+                facts_unintern(facts, found->p);
+                facts_unintern(facts, found->o);
                 delete_fact(found);
                 return 1;
         }

@@ -24,6 +24,7 @@ struct set_item {
         void *data;
         size_t hash;
         s_set_item *next;
+        unsigned long usage;
 };
 
 s_set_item * new_set_item (size_t len, void *data, size_t hash, s_set_item *next);
@@ -60,11 +61,11 @@ int          set_remove (s_set *set,
                          s_set_item *item);
 
 s_set_item * set_get (s_set *set,
-                      void *data,
+                      const void *data,
                       size_t len);
 
 s_set_item * set_get_h (s_set *set,
-                        void *data,
+                        const void *data,
                         size_t len,
                         size_t hash);
 

@@ -30,6 +30,7 @@ s_set_item * new_set_item (size_t len, void *data, size_t hash,
                 i->data = data;
                 i->hash = hash;
                 i->next = next;
+                i->usage = 0;
         }
         return i;
 }
@@ -178,7 +179,7 @@ int set_remove (s_set *set, s_set_item *item)
                 return set_remove_linked(set, item, i);
 }
 
-s_set_item * set_get (s_set *set, void *data, size_t len)
+s_set_item * set_get (s_set *set, const void *data, size_t len)
 {
         size_t hash;
         assert(set);
@@ -188,7 +189,8 @@ s_set_item * set_get (s_set *set, void *data, size_t len)
         return set_get_h(set, data, len, hash);
 }
 
-s_set_item * set_get_h (s_set *set, void *data, size_t len, size_t hash)
+s_set_item * set_get_h (s_set *set, const void *data, size_t len,
+                        size_t hash)
 {
         s_set_item *i;
         assert(set);
@@ -254,7 +256,7 @@ void set_cursor_init (s_set *set, s_set_cursor *c)
         assert(c);
         c->set = set;
         c->i = 0;
-        c->item = set->items;
+        c->item = NULL;
         c->count = 0;
 }
 
