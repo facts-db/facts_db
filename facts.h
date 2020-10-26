@@ -17,6 +17,7 @@
 #ifndef FACTS_H
 #define FACTS_H
 
+#include <stdio.h>
 #include "binding.h"
 #include "fact.h"
 #include "set.h"
@@ -25,6 +26,7 @@
 
 #define FACTS_SET_INITIAL_SIZE 1000000
 #define FACTS_SKIPLIST_SPACING 2.0
+#define FACTS_LOAD_BUFSZ (1024 * 1024)
 
 typedef struct facts
 {
@@ -111,5 +113,11 @@ void              facts_with_spo (s_facts *facts,
                                   const char *s,
                                   const char *p,
                                   const char *o);
+
+int               facts_save (s_facts *facts,
+                              FILE *fp);
+
+int               facts_load (s_facts *facts,
+                              FILE *fp);
 
 #endif
