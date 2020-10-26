@@ -913,6 +913,10 @@ START_TEST (test_write_facts_log_one)
         ck_assert(facts_count(g_f) == 0);
         g_f->log = fp;
         ck_assert(facts_add_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_add_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_remove_spo(g_f, "a", "b", "c"));
+        ck_assert(!facts_remove_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_count(g_f) == 0);
         fclose(fp);
         ck_assert(!system("cmp test_write_facts_log_one"
                           " test_facts_log_one"));
@@ -927,6 +931,13 @@ START_TEST (test_write_facts_log_two)
         g_f->log = fp;
         ck_assert(facts_add_spo(g_f, "a", "b", "c"));
         ck_assert(facts_add_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_add_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_add_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_remove_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_remove_spo(g_f, "b", "c", "d"));
+        ck_assert(!facts_remove_spo(g_f, "a", "b", "c"));
+        ck_assert(!facts_remove_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_count(g_f) == 0);
         fclose(fp);
         ck_assert(!system("cmp test_write_facts_log_two"
                           " test_facts_log_two"));
@@ -949,6 +960,37 @@ START_TEST (test_write_facts_log_ten)
         ck_assert(facts_add_spo(g_f, "h", "i", "j"));
         ck_assert(facts_add_spo(g_f, "i", "j", "k"));
         ck_assert(facts_add_spo(g_f, "j", "k", "l"));
+        ck_assert(facts_add_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_add_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_add_spo(g_f, "c", "d", "e"));
+        ck_assert(facts_add_spo(g_f, "d", "e", "f"));
+        ck_assert(facts_add_spo(g_f, "e", "f", "g"));
+        ck_assert(facts_add_spo(g_f, "f", "g", "h"));
+        ck_assert(facts_add_spo(g_f, "g", "h", "i"));
+        ck_assert(facts_add_spo(g_f, "h", "i", "j"));
+        ck_assert(facts_add_spo(g_f, "i", "j", "k"));
+        ck_assert(facts_add_spo(g_f, "j", "k", "l"));
+        ck_assert(facts_remove_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_remove_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_remove_spo(g_f, "c", "d", "e"));
+        ck_assert(facts_remove_spo(g_f, "d", "e", "f"));
+        ck_assert(facts_remove_spo(g_f, "e", "f", "g"));
+        ck_assert(facts_remove_spo(g_f, "f", "g", "h"));
+        ck_assert(facts_remove_spo(g_f, "g", "h", "i"));
+        ck_assert(facts_remove_spo(g_f, "h", "i", "j"));
+        ck_assert(facts_remove_spo(g_f, "i", "j", "k"));
+        ck_assert(facts_remove_spo(g_f, "j", "k", "l"));
+        ck_assert(!facts_remove_spo(g_f, "a", "b", "c"));
+        ck_assert(!facts_remove_spo(g_f, "b", "c", "d"));
+        ck_assert(!facts_remove_spo(g_f, "c", "d", "e"));
+        ck_assert(!facts_remove_spo(g_f, "d", "e", "f"));
+        ck_assert(!facts_remove_spo(g_f, "e", "f", "g"));
+        ck_assert(!facts_remove_spo(g_f, "f", "g", "h"));
+        ck_assert(!facts_remove_spo(g_f, "g", "h", "i"));
+        ck_assert(!facts_remove_spo(g_f, "h", "i", "j"));
+        ck_assert(!facts_remove_spo(g_f, "i", "j", "k"));
+        ck_assert(!facts_remove_spo(g_f, "j", "k", "l"));
+        ck_assert(facts_count(g_f) == 0);
         fclose(fp);
         ck_assert(!system("cmp test_write_facts_log_ten"
                           " test_facts_log_ten"));
@@ -969,7 +1011,31 @@ START_TEST (test_write_facts_log_escapes)
                                 "\\\"\n\\\"\n\\\"\n"));
         ck_assert(facts_add_spo(g_f, "\\a", "\\b", "\\c"));
         ck_assert(facts_add_spo(g_f, "a\\a", "a\\aa", "a\\a\\aa"));
-        ck_assert(facts_count(g_f) == 7);
+        ck_assert(facts_add_spo(g_f, "\\", "\"", "\n"));
+        ck_assert(facts_add_spo(g_f, "a\\", "a\\a", "a\\\\a"));
+        ck_assert(facts_add_spo(g_f, "a\"", "a\"a", "a\"\"a"));
+        ck_assert(facts_add_spo(g_f, "a\n", "a\na", "a\n\na"));
+        ck_assert(facts_add_spo(g_f, "\\\"\n", "\\\"\n\\\"\n",
+                                "\\\"\n\\\"\n\\\"\n"));
+        ck_assert(facts_add_spo(g_f, "\\a", "\\b", "\\c"));
+        ck_assert(facts_add_spo(g_f, "a\\a", "a\\aa", "a\\a\\aa"));
+        ck_assert(facts_remove_spo(g_f, "\\", "\"", "\n"));
+        ck_assert(facts_remove_spo(g_f, "a\\", "a\\a", "a\\\\a"));
+        ck_assert(facts_remove_spo(g_f, "a\"", "a\"a", "a\"\"a"));
+        ck_assert(facts_remove_spo(g_f, "a\n", "a\na", "a\n\na"));
+        ck_assert(facts_remove_spo(g_f, "\\\"\n", "\\\"\n\\\"\n",
+                                   "\\\"\n\\\"\n\\\"\n"));
+        ck_assert(facts_remove_spo(g_f, "\\a", "\\b", "\\c"));
+        ck_assert(facts_remove_spo(g_f, "a\\a", "a\\aa", "a\\a\\aa"));
+        ck_assert(!facts_remove_spo(g_f, "\\", "\"", "\n"));
+        ck_assert(!facts_remove_spo(g_f, "a\\", "a\\a", "a\\\\a"));
+        ck_assert(!facts_remove_spo(g_f, "a\"", "a\"a", "a\"\"a"));
+        ck_assert(!facts_remove_spo(g_f, "a\n", "a\na", "a\n\na"));
+        ck_assert(!facts_remove_spo(g_f, "\\\"\n", "\\\"\n\\\"\n",
+                                   "\\\"\n\\\"\n\\\"\n"));
+        ck_assert(!facts_remove_spo(g_f, "\\a", "\\b", "\\c"));
+        ck_assert(!facts_remove_spo(g_f, "a\\a", "a\\aa", "a\\a\\aa"));
+        ck_assert(facts_count(g_f) == 0);
         fclose(fp);
         ck_assert(!system("cmp test_write_facts_log_escapes"
                           " test_facts_log_escapes"));
