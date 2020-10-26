@@ -34,6 +34,7 @@ typedef struct facts
         s_skiplist *index_spo;
         s_skiplist *index_pos;
         s_skiplist *index_osp;
+        FILE *log;
 } s_facts;
 
 void              facts_init (s_facts *facts, unsigned long max);

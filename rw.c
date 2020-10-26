@@ -134,6 +134,7 @@ int write_facts (s_facts *facts, FILE *fp)
                 if (write_fact(f, fp))
                         return -1;
         }
+        fflush(fp);
         return 0;
 }
 
@@ -188,7 +189,7 @@ int read_facts (s_facts *facts, FILE *fp)
         return 0;
 }
 
-int write_facts_log (const char *operation, s_fact *f, FILE *fp)
+int write_fact_log (const char *operation, s_fact *f, FILE *fp)
 {
         if (fwrite(operation, strlen(operation), 1, fp) != 1)
                 return -1;
@@ -196,6 +197,7 @@ int write_facts_log (const char *operation, s_fact *f, FILE *fp)
                 return -1;
         if (write_fact(f, fp))
                 return -1;
+        fflush(fp);
         return 0;
 }
 

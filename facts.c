@@ -21,6 +21,7 @@
 #include <string.h>
 #include <strings.h>
 #include "facts.h"
+#include "rw.h"
 
 void facts_init (s_facts *facts, unsigned long max)
 {
@@ -37,6 +38,7 @@ void facts_init (s_facts *facts, unsigned long max)
         facts->index_osp = new_skiplist(height, FACTS_SKIPLIST_SPACING);
         assert(facts->index_osp);
         facts->index_osp->compare = fact_compare_osp;
+        facts->log = NULL;
 }
 
 void facts_destroy (s_facts *facts)
@@ -106,6 +108,8 @@ s_fact * facts_add_fact (s_facts *facts, s_fact *f)
         intern.o = facts_intern(facts, f->o);
         if ((found = facts_get_fact(facts, &intern)))
                 return found;
+        if (facts->log)
+                write_fact_log("add", &intern, facts->log);
         new = new_fact(intern.s, intern.p, intern.o);
         assert(new);
         skiplist_insert(facts->index_spo, new);
@@ -136,6 +140,8 @@ int facts_remove_fact (s_facts *facts, s_fact *f)
         if (found) {
                 skiplist_remove(facts->index_pos, found);
                 skiplist_remove(facts->index_osp, found);
+                if (facts->log)
+                        write_fact_log("remove", found, facts->log);
                 facts_unintern(facts, found->s);
                 facts_unintern(facts, found->p);
                 facts_unintern(facts, found->o);

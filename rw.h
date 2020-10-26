@@ -51,8 +51,8 @@ int write_facts (s_facts *facts,
 int read_facts_log (s_facts *facts,
                     FILE *fp);
 
-int write_facts_log (const char *operation,
-                     s_fact *f,
-                     FILE *fp);
+int write_fact_log (const char *operation,
+                    s_fact *f,
+                    FILE *fp);
 
 #endif
