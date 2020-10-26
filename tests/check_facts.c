@@ -716,7 +716,7 @@ END_TEST
 
 void setup_write ()
 {
-        g_f = new_facts(100);
+        g_f = new_facts(10);
 }
 
 void teardown_write ()
