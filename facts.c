@@ -171,6 +171,16 @@ s_fact * facts_get_fact (s_facts *facts, s_fact *f)
         return NULL;
 }
 
+s_fact * facts_get_spo (s_facts *facts, const char *s, const char *p,
+                        const char *o)
+{
+        s_fact f;
+        f.s = s;
+        f.p = p;
+        f.o = o;
+        return facts_get_fact(facts, &f);
+}
+
 unsigned long facts_count (s_facts *facts)
 {
         assert(facts);
@@ -347,14 +357,27 @@ int facts_read_fact (s_facts *facts, s_fact *f, FILE *fp)
                 return -1;
         if (!(f->o = facts_intern(facts, buf)))
                 return -1;
+        if (fread(buf, 1, 1, fp) != 1)
+                return -1;
+        if (buf[0] != '\n')
+                return -1;
         return 0;
+}
+
+static int fpeek (FILE *fp)
+{
+        int c = fgetc(fp);
+        if (c >= 0)
+                ungetc(c, fp);
+        return c;
 }
 
 int facts_load (s_facts *facts, FILE *fp)
 {
         s_fact f;
         assert(facts);
-        while (!feof(fp)) {
+        while (!feof(fp) && fpeek(fp) != EOF) {
+                printf("wtf\n");
                 if (facts_read_fact(facts, &f, fp))
                         return -1;
                 if (!facts_add_fact(facts, &f))

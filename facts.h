@@ -66,6 +66,11 @@ int               facts_remove_spo (s_facts *facts,
 s_fact *          facts_get_fact (s_facts *facts,
                                   s_fact *f);
 
+s_fact *          facts_get_spo (s_facts *facts,
+                                 const char *s,
+                                 const char *p,
+                                 const char *o);
+
 unsigned long     facts_count (s_facts *facts);
 
 typedef struct facts_cursor {
