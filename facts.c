@@ -21,6 +21,7 @@
 #include <string.h>
 #include <strings.h>
 #include "facts.h"
+#include "rw.h"
 
 void facts_init (s_facts *facts, unsigned long max)
 {
@@ -313,53 +314,7 @@ void facts_with_spo (s_facts *facts,
                 facts_with_1_2(facts, c, s, p, o, var_s, var_p, var_o);
 }
 
-int write_string_quoted (const char *string, FILE *fp)
-{
-        size_t i;
-        if (fwrite("\"", 1, 1, fp) != 1)
-                return -1;
-        for (i = 0; i < strlen(string); i++) {
-                switch (string[i]) {
-                case '"':
-                case '\\':
-                        if (fwrite("\\", 1, 1, fp) != 1)
-                                return -1;
-                default:
-                        if (fwrite(string + i, 1, 1, fp) != 1)
-                                return -1;
-                }
-        }
-        if (fwrite("\"\n", 2, 1, fp) != 1)
-                return -1;
-        return 0;
-}
-
-int write_string (const char *string, FILE *fp)
-{
-        if (string[0] == '"' || strchr(string, '\n'))
-                return write_string_quoted(string, fp);
-        if (string[0])
-                if (fwrite(string, strlen(string), 1, fp) != 1)
-                        return -1;
-        if (fwrite("\n", 1, 1, fp) != 1)
-                return -1;
-        return 0;
-}
-
-int write_fact (const s_fact *f, FILE *fp)
-{
-        if (write_string(f->s, fp))
-                return -1;
-        if (write_string(f->p, fp))
-                return -1;
-        if (write_string(f->o, fp))
-                return -1;
-        if (write_string("", fp))
-                return -1;
-        return 0;
-}
-
-int facts_save (s_facts *facts, FILE *fp)
+int facts_write (s_facts *facts, FILE *fp)
 {
         s_facts_cursor c;
         s_fact *f;
@@ -372,53 +327,6 @@ int facts_save (s_facts *facts, FILE *fp)
                 if (write_fact(f, fp))
                         return -1;
         }
-        return 0;
-}
-
-int read_string_quoted (char *buf, size_t len, FILE *fp)
-{
-        char c;
-        if (fread(&c, 1, 1, fp) != 1)
-                return -1;
-        while (c != '"') {
-                if (len == 1)
-                        return -1;
-                if (c == '\\')
-                        if (fread(&c, 1, 1, fp) != 1)
-                                return -1;
-                if (!c)
-                        return -1;
-                *buf = c;
-                len--;
-                buf++;
-                if (fread(&c, 1, 1, fp) != 1)
-                        return -1;
-        }
-        *buf = 0;
-        return 0;
-}
-
-int read_string (char *buf, size_t len, FILE *fp)
-{
-        char c;
-        assert(buf);
-        assert(len > 0);
-        if (fread(&c, 1, 1, fp) != 1)
-                return -1;
-        if (c == '"')
-                return read_string_quoted(buf, len, fp);
-        while (c != '\n') {
-                if (len == 1)
-                        return -1;
-                if (!c)
-                        return -1;
-                *buf = c;
-                len--;
-                buf++;
-                if (fread(&c, 1, 1, fp) != 1)
-                        return -1;
-        }
-        *buf = 0;
         return 0;
 }
 

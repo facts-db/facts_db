@@ -28,6 +28,7 @@ check_facts_SOURCES = \
 	$(top_builddir)/fact.c \
 	$(top_builddir)/facts.c \
 	$(top_builddir)/farmhash.c \
+	$(top_builddir)/rw.c \
 	$(top_builddir)/set.c \
 	$(top_builddir)/skiplist.c
 check_facts_CFLAGS = @CHECK_CFLAGS@ ${AM_CFLAGS}

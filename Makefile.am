@@ -18,6 +18,7 @@ libfacts_db_la_SOURCES = \
 	fact.c \
 	facts.c \
 	farmhash.c \
+	rw.c \
 	set.c \
 	skiplist.c \
 	spec.c
@@ -27,6 +28,7 @@ include_HEADERS += \
 	fact.h \
 	facts.h \
 	farmhash.h \
+	rw.h \
 	set.h \
 	skiplist.h \
 	spec.h
