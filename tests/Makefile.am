@@ -42,6 +42,10 @@ binding.c.gcov:
 	gcov check_facts-binding.c
 GCOV += binding.c.gcov
 
+rw.c.gcov:
+	gcov check_facts-rw.c
+GCOV += rw.c.gcov
+
 check_set_SOURCES = \
 	check_set.c \
 	$(top_builddir)/farmhash.c \

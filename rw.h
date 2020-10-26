@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 #include "fact.h"
+#include "facts.h"
 
 int read_string_quoted (char *buf,
                         size_t len,
@@ -34,7 +35,24 @@ int read_string (char *buf,
 int write_string (const char *string,
                   FILE *fp);
 
+int read_fact (s_facts *facts,
+               s_fact *f,
+               FILE *fp);
+
 int write_fact (const s_fact *f,
                 FILE *fp);
+
+int read_facts (s_facts *facts,
+                FILE *fp);
+
+int write_facts (s_facts *facts,
+                 FILE *fp);
+
+int read_facts_log (s_facts *facts,
+                    FILE *fp);
+
+int write_facts_log (const char *operation,
+                     s_fact *f,
+                     FILE *fp);
 
 #endif

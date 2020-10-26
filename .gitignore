@@ -21,10 +21,11 @@ stamp-h1
 *.gcov
 /tests/check_fact
 /tests/check_facts
-/tests/test_facts_write_empty
-/tests/test_facts_write_one
-/tests/test_facts_write_two
-/tests/test_facts_write_ten
+/tests/test_write_facts_empty
+/tests/test_write_facts_one
+/tests/test_write_facts_two
+/tests/test_write_facts_ten
+/tests/test_write_facts_escapes
 /tests/check_set
 /tests/check_skiplist
 /tests/fixtures/

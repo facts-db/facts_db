@@ -21,7 +21,6 @@
 #include <string.h>
 #include <strings.h>
 #include "facts.h"
-#include "rw.h"
 
 void facts_init (s_facts *facts, unsigned long max)
 {
@@ -322,109 +321,4 @@ void facts_with_spo (s_facts *facts,
                 facts_with_3(facts, c, s, p, o);
         else
                 facts_with_1_2(facts, c, s, p, o, var_s, var_p, var_o);
-}
-
-int facts_write (s_facts *facts, FILE *fp)
-{
-        s_facts_cursor c;
-        s_fact *f;
-        const char *s;
-        const char *p;
-        const char *o;
-        assert(facts);
-        facts_with_0(facts, &c, &s, &p, &o);
-        while ((f = facts_cursor_next(&c))) {
-                if (write_fact(f, fp))
-                        return -1;
-        }
-        return 0;
-}
-
-int facts_read_fact (s_facts *facts, s_fact *f, FILE *fp)
-{
-        char buf[FACTS_LOAD_BUFSZ];
-        assert(facts);
-        assert(f);
-        if (read_string(buf, sizeof(buf), fp))
-                return -1;
-        if (!(f->s = facts_intern(facts, buf)))
-                return -1;
-        if (read_string(buf, sizeof(buf), fp))
-                return -1;
-        if (!(f->p = facts_intern(facts, buf)))
-                return -1;
-        if (read_string(buf, sizeof(buf), fp))
-                return -1;
-        if (!(f->o = facts_intern(facts, buf)))
-                return -1;
-        if (fread(buf, 1, 1, fp) != 1)
-                return -1;
-        if (buf[0] != '\n')
-                return -1;
-        return 0;
-}
-
-static int fpeek (FILE *fp)
-{
-        int c = fgetc(fp);
-        if (c >= 0)
-                ungetc(c, fp);
-        return c;
-}
-
-int facts_load (s_facts *facts, FILE *fp)
-{
-        s_fact f;
-        assert(facts);
-        while (!feof(fp) && fpeek(fp) != EOF) {
-                printf("wtf\n");
-                if (facts_read_fact(facts, &f, fp))
-                        return -1;
-                if (!facts_add_fact(facts, &f))
-                        return -1;
-        }
-        return 0;
-}
-
-int facts_write_log (const char *operation, s_fact *f, FILE *fp)
-{
-        if (fwrite(operation, strlen(operation), 1, fp) != 1)
-                return -1;
-        if (fwrite("\n", 1, 1, fp) != 1)
-                return -1;
-        if (write_fact(f, fp))
-                return -1;
-        return 0;
-}
-
-int facts_load_log (s_facts *facts, FILE *fp)
-{
-        char operation[32];
-        int op = 0;
-        s_fact f;
-        assert(facts);
-        while (!feof(fp)) {
-                if (!fgets(operation, sizeof(operation), fp))
-                        return -1;
-                if (!strcasecmp(operation, "add"))
-                        op = 1;
-                else if (!strcasecmp(operation, "remove"))
-                        op = 2;
-                else {
-                        fprintf(stderr, "facts_load_log:"
-                                " unknown operation: %s\n", operation);
-                        return -1;
-                }
-                if (facts_read_fact(facts, &f, fp))
-                        return -1;
-                if (op == 1) {
-                        if (!facts_add_fact(facts, &f))
-                                return -1;
-                }
-                else if (op == 2) {
-                        if (!facts_remove_fact(facts, &f))
-                                return -1;
-                }
-        }
-        return 0;
 }

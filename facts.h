@@ -119,21 +119,4 @@ void              facts_with_spo (s_facts *facts,
                                   const char *p,
                                   const char *o);
 
-int               facts_write (s_facts *facts,
-                               FILE *fp);
-
-int               facts_read_fact (s_facts *facts,
-                                   s_fact *f,
-                                   FILE *fp);
-
-int               facts_load (s_facts *facts,
-                              FILE *fp);
-
-int               facts_write_log (const char *operation,
-                                   s_fact *f,
-                                   FILE *fp);
-
-int               facts_load_log (s_facts *facts,
-                                  FILE *fp);
-
 #endif

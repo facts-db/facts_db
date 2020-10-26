@@ -18,6 +18,7 @@
 #include <check.h>
 #include <stdlib.h>
 #include "facts.h"
+#include "rw.h"
 
 s_facts *g_f;
 
@@ -725,48 +726,48 @@ void teardown_write ()
         g_f = NULL;
 }
 
-START_TEST (test_facts_write_empty)
+START_TEST (test_write_facts_empty)
 {
-        FILE *fp = fopen("test_facts_write_empty", "w");
+        FILE *fp = fopen("test_write_facts_empty", "w");
         ck_assert(fp);
         ck_assert(facts_count(g_f) == 0);
-        ck_assert(!facts_write(g_f, fp));
+        ck_assert(!write_facts(g_f, fp));
         fclose(fp);
-        ck_assert(!system("cmp test_facts_write_empty"
+        ck_assert(!system("cmp test_write_facts_empty"
                           " test_facts_empty"));
 }
 END_TEST
 
-START_TEST (test_facts_write_one)
+START_TEST (test_write_facts_one)
 {
-        FILE *fp = fopen("test_facts_write_one", "w");
+        FILE *fp = fopen("test_write_facts_one", "w");
         ck_assert(fp);
         ck_assert(facts_count(g_f) == 0);
         ck_assert(facts_add_spo(g_f, "a", "b", "c"));
-        ck_assert(!facts_write(g_f, fp));
+        ck_assert(!write_facts(g_f, fp));
         fclose(fp);
-        ck_assert(!system("cmp test_facts_write_one"
+        ck_assert(!system("cmp test_write_facts_one"
                           " test_facts_one"));
 }
 END_TEST
 
-START_TEST (test_facts_write_two)
+START_TEST (test_write_facts_two)
 {
-        FILE *fp = fopen("test_facts_write_two", "w");
+        FILE *fp = fopen("test_write_facts_two", "w");
         ck_assert(fp);
         ck_assert(facts_count(g_f) == 0);
         ck_assert(facts_add_spo(g_f, "a", "b", "c"));
         ck_assert(facts_add_spo(g_f, "b", "c", "d"));
-        ck_assert(!facts_write(g_f, fp));
+        ck_assert(!write_facts(g_f, fp));
         fclose(fp);
-        ck_assert(!system("cmp test_facts_write_two"
+        ck_assert(!system("cmp test_write_facts_two"
                           " test_facts_two"));
 }
 END_TEST
 
-START_TEST (test_facts_write_ten)
+START_TEST (test_write_facts_ten)
 {
-        FILE *fp = fopen("test_facts_write_ten", "w");
+        FILE *fp = fopen("test_write_facts_ten", "w");
         ck_assert(fp);
         ck_assert(facts_count(g_f) == 0);
         ck_assert(facts_add_spo(g_f, "a", "b", "c"));
@@ -779,56 +780,74 @@ START_TEST (test_facts_write_ten)
         ck_assert(facts_add_spo(g_f, "h", "i", "j"));
         ck_assert(facts_add_spo(g_f, "i", "j", "k"));
         ck_assert(facts_add_spo(g_f, "j", "k", "l"));
-        ck_assert(!facts_write(g_f, fp));
+        ck_assert(!write_facts(g_f, fp));
         fclose(fp);
-        ck_assert(!system("cmp test_facts_write_ten"
+        ck_assert(!system("cmp test_write_facts_ten"
                           " test_facts_ten"));
 }
 END_TEST
 
-void setup_load ()
+START_TEST (test_write_facts_escapes)
+{
+        FILE *fp = fopen("test_write_facts_escapes", "w");
+        ck_assert(fp);
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(facts_add_spo(g_f, "\\", "\"", "\n"));
+        ck_assert(facts_add_spo(g_f, "a\\", "a\\a", "a\\\\a"));
+        ck_assert(facts_add_spo(g_f, "a\"", "a\"a", "a\"\"a"));
+        ck_assert(facts_add_spo(g_f, "a\n", "a\na", "a\n\na"));
+        ck_assert(facts_add_spo(g_f, "\\\"\n", "\\\"\n\\\"\n",
+                                "\\\"\n\\\"\n\\\"\n"));
+        ck_assert(facts_add_spo(g_f, "\\a", "\\b", "\\c"));
+        ck_assert(facts_add_spo(g_f, "a\\a", "a\\aa", "a\\a\\aa"));
+        ck_assert(facts_count(g_f) == 7);
+        ck_assert(!write_facts(g_f, fp));
+        fclose(fp);
+        ck_assert(!system("cmp test_write_facts_escapes"
+                          " test_facts_escapes"));
+}
+END_TEST
+
+void setup_read ()
 {
         g_f = new_facts(10);
 }
 
-void teardown_load ()
+void teardown_read ()
 {
         delete_facts(g_f);
         g_f = NULL;
 }
 
-START_TEST (test_facts_load_empty)
+START_TEST (test_read_facts_empty)
 {
         FILE *fp = fopen("test_facts_empty", "r");
-        printf("test_facts_empty\n");
         ck_assert(fp);
         ck_assert(facts_count(g_f) == 0);
-        ck_assert(!facts_load(g_f, fp));
-        printf("test_facts_empty loaded\n");
+        ck_assert(!read_facts(g_f, fp));
         fclose(fp);
         ck_assert(facts_count(g_f) == 0);
 }
 END_TEST
 
-START_TEST (test_facts_load_one)
+START_TEST (test_read_facts_one)
 {
         FILE *fp = fopen("test_facts_one", "r");
-        printf("test_facts_one\n");
         ck_assert(fp);
         ck_assert(facts_count(g_f) == 0);
-        ck_assert(!facts_load(g_f, fp));
+        ck_assert(!read_facts(g_f, fp));
         fclose(fp);
         ck_assert(facts_count(g_f) == 1);
         ck_assert(facts_get_spo(g_f, "a", "b", "c"));
 }
 END_TEST
 
-START_TEST (test_facts_load_two)
+START_TEST (test_read_facts_two)
 {
         FILE *fp = fopen("test_facts_two", "r");
         ck_assert(fp);
         ck_assert(facts_count(g_f) == 0);
-        ck_assert(!facts_load(g_f, fp));
+        ck_assert(!read_facts(g_f, fp));
         fclose(fp);
         ck_assert(facts_count(g_f) == 2);
         ck_assert(facts_get_spo(g_f, "a", "b", "c"));
@@ -836,12 +855,12 @@ START_TEST (test_facts_load_two)
 }
 END_TEST
 
-START_TEST (test_facts_load_ten)
+START_TEST (test_read_facts_ten)
 {
         FILE *fp = fopen("test_facts_ten", "r");
         ck_assert(fp);
         ck_assert(facts_count(g_f) == 0);
-        ck_assert(!facts_load(g_f, fp));
+        ck_assert(!read_facts(g_f, fp));
         fclose(fp);
         ck_assert(facts_count(g_f) == 10);
         ck_assert(facts_get_spo(g_f, "a", "b", "c"));
@@ -857,6 +876,25 @@ START_TEST (test_facts_load_ten)
 }
 END_TEST
 
+START_TEST (test_read_facts_escapes)
+{
+        FILE *fp = fopen("test_facts_escapes", "r");
+        ck_assert(fp);
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(!read_facts(g_f, fp));
+        fclose(fp);
+        ck_assert(facts_count(g_f) == 7);
+        ck_assert(facts_get_spo(g_f, "\\", "\"", "\n"));
+        ck_assert(facts_get_spo(g_f, "a\\", "a\\a", "a\\\\a"));
+        ck_assert(facts_get_spo(g_f, "a\"", "a\"a", "a\"\"a"));
+        ck_assert(facts_get_spo(g_f, "a\n", "a\na", "a\n\na"));
+        ck_assert(facts_get_spo(g_f, "\\\"\n", "\\\"\n\\\"\n",
+                                "\\\"\n\\\"\n\\\"\n"));
+        ck_assert(facts_get_spo(g_f, "\\a", "\\b", "\\c"));
+        ck_assert(facts_get_spo(g_f, "a\\a", "a\\aa", "a\\a\\aa"));
+}
+END_TEST
+
 Suite * facts_suite(void)
 {
     Suite *s;
@@ -867,7 +905,7 @@ Suite * facts_suite(void)
     TCase *tc_remove_spo;
     TCase *tc_with_spo;
     TCase *tc_write;
-    TCase *tc_load;
+    TCase *tc_read;
     s = suite_create("Facts");
     tc_init = tcase_create("Init");
     tcase_add_test(tc_init, test_facts_init_destroy);
@@ -915,18 +953,20 @@ Suite * facts_suite(void)
     suite_add_tcase(s, tc_with_spo);
     tc_write = tcase_create("Write");
     tcase_add_checked_fixture(tc_write, setup_write, teardown_write);
-    tcase_add_test(tc_write, test_facts_write_empty);
-    tcase_add_test(tc_write, test_facts_write_one);
-    tcase_add_test(tc_write, test_facts_write_two);
-    tcase_add_test(tc_write, test_facts_write_ten);
+    tcase_add_test(tc_write, test_write_facts_empty);
+    tcase_add_test(tc_write, test_write_facts_one);
+    tcase_add_test(tc_write, test_write_facts_two);
+    tcase_add_test(tc_write, test_write_facts_ten);
+    tcase_add_test(tc_write, test_write_facts_escapes);
     suite_add_tcase(s, tc_write);
-    tc_load = tcase_create("Load");
-    tcase_add_checked_fixture(tc_load, setup_load, teardown_load);
-    tcase_add_test(tc_load, test_facts_load_empty);
-    tcase_add_test(tc_load, test_facts_load_one);
-    tcase_add_test(tc_load, test_facts_load_two);
-    tcase_add_test(tc_load, test_facts_load_ten);
-    suite_add_tcase(s, tc_load);
+    tc_read = tcase_create("Read");
+    tcase_add_checked_fixture(tc_read, setup_read, teardown_read);
+    tcase_add_test(tc_read, test_read_facts_empty);
+    tcase_add_test(tc_read, test_read_facts_one);
+    tcase_add_test(tc_read, test_read_facts_two);
+    tcase_add_test(tc_read, test_read_facts_ten);
+    tcase_add_test(tc_read, test_read_facts_escapes);
+    suite_add_tcase(s, tc_read);
     return s;
 }
 
