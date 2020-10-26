@@ -1042,6 +1042,72 @@ START_TEST (test_write_facts_log_escapes)
 }
 END_TEST
 
+void setup_read_facts_log ()
+{
+        g_f = new_facts(10);
+}
+
+void teardown_read_facts_log ()
+{
+        delete_facts(g_f);
+        g_f = NULL;
+}
+
+START_TEST (test_read_facts_log_empty)
+{
+        FILE *fp = fopen("test_facts_log_empty", "r");
+        ck_assert(fp);
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(!read_facts_log(g_f, fp));
+        fclose(fp);
+        ck_assert(facts_count(g_f) == 0);
+}
+END_TEST
+
+START_TEST (test_read_facts_log_one)
+{
+        FILE *fp = fopen("test_facts_log_one", "r");
+        ck_assert(fp);
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(!read_facts_log(g_f, fp));
+        fclose(fp);
+        ck_assert(facts_count(g_f) == 0);
+}
+END_TEST
+
+START_TEST (test_read_facts_log_two)
+{
+        FILE *fp = fopen("test_facts_log_two", "r");
+        ck_assert(fp);
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(!read_facts_log(g_f, fp));
+        fclose(fp);
+        ck_assert(facts_count(g_f) == 0);
+}
+END_TEST
+
+START_TEST (test_read_facts_log_ten)
+{
+        FILE *fp = fopen("test_facts_log_ten", "r");
+        ck_assert(fp);
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(!read_facts_log(g_f, fp));
+        fclose(fp);
+        ck_assert(facts_count(g_f) == 0);
+}
+END_TEST
+
+START_TEST (test_read_facts_log_escapes)
+{
+        FILE *fp = fopen("test_facts_log_escapes", "r");
+        ck_assert(fp);
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(!read_facts_log(g_f, fp));
+        fclose(fp);
+        ck_assert(facts_count(g_f) == 0);
+}
+END_TEST
+
 Suite * facts_suite(void)
 {
     Suite *s;
@@ -1054,6 +1120,7 @@ Suite * facts_suite(void)
     TCase *tc_write;
     TCase *tc_read;
     TCase *tc_write_log;
+    TCase *tc_read_log;
     s = suite_create("Facts");
     tc_init = tcase_create("Init");
     tcase_add_test(tc_init, test_facts_init_destroy);
@@ -1123,6 +1190,15 @@ Suite * facts_suite(void)
     tcase_add_test(tc_write_log, test_write_facts_log_ten);
     tcase_add_test(tc_write_log, test_write_facts_log_escapes);
     suite_add_tcase(s, tc_write_log);
+    tc_read_log = tcase_create("Read log");
+    tcase_add_checked_fixture(tc_read_log, setup_read_facts_log,
+                              teardown_read_facts_log);
+    tcase_add_test(tc_read_log, test_read_facts_log_empty);
+    tcase_add_test(tc_read_log, test_read_facts_log_one);
+    tcase_add_test(tc_read_log, test_read_facts_log_two);
+    tcase_add_test(tc_read_log, test_read_facts_log_ten);
+    tcase_add_test(tc_read_log, test_read_facts_log_escapes);
+    suite_add_tcase(s, tc_read_log);
     return s;
 }
 

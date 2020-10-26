@@ -207,12 +207,12 @@ int read_facts_log (s_facts *facts, FILE *fp)
         int op = 0;
         s_fact f;
         assert(facts);
-        while (!feof(fp)) {
+        while (!feof(fp) && fpeek(fp) != EOF) {
                 if (!fgets(operation, sizeof(operation), fp))
                         return -1;
-                if (!strcasecmp(operation, "add"))
+                if (!strcasecmp(operation, "add\n"))
                         op = 1;
-                else if (!strcasecmp(operation, "remove"))
+                else if (!strcasecmp(operation, "remove\n"))
                         op = 2;
                 else {
                         fprintf(stderr, "facts_load_log:"
