@@ -26,6 +26,10 @@ stamp-h1
 /tests/test_write_facts_two
 /tests/test_write_facts_ten
 /tests/test_write_facts_escapes
+/tests/test_write_facts_log_one
+/tests/test_write_facts_log_two
+/tests/test_write_facts_log_ten
+/tests/test_write_facts_log_escapes
 /tests/check_set
 /tests/check_skiplist
 /tests/fixtures/

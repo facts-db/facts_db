@@ -895,6 +895,87 @@ START_TEST (test_read_facts_escapes)
 }
 END_TEST
 
+void setup_write_facts_log ()
+{
+        g_f = new_facts(10);
+}
+
+void teardown_write_facts_log ()
+{
+        delete_facts(g_f);
+        g_f = NULL;
+}
+
+START_TEST (test_write_facts_log_one)
+{
+        FILE *fp = fopen("test_write_facts_log_one", "w");
+        ck_assert(fp);
+        ck_assert(facts_count(g_f) == 0);
+        g_f->log = fp;
+        ck_assert(facts_add_spo(g_f, "a", "b", "c"));
+        fclose(fp);
+        ck_assert(!system("cmp test_write_facts_log_one"
+                          " test_facts_log_one"));
+}
+END_TEST
+
+START_TEST (test_write_facts_log_two)
+{
+        FILE *fp = fopen("test_write_facts_log_two", "w");
+        ck_assert(fp);
+        ck_assert(facts_count(g_f) == 0);
+        g_f->log = fp;
+        ck_assert(facts_add_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_add_spo(g_f, "b", "c", "d"));
+        fclose(fp);
+        ck_assert(!system("cmp test_write_facts_log_two"
+                          " test_facts_log_two"));
+}
+END_TEST
+
+START_TEST (test_write_facts_log_ten)
+{
+        FILE *fp = fopen("test_write_facts_log_ten", "w");
+        ck_assert(fp);
+        ck_assert(facts_count(g_f) == 0);
+        g_f->log = fp;
+        ck_assert(facts_add_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_add_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_add_spo(g_f, "c", "d", "e"));
+        ck_assert(facts_add_spo(g_f, "d", "e", "f"));
+        ck_assert(facts_add_spo(g_f, "e", "f", "g"));
+        ck_assert(facts_add_spo(g_f, "f", "g", "h"));
+        ck_assert(facts_add_spo(g_f, "g", "h", "i"));
+        ck_assert(facts_add_spo(g_f, "h", "i", "j"));
+        ck_assert(facts_add_spo(g_f, "i", "j", "k"));
+        ck_assert(facts_add_spo(g_f, "j", "k", "l"));
+        fclose(fp);
+        ck_assert(!system("cmp test_write_facts_log_ten"
+                          " test_facts_log_ten"));
+}
+END_TEST
+
+START_TEST (test_write_facts_log_escapes)
+{
+        FILE *fp = fopen("test_write_facts_log_escapes", "w");
+        ck_assert(fp);
+        ck_assert(facts_count(g_f) == 0);
+        g_f->log = fp;
+        ck_assert(facts_add_spo(g_f, "\\", "\"", "\n"));
+        ck_assert(facts_add_spo(g_f, "a\\", "a\\a", "a\\\\a"));
+        ck_assert(facts_add_spo(g_f, "a\"", "a\"a", "a\"\"a"));
+        ck_assert(facts_add_spo(g_f, "a\n", "a\na", "a\n\na"));
+        ck_assert(facts_add_spo(g_f, "\\\"\n", "\\\"\n\\\"\n",
+                                "\\\"\n\\\"\n\\\"\n"));
+        ck_assert(facts_add_spo(g_f, "\\a", "\\b", "\\c"));
+        ck_assert(facts_add_spo(g_f, "a\\a", "a\\aa", "a\\a\\aa"));
+        ck_assert(facts_count(g_f) == 7);
+        fclose(fp);
+        ck_assert(!system("cmp test_write_facts_log_escapes"
+                          " test_facts_log_escapes"));
+}
+END_TEST
+
 Suite * facts_suite(void)
 {
     Suite *s;
@@ -906,6 +987,7 @@ Suite * facts_suite(void)
     TCase *tc_with_spo;
     TCase *tc_write;
     TCase *tc_read;
+    TCase *tc_write_log;
     s = suite_create("Facts");
     tc_init = tcase_create("Init");
     tcase_add_test(tc_init, test_facts_init_destroy);
@@ -967,6 +1049,14 @@ Suite * facts_suite(void)
     tcase_add_test(tc_read, test_read_facts_ten);
     tcase_add_test(tc_read, test_read_facts_escapes);
     suite_add_tcase(s, tc_read);
+    tc_write_log = tcase_create("Write log");
+    tcase_add_checked_fixture(tc_write_log, setup_write_facts_log,
+                              teardown_write_facts_log);
+    tcase_add_test(tc_write_log, test_write_facts_log_one);
+    tcase_add_test(tc_write_log, test_write_facts_log_two);
+    tcase_add_test(tc_write_log, test_write_facts_log_ten);
+    tcase_add_test(tc_write_log, test_write_facts_log_escapes);
+    suite_add_tcase(s, tc_write_log);
     return s;
 }
 
