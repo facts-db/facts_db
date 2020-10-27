@@ -7,8 +7,18 @@ endif
 
 AM_CFLAGS += -fprofile-arcs -ftest-coverage
 
-TESTS = check_fact check_skiplist check_facts check_set
-check_PROGRAMS = check_fact check_facts check_set check_skiplist
+TESTS = \
+	check_fact \
+	check_skiplist \
+	check_set \
+	check_spec \
+	check_facts
+check_PROGRAMS = \
+	check_fact \
+	check_facts \
+	check_set \
+	check_skiplist \
+	check_spec
 CLEANFILES = *.gcda *.gcno
 GCOV =
 
@@ -66,6 +76,16 @@ check_skiplist_LDADD = @CHECK_LIBS@
 skiplist.c.gcov:
 	gcov check_skiplist-skiplist.c
 GCOV += skiplist.c.gcov
+
+check_spec_SOURCES = \
+	check_spec.c \
+	$(top_builddir)/spec.c
+check_spec_CFLAGS = @CHECK_CFLAGS@ ${AM_CFLAGS}
+check_spec_LDADD = @CHECK_LIBS@
+
+spec.c.gcov:
+	gcov check_spec-spec.c
+GCOV += spec.c.gcov
 
 gcov: ${GCOV}
 

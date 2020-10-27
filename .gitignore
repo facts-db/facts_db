@@ -32,6 +32,7 @@ stamp-h1
 /tests/test_write_facts_log_escapes
 /tests/check_set
 /tests/check_skiplist
+/tests/check_spec
 /tests/fixtures/
 /tests/*.log
 /tests/*.trs
