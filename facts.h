@@ -48,6 +48,9 @@ void       delete_facts (s_facts *facts);
 const char *      facts_find_symbol (s_facts *facts,
                                      const char *string);
 
+const char *      facts_anon (s_facts *facts,
+                              const char *name);
+
 const char *      facts_intern (s_facts *facts,
                                 const char *string);
 

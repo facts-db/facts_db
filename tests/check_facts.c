@@ -1138,6 +1138,38 @@ START_TEST (test_read_facts_log_escapes)
 }
 END_TEST
 
+void setup_anon ()
+{
+        g_f = new_facts(10);
+}
+
+void teardown_anon ()
+{
+        delete_facts(g_f);
+        g_f = NULL;
+}
+
+START_TEST (test_facts_anon)
+{
+        const char *anon;
+        ck_assert((anon = facts_anon(g_f, NULL)));
+        ck_assert(!strncmp(anon, "anon-", 5));
+        ck_assert(strlen(anon) == 15);
+        ck_assert((anon = facts_anon(g_f, "")));
+        ck_assert(!strncmp(anon, "anon-", 5));
+        ck_assert(strlen(anon) == 15);
+        ck_assert((anon = facts_anon(g_f, "?")));
+        ck_assert(!strncmp(anon, "anon-", 5));
+        ck_assert(strlen(anon) == 15);
+        ck_assert((anon = facts_anon(g_f, "a")));
+        ck_assert(!strncmp(anon, "a-", 2));
+        ck_assert(strlen(anon) == 12);
+        ck_assert((anon = facts_anon(g_f, "?a")));
+        ck_assert(!strncmp(anon, "a-", 2));
+        ck_assert(strlen(anon) == 12);
+}
+END_TEST
+
 Suite * facts_suite(void)
 {
     Suite *s;
@@ -1151,6 +1183,7 @@ Suite * facts_suite(void)
     TCase *tc_read;
     TCase *tc_write_log;
     TCase *tc_read_log;
+    TCase *tc_anon;
     s = suite_create("Facts");
     tc_init = tcase_create("Init");
     tcase_add_test(tc_init, test_facts_init_destroy);
@@ -1229,6 +1262,10 @@ Suite * facts_suite(void)
     tcase_add_test(tc_read_log, test_read_facts_log_ten);
     tcase_add_test(tc_read_log, test_read_facts_log_escapes);
     suite_add_tcase(s, tc_read_log);
+    tc_anon = tcase_create("Anon");
+    tcase_add_checked_fixture(tc_anon, setup_anon, teardown_anon);
+    tcase_add_test(tc_anon, test_facts_anon);
+    suite_add_tcase(s, tc_anon);
     return s;
 }
 

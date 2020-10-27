@@ -109,6 +109,48 @@ void facts_unintern (s_facts *facts, const char *string)
         }
 }
 
+void random_id (char *buf, size_t len)
+{
+        static const char base64url[] =
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "abcdefghijklmnopqrstuvwxyz"
+                "0123456789-_";
+        int r = rand();
+        int m = RAND_MAX;
+        while (len--) {
+                if (m < 64) {
+                        r = rand();
+                        m = RAND_MAX;
+                }
+                *buf = base64url[r % 64];
+                buf++;
+                r /= 64;
+                m /= 64;
+        }
+}
+
+const char * facts_anon (s_facts *facts, const char *name)
+{
+        char buf[1024];
+        char *b = buf;
+        int i = 0;
+        assert(facts);
+        if (name && name[0] == '?')
+                name++;
+        if (!name || !name[0])
+                name = "anon";
+        while ((unsigned) i < sizeof(buf) - 12 && name[i])
+                *b++ = name[i++];
+        *b++ = '-';
+        while (1) {
+                random_id(b, 10);
+                b[10] = 0;
+                if (!facts_find_symbol(facts, buf))
+                        return facts_intern(facts, buf);
+        }
+        return NULL;
+}
+
 s_fact * facts_add_fact (s_facts *facts, s_fact *f)
 {
         s_fact intern;
