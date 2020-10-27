@@ -25,7 +25,7 @@ s_facts *g_f;
 START_TEST (test_facts_init_destroy)
 {
         s_facts f;
-        facts_init(&f, 100);
+        facts_init(&f, NULL, 100);
         ck_assert(!facts_count(&f));
         facts_destroy(&f);
 }
@@ -34,7 +34,7 @@ END_TEST
 START_TEST (test_facts_new_delete)
 {
         s_facts *f;
-        f = new_facts(100);
+        f = new_facts(NULL, 100);
         ck_assert(f);
         ck_assert(!facts_count(f));
         delete_facts(f);
@@ -43,7 +43,7 @@ END_TEST
 
 void setup_add_fact ()
 {
-        g_f = new_facts(100);
+        g_f = new_facts(NULL, 100);
 }
 
 void teardown_add_fact ()
@@ -135,7 +135,7 @@ END_TEST
 
 void setup_add_spo ()
 {
-        g_f = new_facts(100);
+        g_f = new_facts(NULL, 100);
 }
 
 void teardown_add_spo ()
@@ -205,7 +205,7 @@ END_TEST
 
 void setup_add ()
 {
-        g_f = new_facts(10);
+        g_f = new_facts(NULL, 10);
 }
 
 void teardown_add ()
@@ -278,7 +278,7 @@ END_TEST
 
 void setup_remove_fact ()
 {
-        g_f = new_facts(100);
+        g_f = new_facts(NULL, 100);
         facts_add_spo(g_f, "a", "b", "c");
         facts_add_spo(g_f, "b", "c", "d");
         facts_add_spo(g_f, "c", "d", "e");
@@ -380,7 +380,7 @@ END_TEST
 
 void setup_remove_spo ()
 {
-        g_f = new_facts(100);
+        g_f = new_facts(NULL, 100);
         facts_add_spo(g_f, "a", "b", "c");
         facts_add_spo(g_f, "b", "c", "d");
         facts_add_spo(g_f, "c", "d", "e");
@@ -451,7 +451,7 @@ END_TEST
 
 void setup_with_spo ()
 {
-        g_f = new_facts(100);
+        g_f = new_facts(NULL, 100);
         facts_add_spo(g_f, "a", "b", "c");
         facts_add_spo(g_f, "a", "b", "d");
         facts_add_spo(g_f, "a", "e", "d");
@@ -820,7 +820,7 @@ END_TEST
 
 void setup_write ()
 {
-        g_f = new_facts(10);
+        g_f = new_facts(NULL, 10);
 }
 
 void teardown_write ()
@@ -913,7 +913,7 @@ END_TEST
 
 void setup_read ()
 {
-        g_f = new_facts(10);
+        g_f = new_facts(NULL, 10);
 }
 
 void teardown_read ()
@@ -1000,7 +1000,7 @@ END_TEST
 
 void setup_write_facts_log ()
 {
-        g_f = new_facts(10);
+        g_f = new_facts(NULL, 10);
 }
 
 void teardown_write_facts_log ()
@@ -1147,7 +1147,7 @@ END_TEST
 
 void setup_read_facts_log ()
 {
-        g_f = new_facts(10);
+        g_f = new_facts(NULL, 10);
 }
 
 void teardown_read_facts_log ()
@@ -1213,7 +1213,7 @@ END_TEST
 
 void setup_anon ()
 {
-        g_f = new_facts(10);
+        g_f = new_facts(NULL, 10);
 }
 
 void teardown_anon ()

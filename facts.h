@@ -30,18 +30,22 @@
 
 typedef struct facts
 {
-        s_set set;
+        s_set *set;
+        size_t set_delete;
         s_skiplist *index_spo;
         s_skiplist *index_pos;
         s_skiplist *index_osp;
         FILE *log;
 } s_facts;
 
-void              facts_init (s_facts *facts, unsigned long max);
+void              facts_init (s_facts *facts,
+                              s_set *symbols,
+                              unsigned long max);
 
 void              facts_destroy (s_facts *facts);
 
-s_facts *     new_facts (unsigned long max);
+s_facts *     new_facts (s_set *symbols,
+                         unsigned long max);
 
 void       delete_facts (s_facts *facts);
 

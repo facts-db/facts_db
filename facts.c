@@ -23,11 +23,12 @@
 #include "facts.h"
 #include "rw.h"
 
-void facts_init (s_facts *facts, unsigned long max)
+void facts_init (s_facts *facts, s_set *symbols, unsigned long max)
 {
         unsigned long height;
         assert(facts);
-        set_init(&facts->set, max);
+        facts->set = symbols ? symbols : new_set(max);
+        facts->set_delete = !symbols;
         height = log(max) / log(FACTS_SKIPLIST_SPACING);
         facts->index_spo = new_skiplist(height, FACTS_SKIPLIST_SPACING);
         assert(facts->index_spo);
@@ -46,14 +47,15 @@ void facts_destroy (s_facts *facts)
         delete_skiplist(facts->index_spo);
         delete_skiplist(facts->index_pos);
         delete_skiplist(facts->index_osp);
-        set_destroy(&facts->set);
+        if (facts->set_delete)
+                delete_set(facts->set);
 }
 
-s_facts * new_facts (unsigned long max)
+s_facts * new_facts (s_set *symbols, unsigned long max)
 {
         s_facts *facts = malloc(sizeof(s_facts));
         if (facts)
-                facts_init(facts, max);
+                facts_init(facts, symbols, max);
         return facts;
 }
 
@@ -70,7 +72,7 @@ const char * facts_find_symbol (s_facts *facts, const char *string)
         assert(facts);
         assert(string);
         len = strlen(string);
-        i = set_get(&facts->set, string, len);
+        i = set_get(facts->set, string, len);
         if (i)
                 return i->data;
         return NULL;
@@ -83,11 +85,11 @@ const char * facts_intern (s_facts *facts, const char *string)
         assert(facts);
         assert(string);
         len = strlen(string);
-        i = set_get(&facts->set, string, len);
+        i = set_get(facts->set, string, len);
         if (!i) {
                 char *data = malloc(len + 1);
                 memcpy(data, string, len + 1);
-                i = set_add(&facts->set, data, len);
+                i = set_add(facts->set, data, len);
         }
         assert(i);
         i->usage++;
@@ -101,11 +103,11 @@ void facts_unintern (s_facts *facts, const char *string)
         assert(facts);
         assert(string);
         len = strlen(string);
-        i = set_get(&facts->set, string, len);
+        i = set_get(facts->set, string, len);
         if (i) {
                 i->usage--;
                 if (!i->usage)
-                        set_remove(&facts->set, i);
+                        set_remove(facts->set, i);
         }
 }
 
