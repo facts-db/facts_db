@@ -62,6 +62,9 @@ s_fact *          facts_add_spo (s_facts *facts,
                                  const char *p,
                                  const char *o);
 
+int               facts_add (s_facts *facts,
+                             p_spec spec);
+
 int               facts_remove_fact (s_facts *facts,
                                      s_fact *f);
 

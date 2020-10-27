@@ -40,7 +40,8 @@ check_facts_SOURCES = \
 	$(top_builddir)/farmhash.c \
 	$(top_builddir)/rw.c \
 	$(top_builddir)/set.c \
-	$(top_builddir)/skiplist.c
+	$(top_builddir)/skiplist.c \
+	$(top_builddir)/spec.c
 check_facts_CFLAGS = @CHECK_CFLAGS@ ${AM_CFLAGS}
 check_facts_LDADD = @CHECK_LIBS@
 

@@ -203,6 +203,79 @@ START_TEST (test_facts_add_spo_ten)
 }
 END_TEST
 
+void setup_add ()
+{
+        g_f = new_facts(10);
+}
+
+void teardown_add ()
+{
+        delete_facts(g_f);
+        g_f = NULL;
+}
+
+START_TEST (test_facts_add_one)
+{
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(!facts_add(g_f, (const char *[]) {
+                                "a", "b", "c", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 1);
+        ck_assert(!facts_add(g_f, (const char *[]) {
+                                "a", "b", "c", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 1);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(facts_find_symbol(g_f, "a"));
+}
+END_TEST
+
+START_TEST (test_facts_add_two)
+{
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(!facts_add(g_f, (const char *[]) {
+                                "a", "b", "c",
+                                "d", "e", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 2);
+        ck_assert(!facts_add(g_f, (const char *[]) {
+                                "a", "b", "c",
+                                "d", "e", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 2);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(facts_find_symbol(g_f, "a"));
+}
+END_TEST
+
+START_TEST (test_facts_add_ten)
+{
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(!facts_add(g_f, (const char *[]) {
+                                "a", "b", "c",
+                                "d", "e", NULL,
+                                "b", "c", "d",
+                                "e", "f",
+                                "g", "h", NULL,
+                                "i", "j", "k",
+                                "l", "m",
+                                "n", "o",
+                                "p", "q", NULL,
+                                "r", "s", "t", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 10);
+        ck_assert(!facts_add(g_f, (const char *[]) {
+                                "a", "b", "c",
+                                "d", "e", NULL,
+                                "b", "c", "d",
+                                "e", "f",
+                                "g", "h", NULL,
+                                "i", "j", "k",
+                                "l", "m",
+                                "n", "o",
+                                "p", "q", NULL,
+                                "r", "s", "t", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 10);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(facts_find_symbol(g_f, "a"));
+}
+END_TEST
+
 void setup_remove_fact ()
 {
         g_f = new_facts(100);
@@ -1176,6 +1249,7 @@ Suite * facts_suite(void)
     TCase *tc_init;
     TCase *tc_add_fact;
     TCase *tc_add_spo;
+    TCase *tc_add;
     TCase *tc_remove_fact;
     TCase *tc_remove_spo;
     TCase *tc_with_spo;
@@ -1203,6 +1277,13 @@ Suite * facts_suite(void)
     tcase_add_test(tc_add_spo, test_facts_add_spo_two);
     tcase_add_test(tc_add_spo, test_facts_add_spo_ten);
     suite_add_tcase(s, tc_add_spo);
+    tc_add = tcase_create("Add");
+    tcase_add_checked_fixture(tc_add, setup_add,
+                              teardown_add);
+    tcase_add_test(tc_add, test_facts_add_one);
+    tcase_add_test(tc_add, test_facts_add_two);
+    tcase_add_test(tc_add, test_facts_add_ten);
+    suite_add_tcase(s, tc_add);
     tc_remove_fact = tcase_create("Remove fact");
     tcase_add_checked_fixture(tc_remove_fact, setup_remove_fact,
                               teardown_remove_fact);

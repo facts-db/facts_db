@@ -187,6 +187,77 @@ s_fact * facts_add_spo (s_facts *facts, const char *s,
         return facts_add_fact(facts, &f);
 }
 
+size_t spec_count_bindings (p_spec spec)
+{
+        size_t count = 0;
+        size_t i = 0;
+        while (spec[i] || spec[i + 1]) {
+                if (spec[i] && spec[i][0] == '?')
+                        count++;
+                i++;
+        }
+        return count;
+}
+
+const char ** spec_bindings_anon_assoc (s_facts *facts, p_spec spec)
+{
+        const char **b;
+        const char **bindings;
+        size_t count;
+        assert(spec);
+        count = spec_count_bindings(spec);
+        bindings = calloc(count * 2 + 1, sizeof(char*));
+        if (bindings) {
+                size_t s = 0;
+                b = bindings;
+                while (spec[s] || spec[s + 1]) {
+                        if (spec[s] && spec[s][0] == '?') {
+                                *b++ = spec[s];
+                                *b++ = facts_anon(facts, spec[s]);
+                        }
+                        s++;
+                }
+                *b = NULL;
+        }
+        return bindings;
+}
+
+const char * assoc_get (const char **kv,
+                        const char *k)
+{
+        assert(kv);
+        assert(k);
+        while (*kv && strcmp(*kv, k))
+                kv += 2;
+        if (*kv)
+                return kv[1];
+        return NULL;
+}
+
+int facts_add (s_facts *facts, p_spec spec)
+{
+        const char **anon;
+        s_spec_cursor c;
+        s_fact f;
+        assert(facts);
+        assert(spec);
+        anon = spec_bindings_anon_assoc(facts, spec);
+        if (!anon)
+                return -1;
+        spec_cursor_init(&c, spec);
+        while (spec_cursor_next(&c, &f)) {
+                if (f.s[0] == '?')
+                        f.s = assoc_get(anon, f.s);
+                if (f.p[0] == '?')
+                        f.p = assoc_get(anon, f.p);
+                if (f.o[0] == '?')
+                        f.o = assoc_get(anon, f.o);
+                facts_add_fact(facts, &f);
+        }
+        free(anon);
+        return 0;
+}
+
 int facts_remove_fact (s_facts *facts, s_fact *f)
 {
         s_fact *found;
