@@ -63,6 +63,19 @@ void delete_facts (s_facts *facts)
         free(facts);
 }
 
+const char * facts_find_symbol (s_facts *facts, const char *string)
+{
+        s_set_item *i;
+        size_t len;
+        assert(facts);
+        assert(string);
+        len = strlen(string);
+        i = set_get(&facts->set, string, len);
+        if (i)
+                return i->data;
+        return NULL;
+}
+
 const char * facts_intern (s_facts *facts, const char *string)
 {
         s_set_item *i;

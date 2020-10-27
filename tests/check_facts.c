@@ -64,6 +64,8 @@ START_TEST (test_facts_add_fact_one)
         ck_assert(facts_count(g_f) == 1);
         ck_assert(ia == facts_add_fact(g_f, &aa));
         ck_assert(facts_count(g_f) == 1);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(facts_find_symbol(g_f, "a"));
 }
 END_TEST
 
@@ -88,6 +90,8 @@ START_TEST (test_facts_add_fact_two)
         ck_assert(facts_count(g_f) == 2);
         ck_assert(facts_add_fact(g_f, &bb) == ib);
         ck_assert(facts_count(g_f) == 2);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(facts_find_symbol(g_f, "a"));
 }
 END_TEST
 
@@ -124,6 +128,8 @@ START_TEST (test_facts_add_fact_ten)
         ck_assert(facts_count(g_f) == 9);
         ck_assert(facts_add_fact(g_f, &j));
         ck_assert(facts_count(g_f) == 10);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(facts_find_symbol(g_f, "a"));
 }
 END_TEST
 
@@ -146,6 +152,8 @@ START_TEST (test_facts_add_spo_one)
         ck_assert(facts_count(g_f) == 1);
         ck_assert(ia == facts_add_spo(g_f, "a", "b", "c"));
         ck_assert(facts_count(g_f) == 1);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(facts_find_symbol(g_f, "a"));
 }
 END_TEST
 
@@ -162,6 +170,8 @@ START_TEST (test_facts_add_spo_two)
         ck_assert(facts_count(g_f) == 2);
         ck_assert(facts_add_spo(g_f, "b", "c", "d") == ib);
         ck_assert(facts_count(g_f) == 2);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(facts_find_symbol(g_f, "a"));
 }
 END_TEST
 
@@ -188,6 +198,8 @@ START_TEST (test_facts_add_spo_ten)
         ck_assert(facts_count(g_f) == 9);
         ck_assert(facts_add_spo(g_f, "j", "k", "l"));
         ck_assert(facts_count(g_f) == 10);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(facts_find_symbol(g_f, "a"));
 }
 END_TEST
 
@@ -220,6 +232,9 @@ START_TEST (test_facts_remove_fact_one)
         ck_assert(facts_count(g_f) == 9);
         ck_assert(!facts_remove_fact(g_f, &a));
         ck_assert(facts_count(g_f) == 9);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(!facts_find_symbol(g_f, "a"));
+        ck_assert(facts_find_symbol(g_f, "j"));
 }
 END_TEST
 
@@ -236,6 +251,10 @@ START_TEST (test_facts_remove_fact_two)
         ck_assert(facts_count(g_f) == 8);
         ck_assert(!facts_remove_fact(g_f, &b));
         ck_assert(facts_count(g_f) == 8);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(!facts_find_symbol(g_f, "a"));
+        ck_assert(!facts_find_symbol(g_f, "b"));
+        ck_assert(facts_find_symbol(g_f, "j"));
 }
 END_TEST
 
@@ -272,6 +291,17 @@ START_TEST (test_facts_remove_fact_ten)
         ck_assert(facts_count(g_f) == 1);
         ck_assert(facts_remove_fact(g_f, &j));
         ck_assert(facts_count(g_f) == 0);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(!facts_find_symbol(g_f, "a"));
+        ck_assert(!facts_find_symbol(g_f, "b"));
+        ck_assert(!facts_find_symbol(g_f, "c"));
+        ck_assert(!facts_find_symbol(g_f, "d"));
+        ck_assert(!facts_find_symbol(g_f, "e"));
+        ck_assert(!facts_find_symbol(g_f, "f"));
+        ck_assert(!facts_find_symbol(g_f, "g"));
+        ck_assert(!facts_find_symbol(g_f, "h"));
+        ck_assert(!facts_find_symbol(g_f, "i"));
+        ck_assert(!facts_find_symbol(g_f, "j"));
 }
 END_TEST
 
