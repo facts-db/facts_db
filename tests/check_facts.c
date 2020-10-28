@@ -278,6 +278,8 @@ END_TEST
 
 START_TEST (test_facts_add_anon)
 {
+        FILE *fp = fopen("test_facts_add_anon", "w");
+        ck_assert(fp);
         ck_assert(facts_count(g_f) == 0);
         ck_assert(!facts_add(g_f, (const char *[]) {
                                 "?a", "b", "c",
@@ -299,6 +301,7 @@ START_TEST (test_facts_add_anon)
         ck_assert(facts_count(g_f) == 14);
         ck_assert(!facts_find_symbol(g_f, "0"));
         ck_assert(facts_find_symbol(g_f, "b"));
+        ck_assert(!write_facts(g_f, fp));
 }
 END_TEST
 

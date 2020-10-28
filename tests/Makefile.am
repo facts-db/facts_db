@@ -44,6 +44,17 @@ check_facts_SOURCES = \
 	$(top_builddir)/spec.c
 check_facts_CFLAGS = @CHECK_CFLAGS@ ${AM_CFLAGS}
 check_facts_LDADD = @CHECK_LIBS@
+CLEANFILES += \
+	test_facts_add_anon \
+	test_write_facts_empty \
+	test_write_facts_escapes \
+	test_write_facts_log_escapes \
+	test_write_facts_log_one \
+	test_write_facts_log_ten \
+	test_write_facts_log_two \
+	test_write_facts_one \
+	test_write_facts_ten \
+	test_write_facts_two
 
 facts.c.gcov:
 	gcov check_facts-facts.c

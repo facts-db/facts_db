@@ -21,6 +21,7 @@ stamp-h1
 *.gcov
 /tests/check_fact
 /tests/check_facts
+/tests/test_facts_add_anon
 /tests/test_write_facts_empty
 /tests/test_write_facts_one
 /tests/test_write_facts_two
