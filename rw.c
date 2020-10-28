@@ -141,22 +141,24 @@ int write_facts (s_facts *facts, FILE *fp)
 
 int read_fact (s_facts *facts, s_fact *f, FILE *fp)
 {
-        char *buf = calloc(FACTS_LOAD_BUFSZ, sizeof(char));
+        char *buf;
         assert(facts);
         assert(f);
-        if (read_string(buf, sizeof(buf), fp))
+        if (!(buf = calloc(FACTS_LOAD_BUFSZ, sizeof(char))))
+                return -1;
+        if (read_string(buf, FACTS_LOAD_BUFSZ, fp))
                 goto error;
         if (!buf[0])
                 goto error;
         if (!(f->s = facts_intern(facts, buf)))
                 goto error;
-        if (read_string(buf, sizeof(buf), fp))
+        if (read_string(buf, FACTS_LOAD_BUFSZ, fp))
                 goto error;
         if (!buf[0])
                 goto error;
         if (!(f->p = facts_intern(facts, buf)))
                 goto error;
-        if (read_string(buf, sizeof(buf), fp))
+        if (read_string(buf, FACTS_LOAD_BUFSZ, fp))
                 goto error;
         if (!buf[0])
                 goto error;
