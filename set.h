@@ -20,8 +20,8 @@
 typedef struct set_item s_set_item;
 
 struct set_item {
-        size_t len;
         void *data;
+        size_t len;
         size_t hash;
         s_set_item *next;
         unsigned long usage;

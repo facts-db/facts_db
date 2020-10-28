@@ -17,6 +17,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "rw.h"
 
@@ -140,32 +141,36 @@ int write_facts (s_facts *facts, FILE *fp)
 
 int read_fact (s_facts *facts, s_fact *f, FILE *fp)
 {
-        char buf[FACTS_LOAD_BUFSZ];
+        char *buf = calloc(FACTS_LOAD_BUFSZ, sizeof(char));
         assert(facts);
         assert(f);
         if (read_string(buf, sizeof(buf), fp))
-                return -1;
+                goto error;
         if (!buf[0])
-                return -1;
+                goto error;
         if (!(f->s = facts_intern(facts, buf)))
-                return -1;
+                goto error;
         if (read_string(buf, sizeof(buf), fp))
-                return -1;
+                goto error;
         if (!buf[0])
-                return -1;
+                goto error;
         if (!(f->p = facts_intern(facts, buf)))
-                return -1;
+                goto error;
         if (read_string(buf, sizeof(buf), fp))
-                return -1;
+                goto error;
         if (!buf[0])
-                return -1;
+                goto error;
         if (!(f->o = facts_intern(facts, buf)))
-                return -1;
+                goto error;
         if (fread(buf, 1, 1, fp) != 1)
-                return -1;
+                goto error;
         if (buf[0] != '\n')
-                return -1;
+                goto error;
+        free(buf);
         return 0;
+ error:
+        free(buf);
+        return -1;
 }
 
 static int fpeek (FILE *fp)

@@ -133,4 +133,35 @@ void              facts_with_spo (s_facts *facts,
                                   const char *p,
                                   const char *o);
 
+typedef struct facts_with_cursor_level {
+        int active;
+        s_facts_cursor c;
+        s_fact *fact;
+        s_fact spec;
+} s_facts_with_cursor_level;
+
+typedef struct facts_with_cursor {
+        s_facts *facts;
+        s_binding *bindings;
+        size_t facts_count;
+        s_facts_with_cursor_level *l;
+        size_t level;
+        p_spec spec;
+} s_facts_with_cursor;
+
+void              facts_with_cursor_init (s_facts *facts,
+                                          s_binding *bindings,
+                                          s_facts_with_cursor *c,
+                                          p_spec spec,
+                                          size_t facts_count);
+
+void              facts_with_cursor_destroy (s_facts_with_cursor *c);
+
+int               facts_with_cursor_next (s_facts_with_cursor *c);
+
+void              facts_with (s_facts *facts,
+                              s_binding *bindings,
+                              s_facts_with_cursor *c,
+                              p_spec spec);
+
 #endif

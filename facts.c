@@ -189,18 +189,6 @@ s_fact * facts_add_spo (s_facts *facts, const char *s,
         return facts_add_fact(facts, &f);
 }
 
-size_t spec_count_bindings (p_spec spec)
-{
-        size_t count = 0;
-        size_t i = 0;
-        while (spec[i] || spec[i + 1]) {
-                if (spec[i] && spec[i][0] == '?')
-                        count++;
-                i++;
-        }
-        return count;
-}
-
 const char ** spec_bindings_anon_assoc (s_facts *facts, p_spec spec)
 {
         const char **b;
@@ -373,6 +361,12 @@ s_fact * facts_cursor_next (s_facts_cursor *c)
                         *c->var_o = f->o;
                 return f;
         }
+        if (c->var_s)
+                *c->var_s = NULL;
+        if (c->var_p)
+                *c->var_p = NULL;
+        if (c->var_o)
+                *c->var_o = NULL;
         return NULL;
 }
 
@@ -455,4 +449,98 @@ void facts_with_spo (s_facts *facts,
                 facts_with_3(facts, c, s, p, o);
         else
                 facts_with_1_2(facts, c, s, p, o, var_s, var_p, var_o);
+}
+
+void facts_with_cursor_init (s_facts *facts, s_binding *bindings,
+                             s_facts_with_cursor *c, p_spec spec,
+                             size_t facts_count)
+{
+        assert(facts);
+        assert(bindings);
+        assert(c);
+        assert(spec);
+        c->facts = facts;
+        c->bindings = bindings;
+        c->facts_count = facts_count;
+        if (facts_count > 0) {
+                size_t i;
+                c->l = calloc(facts_count,
+                              sizeof(s_facts_with_cursor_level));
+                c->spec = spec_expand(spec);
+                spec_sort(c->spec);
+                for (i = 0; i < facts_count; i++) {
+                        c->l[i].spec.s = c->spec[i * 4];
+                        c->l[i].spec.p = c->spec[i * 4 + 1];
+                        c->l[i].spec.o = c->spec[i * 4 + 2];
+                }
+        }
+        else {
+                c->l = NULL;
+                c->spec = NULL;
+        }
+        c->level = 0;
+}
+
+void facts_with_cursor_destroy (s_facts_with_cursor *c)
+{
+        assert(c);
+        free(c->l);
+        if (c->spec)
+                free(c->spec);
+        c->facts = NULL;
+        c->bindings = NULL;
+        c->facts_count = 0;
+        c->l = NULL;
+        c->level = 0;
+        c->spec = NULL;
+}
+
+int facts_with_cursor_next (s_facts_with_cursor *c)
+{
+        assert(c);
+        if (!c->facts_count)
+                return 0;
+        if (c->level == c->facts_count) {
+                s_facts_with_cursor_level *l =
+                        c->l + (c->facts_count - 1);
+                l->fact = facts_cursor_next(&l->c);
+                if (l->fact)
+                        return 1;
+                l->active = 0;
+                c->level--;
+        }
+        else
+                while (c->level < c->facts_count) {
+                        s_facts_with_cursor_level *l = c->l + c->level;
+                        if (!l->active) {
+                                facts_with_spo(c->facts, c->bindings,
+                                               &l->c, l->spec.s,
+                                               l->spec.p, l->spec.o);
+                                l->active = 1;
+                        }
+                        l->fact = facts_cursor_next(&l->c);
+                        if (l->fact)
+                                c->level++;
+                        else {
+                                l->active = 0;
+                                if (c->level > 0)
+                                        c->level--;
+                                else {
+                                        c->facts_count = 0;
+                                        return 0;
+                                }
+                        }
+                }
+        return 1;
+}
+
+void facts_with (s_facts *facts, s_binding *bindings,
+                 s_facts_with_cursor *c, p_spec spec)
+{
+        size_t facts_count;
+        assert(facts);
+        assert(c);
+        assert(spec);
+        facts_count = spec_count_facts(spec);
+        facts_with_cursor_init(facts, bindings, c, spec, facts_count);
 }
