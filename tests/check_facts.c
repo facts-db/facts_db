@@ -1272,6 +1272,138 @@ START_TEST (test_facts_anon)
 }
 END_TEST
 
+void setup_with ()
+{
+        g_f = new_facts(NULL, 10);
+        facts_add_spo(g_f, "a", "b", "c");
+        facts_add_spo(g_f, "a", "b", "d");
+        facts_add_spo(g_f, "a", "e", "d");
+        facts_add_spo(g_f, "g", "b", "c");
+        facts_add_spo(g_f, "h", "i", "c");
+}
+
+void teardown_with ()
+{
+        delete_facts(g_f);
+        g_f = NULL;
+}
+
+START_TEST (test_facts_with_empty)
+{
+        s_facts *facts = new_facts(NULL, 10);
+        s_facts_with_cursor c;
+        ck_assert(facts);
+        facts_with(facts, NULL, &c, (const char *[]) {NULL, NULL});
+        ck_assert(!facts_with_cursor_next(&c));
+        facts_with_cursor_destroy(&c);
+        facts_with(facts, NULL, &c, (const char *[]) {
+                        "a", "a", "a", NULL, NULL});
+        printf("a\n");
+        ck_assert(!facts_with_cursor_next(&c));
+        printf("b\n");
+        facts_with_cursor_destroy(&c);
+        printf("c\n");
+        facts_with(facts, NULL, &c, (const char *[]) {
+                        "a", "a", "a", "b", "c", NULL, NULL});
+        printf("d\n");
+        ck_assert(!facts_with_cursor_next(&c));
+        printf("e\n");
+        facts_with_cursor_destroy(&c);
+        printf("f\n");
+        facts_with(facts, NULL, &c, (const char *[]) {
+                        "a", "a", "a", NULL,
+                        "a", "b", "c", NULL, NULL});
+        ck_assert(!facts_with_cursor_next(&c));
+        facts_with_cursor_destroy(&c);
+        delete_facts(facts);
+        facts_with(g_f, NULL, &c, (const char *[]) {NULL, NULL});
+        ck_assert(!facts_with_cursor_next(&c));
+        facts_with_cursor_destroy(&c);
+        facts_with(g_f, NULL, &c, (const char *[]) {
+                        "a", "a", "a", NULL, NULL});
+        ck_assert(!facts_with_cursor_next(&c));
+        facts_with_cursor_destroy(&c);
+        facts_with(g_f, NULL, &c, (const char *[]) {
+                        "a", "a", "a", "b", "c", NULL, NULL});
+        ck_assert(!facts_with_cursor_next(&c));
+        facts_with_cursor_destroy(&c);
+        facts_with(g_f, NULL, &c, (const char *[]) {
+                        "a", "a", "a", NULL,
+                        "a", "b", "c", NULL, NULL});
+        ck_assert(!facts_with_cursor_next(&c));
+        facts_with_cursor_destroy(&c);
+}
+END_TEST
+
+START_TEST (test_facts_with_one)
+{
+        const char *a;
+        const char *b;
+        const char *c;
+        const char *d;
+        s_binding bindings[] = {{"?a", &a},
+                                {"?b", &b},
+                                {"?c", &c},
+                                {"?d", &d},
+                                {NULL, NULL}};
+        s_facts *facts = new_facts(NULL, 10);
+        s_facts_with_cursor cur;
+        ck_assert(facts);
+        ck_assert(facts_count(facts) == 0);
+        ck_assert(facts_add_spo(facts, "a", "b", "c"));
+        ck_assert(facts_count(facts) == 1);
+        facts_with(facts, NULL, &cur, (const char *[]) {
+                        "a", "b", "c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(facts, bindings, &cur, (const char *[]) {
+                        "?a", "?b", "?c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "a"));
+        ck_assert(!strcmp(b, "b"));
+        ck_assert(!strcmp(c, "c"));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(facts, bindings, &cur, (const char *[]) {
+                        "?a", "b", "c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "a"));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(facts, bindings, &cur, (const char *[]) {
+                        "a", "?b", "c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(b, "b"));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(facts, bindings, &cur, (const char *[]) {
+                        "a", "b", "?c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(c, "c"));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(g_f, NULL, &cur, (const char *[]) {
+                        "a", "b", "c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(g_f, NULL, &cur, (const char *[]) {
+                        "a", "b", "c", "b", "d", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(g_f, bindings, &cur, (const char *[]) {
+                        "a", "b", "c", NULL,
+                        "g", "?b", "?c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(b, "b"));
+        ck_assert(!strcmp(c, "c"));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+}
+END_TEST
+
 Suite * facts_suite(void)
 {
     Suite *s;
@@ -1287,6 +1419,7 @@ Suite * facts_suite(void)
     TCase *tc_write_log;
     TCase *tc_read_log;
     TCase *tc_anon;
+    TCase *tc_with;
     s = suite_create("Facts");
     tc_init = tcase_create("Init");
     tcase_add_test(tc_init, test_facts_init_destroy);
@@ -1377,6 +1510,15 @@ Suite * facts_suite(void)
     tcase_add_checked_fixture(tc_anon, setup_anon, teardown_anon);
     tcase_add_test(tc_anon, test_facts_anon);
     suite_add_tcase(s, tc_anon);
+    tc_with = tcase_create("With");
+    tcase_add_checked_fixture(tc_with, setup_with, teardown_with);
+    tcase_add_test(tc_with, test_facts_with_empty);
+    tcase_add_test(tc_with, test_facts_with_one);
+    /*
+    tcase_add_test(tc_with, test_facts_with_two);
+    tcase_add_test(tc_with, test_facts_with_ten);
+    */
+    suite_add_tcase(s, tc_with);
     return s;
 }
 

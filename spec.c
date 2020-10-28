@@ -47,7 +47,10 @@ size_t spec_count_facts (p_spec spec)
 /* calls malloc to return a new p_spec */
 p_spec spec_expand (p_spec spec)
 {
-        size_t count = spec_count_facts(spec);
+        size_t count;
+        assert(spec);
+        fprintf(stderr, "spec_expand\n");
+        count = spec_count_facts(spec);
         if (count > 0) {
                 s_spec_cursor c;
                 s_fact f;
@@ -95,14 +98,17 @@ int fact_compare_bindings (s_fact *a, s_fact *b)
 /* this only works on expanded specs : (s, p, o, NULL)*, NULL. */
 p_spec spec_sort (p_spec spec)
 {
-        size_t count = spec_count_facts(spec);
+        size_t count;
         size_t i;
+        assert(spec);
+        fprintf(stderr, "spec_sort\n");
+        count = spec_count_facts(spec);
         if (count)
                 for (i = 0; i < count - 1; i++) {
                         size_t j;
                         for (j = 0; j < count - i - 1; j++) {
-                                s_fact *a = (s_fact*) spec[j * 4];
-                                s_fact *b = (s_fact*) spec[(j + 1) * 4];
+                                s_fact *a = (s_fact*) (spec + j * 4);
+                                s_fact *b = (s_fact*) (spec + (j + 1) * 4);
                                 if (fact_compare_bindings(a, b) > 0) {
                                         s_fact swap = *a;
                                         *a = *b;
@@ -110,6 +116,7 @@ p_spec spec_sort (p_spec spec)
                                 }
                         }
                 }
+        fprintf(stderr, "spec_sort end\n");
         return spec;
 }
 

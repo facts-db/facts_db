@@ -456,7 +456,6 @@ void facts_with_cursor_init (s_facts *facts, s_binding *bindings,
                              size_t facts_count)
 {
         assert(facts);
-        assert(bindings);
         assert(c);
         assert(spec);
         c->facts = facts;
@@ -498,39 +497,47 @@ void facts_with_cursor_destroy (s_facts_with_cursor *c)
 int facts_with_cursor_next (s_facts_with_cursor *c)
 {
         assert(c);
+        fprintf(stderr, "facts_with_cursor_next %p\n", (void*) c);
         if (!c->facts_count)
                 return 0;
         if (c->level == c->facts_count) {
                 s_facts_with_cursor_level *l =
                         c->l + (c->facts_count - 1);
                 l->fact = facts_cursor_next(&l->c);
-                if (l->fact)
+                if (l->fact) {
+                        fprintf(stderr, "%p fact %s %s %s\n",
+                                (void*) c, l->fact->s,
+                                l->fact->p, l->fact->o);
                         return 1;
+                }
                 l->active = 0;
                 c->level--;
         }
-        else
-                while (c->level < c->facts_count) {
-                        s_facts_with_cursor_level *l = c->l + c->level;
-                        if (!l->active) {
-                                facts_with_spo(c->facts, c->bindings,
-                                               &l->c, l->spec.s,
-                                               l->spec.p, l->spec.o);
-                                l->active = 1;
-                        }
-                        l->fact = facts_cursor_next(&l->c);
-                        if (l->fact)
-                                c->level++;
+        while (c->level < c->facts_count) {
+                s_facts_with_cursor_level *l = c->l + c->level;
+                if (!l->active) {
+                        facts_with_spo(c->facts, c->bindings,
+                                       &l->c, l->spec.s,
+                                       l->spec.p, l->spec.o);
+                        l->active = 1;
+                }
+                l->fact = facts_cursor_next(&l->c);
+                if (l->fact) {
+                        fprintf(stderr, "%p fact %s %s %s\n",
+                                (void*) c, l->fact->s,
+                                l->fact->p, l->fact->o);
+                        c->level++;
+                }
+                else {
+                        l->active = 0;
+                        if (c->level > 0)
+                                c->level--;
                         else {
-                                l->active = 0;
-                                if (c->level > 0)
-                                        c->level--;
-                                else {
-                                        c->facts_count = 0;
-                                        return 0;
-                                }
+                                c->facts_count = 0;
+                                return 0;
                         }
                 }
+        }
         return 1;
 }
 
