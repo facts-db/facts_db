@@ -100,5 +100,6 @@ spec.c.gcov:
 GCOV += spec.c.gcov
 
 gcov: ${GCOV}
+CLEANFILES += *.gcov
 
 .PHONY: gcov ${GCOV}
