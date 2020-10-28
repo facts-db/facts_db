@@ -276,6 +276,32 @@ START_TEST (test_facts_add_ten)
 }
 END_TEST
 
+START_TEST (test_facts_add_anon)
+{
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(!facts_add(g_f, (const char *[]) {
+                                "?a", "b", "c",
+                                "d", "?e",
+                                "?f", "g",
+                                "?h", "?i", NULL,
+                                "i", "j", "?k",
+                                "?l", "m",
+                                "?n", "?o", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 7);
+        ck_assert(!facts_add(g_f, (const char *[]) {
+                                "?a", "b", "c",
+                                "d", "?e",
+                                "?f", "g",
+                                "?h", "?i", NULL,
+                                "i", "j", "?k",
+                                "?l", "m",
+                                "?n", "?o", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 14);
+        ck_assert(!facts_find_symbol(g_f, "0"));
+        ck_assert(facts_find_symbol(g_f, "b"));
+}
+END_TEST
+
 void setup_remove_fact ()
 {
         g_f = new_facts(NULL, 100);
@@ -1283,6 +1309,7 @@ Suite * facts_suite(void)
     tcase_add_test(tc_add, test_facts_add_one);
     tcase_add_test(tc_add, test_facts_add_two);
     tcase_add_test(tc_add, test_facts_add_ten);
+    tcase_add_test(tc_add, test_facts_add_anon);
     suite_add_tcase(s, tc_add);
     tc_remove_fact = tcase_create("Remove fact");
     tcase_add_checked_fixture(tc_remove_fact, setup_remove_fact,
