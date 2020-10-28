@@ -345,6 +345,7 @@ void facts_cursor_init (s_facts *facts,
 s_fact * facts_cursor_next (s_facts_cursor *c)
 {
         assert(c);
+        fprintf(stderr, "facts_cursor_next\n");
         if (c->node) {
                 c->node = skiplist_node_next(c->node, 0);
                 if (c->node &&
@@ -440,6 +441,7 @@ void facts_with_spo (s_facts *facts,
         assert(s);
         assert(p);
         assert(o);
+        fprintf(stderr, "facts_with_spo %s %s %s\n", s, p, o);
         var_s = (s[0] == '?') ? bindings_get(bindings, s) : NULL;
         var_p = (p[0] == '?') ? bindings_get(bindings, p) : NULL;
         var_o = (o[0] == '?') ? bindings_get(bindings, o) : NULL;
@@ -458,6 +460,7 @@ void facts_with_cursor_init (s_facts *facts, s_binding *bindings,
         assert(facts);
         assert(c);
         assert(spec);
+        fprintf(stderr, "facts_with_cursor_init\n");
         c->facts = facts;
         c->bindings = bindings;
         c->facts_count = facts_count;
@@ -512,6 +515,11 @@ int facts_with_cursor_next (s_facts_with_cursor *c)
                 }
                 l->active = 0;
                 c->level--;
+                if (!c->level) {
+                        c->facts_count = 0;
+                        return 0;
+                }
+                c->level--;
         }
         while (c->level < c->facts_count) {
                 s_facts_with_cursor_level *l = c->l + c->level;
@@ -523,15 +531,22 @@ int facts_with_cursor_next (s_facts_with_cursor *c)
                 }
                 l->fact = facts_cursor_next(&l->c);
                 if (l->fact) {
-                        fprintf(stderr, "%p fact %s %s %s\n",
-                                (void*) c, l->fact->s,
+                        fprintf(stderr, "%p fact(%li) %s %s %s\n",
+                                (void*) c, c->level, l->fact->s,
                                 l->fact->p, l->fact->o);
                         c->level++;
                 }
                 else {
+                        fprintf(stderr, "%p level down %li\n",
+                                (void*) c, c->level);
                         l->active = 0;
-                        if (c->level > 0)
+                        if (c->level > 0) {
                                 c->level--;
+                                if (!c->level) {
+                                        c->facts_count = 0;
+                                        return 0;
+                                }
+                        }
                         else {
                                 c->facts_count = 0;
                                 return 0;
