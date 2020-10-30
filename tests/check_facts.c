@@ -1665,133 +1665,134 @@ END_TEST
 
 Suite * facts_suite(void)
 {
-    Suite *s;
-    TCase *tc_init;
-    TCase *tc_add_fact;
-    TCase *tc_add_spo;
-    TCase *tc_add;
-    TCase *tc_remove_fact;
-    TCase *tc_remove_spo;
-    TCase *tc_with_spo;
-    TCase *tc_write;
-    TCase *tc_read;
-    TCase *tc_write_log;
-    TCase *tc_read_log;
-    TCase *tc_anon;
-    TCase *tc_with;
-    s = suite_create("Facts");
-    tc_init = tcase_create("Init");
-    tcase_add_test(tc_init, test_facts_init_destroy);
-    tcase_add_test(tc_init, test_facts_new_delete);
-    suite_add_tcase(s, tc_init);
-    tc_add_fact = tcase_create("Add fact");
-    tcase_add_checked_fixture(tc_add_fact, setup_add_fact,
-                              teardown_add_fact);
-    tcase_add_test(tc_add_fact, test_facts_add_fact_one);
-    tcase_add_test(tc_add_fact, test_facts_add_fact_two);
-    tcase_add_test(tc_add_fact, test_facts_add_fact_ten);
-    suite_add_tcase(s, tc_add_fact);
-    tc_add_spo = tcase_create("Add SPO");
-    tcase_add_checked_fixture(tc_add_spo, setup_add_spo,
-                              teardown_add_spo);
-    tcase_add_test(tc_add_spo, test_facts_add_spo_one);
-    tcase_add_test(tc_add_spo, test_facts_add_spo_two);
-    tcase_add_test(tc_add_spo, test_facts_add_spo_ten);
-    suite_add_tcase(s, tc_add_spo);
-    tc_add = tcase_create("Add");
-    tcase_add_checked_fixture(tc_add, setup_add,
-                              teardown_add);
-    tcase_add_test(tc_add, test_facts_add_one);
-    tcase_add_test(tc_add, test_facts_add_two);
-    tcase_add_test(tc_add, test_facts_add_ten);
-    tcase_add_test(tc_add, test_facts_add_anon);
-    suite_add_tcase(s, tc_add);
-    tc_remove_fact = tcase_create("Remove fact");
-    tcase_add_checked_fixture(tc_remove_fact, setup_remove_fact,
-                              teardown_remove_fact);
-    tcase_add_test(tc_remove_fact, test_facts_remove_fact_one);
-    tcase_add_test(tc_remove_fact, test_facts_remove_fact_two);
-    tcase_add_test(tc_remove_fact, test_facts_remove_fact_ten);
-    suite_add_tcase(s, tc_remove_fact);
-    tc_remove_spo = tcase_create("Remove SPO");
-    tcase_add_checked_fixture(tc_remove_spo, setup_remove_spo,
-                              teardown_remove_spo);
-    tcase_add_test(tc_remove_spo, test_facts_remove_spo_one);
-    tcase_add_test(tc_remove_spo, test_facts_remove_spo_two);
-    tcase_add_test(tc_remove_spo, test_facts_remove_spo_ten);
-    suite_add_tcase(s, tc_remove_spo);
-    tc_with_spo = tcase_create("With SPO");
-    tcase_add_checked_fixture(tc_with_spo, setup_with_spo,
-                              teardown_with_spo);
-    tcase_add_test(tc_with_spo, test_facts_with_spo_0);
-    tcase_add_test(tc_with_spo, test_facts_with_spo_3);
-    tcase_add_test(tc_with_spo, test_facts_with_spo_s);
-    tcase_add_test(tc_with_spo, test_facts_with_spo_p);
-    tcase_add_test(tc_with_spo, test_facts_with_spo_o);
-    tcase_add_test(tc_with_spo, test_facts_with_spo_sp);
-    tcase_add_test(tc_with_spo, test_facts_with_spo_po);
-    tcase_add_test(tc_with_spo, test_facts_with_spo_os);
-    suite_add_tcase(s, tc_with_spo);
-    tc_write = tcase_create("Write");
-    tcase_add_checked_fixture(tc_write, setup_write, teardown_write);
-    tcase_add_test(tc_write, test_write_facts_empty);
-    tcase_add_test(tc_write, test_write_facts_one);
-    tcase_add_test(tc_write, test_write_facts_two);
-    tcase_add_test(tc_write, test_write_facts_ten);
-    tcase_add_test(tc_write, test_write_facts_escapes);
-    suite_add_tcase(s, tc_write);
-    tc_read = tcase_create("Read");
-    tcase_add_checked_fixture(tc_read, setup_read, teardown_read);
-    tcase_add_test(tc_read, test_read_facts_empty);
-    tcase_add_test(tc_read, test_read_facts_one);
-    tcase_add_test(tc_read, test_read_facts_two);
-    tcase_add_test(tc_read, test_read_facts_ten);
-    tcase_add_test(tc_read, test_read_facts_escapes);
-    suite_add_tcase(s, tc_read);
-    tc_write_log = tcase_create("Write log");
-    tcase_add_checked_fixture(tc_write_log, setup_write_facts_log,
-                              teardown_write_facts_log);
-    tcase_add_test(tc_write_log, test_write_facts_log_one);
-    tcase_add_test(tc_write_log, test_write_facts_log_two);
-    tcase_add_test(tc_write_log, test_write_facts_log_ten);
-    tcase_add_test(tc_write_log, test_write_facts_log_escapes);
-    suite_add_tcase(s, tc_write_log);
-    tc_read_log = tcase_create("Read log");
-    tcase_add_checked_fixture(tc_read_log, setup_read_facts_log,
-                              teardown_read_facts_log);
-    tcase_add_test(tc_read_log, test_read_facts_log_empty);
-    tcase_add_test(tc_read_log, test_read_facts_log_one);
-    tcase_add_test(tc_read_log, test_read_facts_log_two);
-    tcase_add_test(tc_read_log, test_read_facts_log_ten);
-    tcase_add_test(tc_read_log, test_read_facts_log_escapes);
-    suite_add_tcase(s, tc_read_log);
-    tc_anon = tcase_create("Anon");
-    tcase_add_checked_fixture(tc_anon, setup_anon, teardown_anon);
-    tcase_add_test(tc_anon, test_facts_anon);
-    suite_add_tcase(s, tc_anon);
-    tc_with = tcase_create("With");
-    tcase_add_checked_fixture(tc_with, setup_with, teardown_with);
-    tcase_add_test(tc_with, test_facts_with_empty);
-    tcase_add_test(tc_with, test_facts_with_zero);
-    tcase_add_test(tc_with, test_facts_with_one);
-    tcase_add_test(tc_with, test_facts_with_two);
-    tcase_add_test(tc_with, test_facts_with_three);
-    tcase_add_test(tc_with, test_facts_with_bindings);
-    suite_add_tcase(s, tc_with);
-    return s;
+        Suite *s;
+        TCase *tc_init;
+        TCase *tc_add_fact;
+        TCase *tc_add_spo;
+        TCase *tc_add;
+        TCase *tc_remove_fact;
+        TCase *tc_remove_spo;
+        TCase *tc_with_spo;
+        TCase *tc_write;
+        TCase *tc_read;
+        TCase *tc_write_log;
+        TCase *tc_read_log;
+        TCase *tc_anon;
+        TCase *tc_with;
+        s = suite_create("Facts");
+        tc_init = tcase_create("Init");
+        tcase_add_test(tc_init, test_facts_init_destroy);
+        tcase_add_test(tc_init, test_facts_new_delete);
+        suite_add_tcase(s, tc_init);
+        tc_add_fact = tcase_create("Add fact");
+        tcase_add_checked_fixture(tc_add_fact, setup_add_fact,
+                                  teardown_add_fact);
+        tcase_add_test(tc_add_fact, test_facts_add_fact_one);
+        tcase_add_test(tc_add_fact, test_facts_add_fact_two);
+        tcase_add_test(tc_add_fact, test_facts_add_fact_ten);
+        suite_add_tcase(s, tc_add_fact);
+        tc_add_spo = tcase_create("Add SPO");
+        tcase_add_checked_fixture(tc_add_spo, setup_add_spo,
+                                  teardown_add_spo);
+        tcase_add_test(tc_add_spo, test_facts_add_spo_one);
+        tcase_add_test(tc_add_spo, test_facts_add_spo_two);
+        tcase_add_test(tc_add_spo, test_facts_add_spo_ten);
+        suite_add_tcase(s, tc_add_spo);
+        tc_add = tcase_create("Add");
+        tcase_add_checked_fixture(tc_add, setup_add,
+                                  teardown_add);
+        tcase_add_test(tc_add, test_facts_add_one);
+        tcase_add_test(tc_add, test_facts_add_two);
+        tcase_add_test(tc_add, test_facts_add_ten);
+        tcase_add_test(tc_add, test_facts_add_anon);
+        suite_add_tcase(s, tc_add);
+        tc_remove_fact = tcase_create("Remove fact");
+        tcase_add_checked_fixture(tc_remove_fact, setup_remove_fact,
+                                  teardown_remove_fact);
+        tcase_add_test(tc_remove_fact, test_facts_remove_fact_one);
+        tcase_add_test(tc_remove_fact, test_facts_remove_fact_two);
+        tcase_add_test(tc_remove_fact, test_facts_remove_fact_ten);
+        suite_add_tcase(s, tc_remove_fact);
+        tc_remove_spo = tcase_create("Remove SPO");
+        tcase_add_checked_fixture(tc_remove_spo, setup_remove_spo,
+                                  teardown_remove_spo);
+        tcase_add_test(tc_remove_spo, test_facts_remove_spo_one);
+        tcase_add_test(tc_remove_spo, test_facts_remove_spo_two);
+        tcase_add_test(tc_remove_spo, test_facts_remove_spo_ten);
+        suite_add_tcase(s, tc_remove_spo);
+        tc_with_spo = tcase_create("With SPO");
+        tcase_add_checked_fixture(tc_with_spo, setup_with_spo,
+                                  teardown_with_spo);
+        tcase_add_test(tc_with_spo, test_facts_with_spo_0);
+        tcase_add_test(tc_with_spo, test_facts_with_spo_3);
+        tcase_add_test(tc_with_spo, test_facts_with_spo_s);
+        tcase_add_test(tc_with_spo, test_facts_with_spo_p);
+        tcase_add_test(tc_with_spo, test_facts_with_spo_o);
+        tcase_add_test(tc_with_spo, test_facts_with_spo_sp);
+        tcase_add_test(tc_with_spo, test_facts_with_spo_po);
+        tcase_add_test(tc_with_spo, test_facts_with_spo_os);
+        suite_add_tcase(s, tc_with_spo);
+        tc_write = tcase_create("Write");
+        tcase_add_checked_fixture(tc_write, setup_write,
+                                  teardown_write);
+        tcase_add_test(tc_write, test_write_facts_empty);
+        tcase_add_test(tc_write, test_write_facts_one);
+        tcase_add_test(tc_write, test_write_facts_two);
+        tcase_add_test(tc_write, test_write_facts_ten);
+        tcase_add_test(tc_write, test_write_facts_escapes);
+        suite_add_tcase(s, tc_write);
+        tc_read = tcase_create("Read");
+        tcase_add_checked_fixture(tc_read, setup_read, teardown_read);
+        tcase_add_test(tc_read, test_read_facts_empty);
+        tcase_add_test(tc_read, test_read_facts_one);
+        tcase_add_test(tc_read, test_read_facts_two);
+        tcase_add_test(tc_read, test_read_facts_ten);
+        tcase_add_test(tc_read, test_read_facts_escapes);
+        suite_add_tcase(s, tc_read);
+        tc_write_log = tcase_create("Write log");
+        tcase_add_checked_fixture(tc_write_log, setup_write_facts_log,
+                                  teardown_write_facts_log);
+        tcase_add_test(tc_write_log, test_write_facts_log_one);
+        tcase_add_test(tc_write_log, test_write_facts_log_two);
+        tcase_add_test(tc_write_log, test_write_facts_log_ten);
+        tcase_add_test(tc_write_log, test_write_facts_log_escapes);
+        suite_add_tcase(s, tc_write_log);
+        tc_read_log = tcase_create("Read log");
+        tcase_add_checked_fixture(tc_read_log, setup_read_facts_log,
+                                  teardown_read_facts_log);
+        tcase_add_test(tc_read_log, test_read_facts_log_empty);
+        tcase_add_test(tc_read_log, test_read_facts_log_one);
+        tcase_add_test(tc_read_log, test_read_facts_log_two);
+        tcase_add_test(tc_read_log, test_read_facts_log_ten);
+        tcase_add_test(tc_read_log, test_read_facts_log_escapes);
+        suite_add_tcase(s, tc_read_log);
+        tc_anon = tcase_create("Anon");
+        tcase_add_checked_fixture(tc_anon, setup_anon, teardown_anon);
+        tcase_add_test(tc_anon, test_facts_anon);
+        suite_add_tcase(s, tc_anon);
+        tc_with = tcase_create("With");
+        tcase_add_checked_fixture(tc_with, setup_with, teardown_with);
+        tcase_add_test(tc_with, test_facts_with_empty);
+        tcase_add_test(tc_with, test_facts_with_zero);
+        tcase_add_test(tc_with, test_facts_with_one);
+        tcase_add_test(tc_with, test_facts_with_two);
+        tcase_add_test(tc_with, test_facts_with_three);
+        tcase_add_test(tc_with, test_facts_with_bindings);
+        suite_add_tcase(s, tc_with);
+        return s;
 }
 
 int main(void)
 {
-    int number_failed;
-    Suite *s;
-    SRunner *sr;
+        int number_failed;
+        Suite *s;
+        SRunner *sr;
 
-    s = facts_suite();
-    sr = srunner_create(s);
+        s = facts_suite();
+        sr = srunner_create(s);
 
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed = srunner_ntests_failed(sr);
-    srunner_free(sr);
-    return (number_failed == 0) ? 0 : 1;
+        srunner_run_all(sr, CK_NORMAL);
+        number_failed = srunner_ntests_failed(sr);
+        srunner_free(sr);
+        return (number_failed == 0) ? 0 : 1;
 }
