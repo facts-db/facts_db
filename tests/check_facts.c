@@ -1335,7 +1335,80 @@ START_TEST (test_facts_with_empty)
 }
 END_TEST
 
+START_TEST (test_facts_with_zero)
+{
+        s_facts_with_cursor cur;
+        facts_with(g_f, NULL, &cur, (const char *[]) {
+                        "a", "b", "c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(g_f, NULL, &cur, (const char *[]) {
+                        "a", "b", "c", "b", "d", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(g_f, NULL, &cur, (const char *[]) {
+                        "a", "e", "d", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(g_f, NULL, &cur, (const char *[]) {
+                        "a", "b", "c", NULL,
+                        "g", "b", "c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(g_f, NULL, &cur, (const char *[]) {
+                        "a", "b", "c",
+                        "b", "d",
+                        "e", "d", NULL,
+                        "g", "b", "c", NULL,
+                        "h", "i", "c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+}
+END_TEST
+
 START_TEST (test_facts_with_one)
+{
+        const char *a;
+        const char *b;
+        const char *c;
+        const char *d;
+        s_binding bindings[] = {{"?a", &a},
+                                {"?b", &b},
+                                {"?c", &c},
+                                {"?d", &d},
+                                {NULL, NULL}};
+        s_facts_with_cursor cur;
+        facts_with(g_f, bindings, &cur, (const char *[]) {
+                        "?a", "b", "c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "a"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "g"));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(g_f, bindings, &cur, (const char *[]) {
+                        "a", "?b", "c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(b, "b"));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(g_f, bindings, &cur, (const char *[]) {
+                        "a", "b", "?c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(c, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(c, "d"));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+}
+END_TEST
+
+START_TEST (test_facts_with_two)
 {
         const char *a;
         const char *b;
@@ -1399,6 +1472,169 @@ START_TEST (test_facts_with_one)
         ck_assert(facts_with_cursor_next(&cur));
         ck_assert(!strcmp(b, "b"));
         ck_assert(!strcmp(c, "c"));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+}
+END_TEST
+
+START_TEST (test_facts_with_three)
+{
+        const char *a;
+        const char *b;
+        const char *c;
+        const char *d;
+        const char *e;
+        const char *f;
+        s_binding bindings[] = {{"?a", &a},
+                                {"?b", &b},
+                                {"?c", &c},
+                                {"?d", &d},
+                                {"?e", &e},
+                                {"?f", &f},
+                                {NULL, NULL}};
+        s_facts_with_cursor cur;
+        facts_with(g_f, bindings, &cur, (const char *[]) {
+                        "?a", "?b", "?c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "a"));
+        ck_assert(!strcmp(b, "b"));
+        ck_assert(!strcmp(c, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "a"));
+        ck_assert(!strcmp(b, "b"));
+        ck_assert(!strcmp(c, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "a"));
+        ck_assert(!strcmp(b, "e"));
+        ck_assert(!strcmp(c, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "g"));
+        ck_assert(!strcmp(b, "b"));
+        ck_assert(!strcmp(c, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "h"));
+        ck_assert(!strcmp(b, "i"));
+        ck_assert(!strcmp(c, "c"));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+        facts_with(g_f, bindings, &cur, (const char *[]) {
+                        "?a", "?b", "?c", NULL,
+                        "?d", "?e", "?f", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "a"));
+        ck_assert(!strcmp(b, "b"));
+        ck_assert(!strcmp(c, "c"));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "e"));
+        ck_assert(!strcmp(f, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "g"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "h"));
+        ck_assert(!strcmp(e, "i"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "a"));
+        ck_assert(!strcmp(b, "b"));
+        ck_assert(!strcmp(c, "d"));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "e"));
+        ck_assert(!strcmp(f, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "g"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "h"));
+        ck_assert(!strcmp(e, "i"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "a"));
+        ck_assert(!strcmp(b, "e"));
+        ck_assert(!strcmp(c, "d"));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "e"));
+        ck_assert(!strcmp(f, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "g"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "h"));
+        ck_assert(!strcmp(e, "i"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "g"));
+        ck_assert(!strcmp(b, "b"));
+        ck_assert(!strcmp(c, "c"));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "e"));
+        ck_assert(!strcmp(f, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "g"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "h"));
+        ck_assert(!strcmp(e, "i"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(a, "h"));
+        ck_assert(!strcmp(b, "i"));
+        ck_assert(!strcmp(c, "c"));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "a"));
+        ck_assert(!strcmp(e, "e"));
+        ck_assert(!strcmp(f, "d"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "g"));
+        ck_assert(!strcmp(e, "b"));
+        ck_assert(!strcmp(f, "c"));
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(d, "h"));
+        ck_assert(!strcmp(e, "i"));
+        ck_assert(!strcmp(f, "c"));
         ck_assert(!facts_with_cursor_next(&cur));
         facts_with_cursor_destroy(&cur);
 }
@@ -1536,12 +1772,11 @@ Suite * facts_suite(void)
     tc_with = tcase_create("With");
     tcase_add_checked_fixture(tc_with, setup_with, teardown_with);
     tcase_add_test(tc_with, test_facts_with_empty);
+    tcase_add_test(tc_with, test_facts_with_zero);
     tcase_add_test(tc_with, test_facts_with_one);
-    tcase_add_test(tc_with, test_facts_with_bindings);
-    /*
     tcase_add_test(tc_with, test_facts_with_two);
-    tcase_add_test(tc_with, test_facts_with_ten);
-    */
+    tcase_add_test(tc_with, test_facts_with_three);
+    tcase_add_test(tc_with, test_facts_with_bindings);
     suite_add_tcase(s, tc_with);
     return s;
 }
