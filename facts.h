@@ -134,10 +134,9 @@ void              facts_with_spo (s_facts *facts,
                                   const char *o);
 
 typedef struct facts_with_cursor_level {
-        int active;
         s_facts_cursor c;
         s_fact *fact;
-        s_fact spec;
+        p_spec spec;
 } s_facts_with_cursor_level;
 
 typedef struct facts_with_cursor {

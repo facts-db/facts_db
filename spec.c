@@ -25,11 +25,12 @@ size_t spec_count_bindings (p_spec spec)
 {
         size_t count = 0;
         size_t i = 0;
-        while (spec[i] || spec[i + 1]) {
-                if (spec[i] && spec[i][0] == '?')
-                        count++;
-                i++;
-        }
+        if (spec && spec[0])
+                while (spec[i] || spec[i + 1]) {
+                        if (spec[i] && spec[i][0] == '?')
+                                count++;
+                        i++;
+                }
         return count;
 }
 

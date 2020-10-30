@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include "fact.h"
 #include "facts.h"
+#include "spec.h"
 
 int read_string_quoted (char *buf,
                         size_t len,
@@ -54,5 +55,8 @@ int read_facts_log (s_facts *facts,
 int write_fact_log (const char *operation,
                     s_fact *f,
                     FILE *fp);
+
+int write_spec (p_spec spec,
+                FILE *fp);
 
 #endif

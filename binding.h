@@ -25,4 +25,10 @@ typedef struct binding {
 const char ** bindings_get (s_binding *bindings,
                             const char *name);
 
+const char ** bindings_get_or_die (s_binding *bindings,
+                                   const char *name);
+
+/* set all bindings values to NULL */
+void bindings_nullify (s_binding *bindings);
+
 #endif

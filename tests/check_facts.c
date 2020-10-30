@@ -1404,6 +1404,29 @@ START_TEST (test_facts_with_one)
 }
 END_TEST
 
+START_TEST (test_facts_with_bindings)
+{
+        const char *a;
+        const char *b;
+        const char *c;
+        const char *d;
+        s_binding bindings[] = {{"?a", &a},
+                                {"?b", &b},
+                                {"?c", &c},
+                                {"?d", &d},
+                                {NULL, NULL}};
+        s_facts_with_cursor cur;
+        facts_with(g_f, bindings, &cur, (const char *[]) {
+                        "a", "?b", "?c", NULL,
+                        "g", "?b", "?c", NULL, NULL});
+        ck_assert(facts_with_cursor_next(&cur));
+        ck_assert(!strcmp(b, "b"));
+        ck_assert(!strcmp(c, "c"));
+        ck_assert(!facts_with_cursor_next(&cur));
+        facts_with_cursor_destroy(&cur);
+}
+END_TEST
+
 Suite * facts_suite(void)
 {
     Suite *s;
@@ -1514,6 +1537,7 @@ Suite * facts_suite(void)
     tcase_add_checked_fixture(tc_with, setup_with, teardown_with);
     tcase_add_test(tc_with, test_facts_with_empty);
     tcase_add_test(tc_with, test_facts_with_one);
+    tcase_add_test(tc_with, test_facts_with_bindings);
     /*
     tcase_add_test(tc_with, test_facts_with_two);
     tcase_add_test(tc_with, test_facts_with_ten);

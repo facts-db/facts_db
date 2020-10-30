@@ -239,3 +239,14 @@ int read_facts_log (s_facts *facts, FILE *fp)
         }
         return 0;
 }
+
+int write_spec (p_spec spec, FILE *fp)
+{
+        s_spec_cursor c;
+        s_fact f;
+        spec_cursor_init(&c, spec);
+        while (spec_cursor_next(&c, &f))
+                if (write_fact(&f, fp))
+                        return -1;
+        return 0;
+}

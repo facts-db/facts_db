@@ -17,6 +17,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "binding.h"
 
@@ -28,7 +29,28 @@ const char ** bindings_get (s_binding *bindings, const char *name)
                                 return bindings->value;
                         bindings++;
                 }
-        fprintf(stderr, "bindings_get: unknown binding: %s\n", name);
-        assert(0);
         return NULL;
+}
+
+const char ** bindings_get_or_die (s_binding *bindings,
+                                   const char *name)
+{
+        const char **b = bindings_get(bindings, name);
+        if (!b) {
+                fprintf(stderr, "bindings_get: unknown binding: %s\n",
+                        name);
+                exit(1);
+        }
+        return b;
+}
+
+/* set all bindings values to NULL */
+
+void bindings_nullify (s_binding *bindings)
+{
+        if (bindings)
+                while (bindings->name) {
+                        *bindings->value = NULL;
+                        bindings++;
+                }
 }

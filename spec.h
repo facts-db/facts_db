@@ -17,6 +17,7 @@
 #ifndef SPEC_H
 #define SPEC_H
 
+#include <stdio.h>
 #include "fact.h"
 
 typedef const char **p_spec;
@@ -33,12 +34,18 @@ typedef const char **p_spec;
      s1 p1.1 o1.1 p1.2 o1.2 NULL s2 p2.1 o2.1 p2.2 o2.2 NULL NULL
 */
 
+/* calls malloc */
+p_spec spec_clone (p_spec spec);
+
 size_t spec_count_bindings (p_spec spec);
 
 size_t spec_count_facts (p_spec spec);
 
 /* calls malloc to return a new p_spec */
 p_spec spec_expand (p_spec spec);
+
+void   spec_print (p_spec spec,
+                   FILE *fp);
 
 p_spec spec_sort (p_spec spec);
 

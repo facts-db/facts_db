@@ -463,18 +463,13 @@ void facts_with_cursor_init (s_facts *facts, s_binding *bindings,
         fprintf(stderr, "facts_with_cursor_init\n");
         c->facts = facts;
         c->bindings = bindings;
+        bindings_nullify(c->bindings);
         c->facts_count = facts_count;
         if (facts_count > 0) {
-                size_t i;
                 c->l = calloc(facts_count,
                               sizeof(s_facts_with_cursor_level));
                 c->spec = spec_expand(spec);
                 spec_sort(c->spec);
-                for (i = 0; i < facts_count; i++) {
-                        c->l[i].spec.s = c->spec[i * 4];
-                        c->l[i].spec.p = c->spec[i * 4 + 1];
-                        c->l[i].spec.o = c->spec[i * 4 + 2];
-                }
         }
         else {
                 c->l = NULL;
@@ -497,6 +492,21 @@ void facts_with_cursor_destroy (s_facts_with_cursor *c)
         c->spec = NULL;
 }
 
+void spec_subst (p_spec spec, s_binding *bindings)
+{
+        size_t i = 0;
+        if (spec && spec[0])
+                while (spec[i] || spec[i + 1]) {
+                        if (spec[i] && spec[i][0] == '?') {
+                                const char **b =
+                                        bindings_get(bindings, spec[i]);
+                                if (*b)
+                                        spec[i] = *b;
+                        }
+                        i++;
+                }
+}
+
 int facts_with_cursor_next (s_facts_with_cursor *c)
 {
         assert(c);
@@ -513,7 +523,8 @@ int facts_with_cursor_next (s_facts_with_cursor *c)
                                 l->fact->p, l->fact->o);
                         return 1;
                 }
-                l->active = 0;
+                free(l->spec);
+                l->spec = NULL;
                 c->level--;
                 if (!c->level) {
                         c->facts_count = 0;
@@ -523,11 +534,18 @@ int facts_with_cursor_next (s_facts_with_cursor *c)
         }
         while (c->level < c->facts_count) {
                 s_facts_with_cursor_level *l = c->l + c->level;
-                if (!l->active) {
+                if (!l->spec) {
+                        p_spec parent_spec = c->level ?
+                                c->l[c->level - 1].spec + 4:
+                                c->spec;
+                        fprintf(stderr, "parent spec\n");
+                        write_spec(parent_spec, stderr);
+                        fprintf(stderr, "parent spec end\n");
+                        l->spec = spec_expand(parent_spec);
+                        spec_subst(l->spec, c->bindings);
                         facts_with_spo(c->facts, c->bindings,
-                                       &l->c, l->spec.s,
-                                       l->spec.p, l->spec.o);
-                        l->active = 1;
+                                       &l->c, l->spec[0],
+                                       l->spec[1], l->spec[2]);
                 }
                 l->fact = facts_cursor_next(&l->c);
                 if (l->fact) {
@@ -539,7 +557,8 @@ int facts_with_cursor_next (s_facts_with_cursor *c)
                 else {
                         fprintf(stderr, "%p level down %li\n",
                                 (void*) c, c->level);
-                        l->active = 0;
+                        free(l->spec);
+                        l->spec = NULL;
                         if (c->level > 0) {
                                 c->level--;
                                 if (!c->level) {
