@@ -4,11 +4,18 @@ Graph database in C99.
 
 ## Documentation
 
-[Fact](fact.md) : a single fact.
+### [Binding](binding.md) : variable bindings.
+A binding associates a name to a value pointer.
+Multiple bindings can be given in a NULL terminated array.
 
-[Facts](facts.md) : indexed facts database.
+### [Fact](fact.md) : a single fact.
+Each fact is a triple which consists of subject, predicate, object.
 
-[Spec](spec.md) : facts (triples) specification.
+### [Facts](facts.md) : indexed facts database.
+Facts database.
+
+### [Spec](spec.md) : facts specification.
+Specification for facts grouped by subject.
 
 ## License
 
