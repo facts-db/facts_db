@@ -28,6 +28,9 @@ A single fact can be removed using
 [facts_remove_fact](#facts_remove_fact) and
 [facts_remove_spo](#facts_remove_spo).
 
+The database can be queried using [facts_with](#facts_with) to
+match and bind symbols to variables according to a pattern
+(pattern matching).
 
 ---
 
