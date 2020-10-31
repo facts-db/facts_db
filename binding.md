@@ -15,6 +15,17 @@ Multiple bindings can be given in a NULL terminated array, that
 is the last element of the array will have a NULL name and a NULL
 value pointer.
 
+Example :
+```
+        const char *s;
+        const char *p;
+        const char *o;
+        s_binding bindings[] = {{"?s", &s},
+                                {"?p", &p},
+                                {"?o", &o},
+                                {NULL, NULL}};
+```
+
 ---
 
 <a id="bindings_get"></a>
