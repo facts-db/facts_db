@@ -180,6 +180,7 @@ Return a fact from **facts** matching **s**, **p**, **o** if found.
 `unsigned long facts_count (s_facts *facts)`
 
 Return the number of facts (triples) in **facts**.
+
 ---
 
 <a id="s_facts_cursor"></a>
