@@ -90,3 +90,98 @@ Frees the associated symbols which must not be in use if the symbols
 set was auto-allocated.
 
 Frees the database facts which must not be in use.
+
+---
+
+<a id="facts_find_symbol"></a>
+`const char * facts_find_symbol (s_facts *facts, const char *string)`
+
+---
+
+<a id="facts_anon"></a>
+`const char * facts_anon (s_facts *facts, const char *name)`
+
+---
+
+<a id="facts_intern"></a>
+`const char * facts_intern (s_facts *facts, const char *string)`
+
+---
+
+<a id="facts_add_fact"></a>
+`s_fact * facts_add_fact (s_facts *facts, s_fact *f)`
+
+---
+
+<a id="facts_add_spo"></a>
+`s_fact * facts_add_spo (s_facts *facts, const char *s, const char *p, const char *o)`
+
+---
+
+<a id="facts_add"></a>
+`int facts_add (s_facts *facts, p_spec spec)`
+
+---
+
+<a id="facts_remove_fact"></a>
+`int facts_remove_fact (s_facts *facts, s_fact *f)`
+
+---
+
+<a id="facts_remove_spo"></a>
+`int facts_remove_spo (s_facts *facts, const char *s, const char *p, const char *o)`
+
+---
+
+<a id="facts_get_fact"></a>
+`s_fact * facts_get_fact (s_facts *facts, s_fact *f)`
+
+---
+
+<a id="facts_get_spo"></a>
+`s_fact * facts_get_spo (s_facts *facts, const char *s, const char *p, const char *o)`
+
+---
+
+<a id="facts_count"></a>
+`unsigned long facts_count (s_facts *facts)`
+
+---
+
+<a id="s_facts_cursor"></a>
+`typedef struct facts_cursor s_facts_cursor`
+
+---
+
+<a id="facts_cursor_next"></a>
+`s_fact * facts_cursor_next (s_facts_cursor *c)`
+
+---
+
+<a id="facts_with_0"></a>
+`void facts_with_0 (s_facts *facts, s_facts_cursor *c, const char **var_s, const char **var_p, const char **var_o)`
+
+---
+
+<a id="facts_with_spo"></a>
+`void facts_with_spo (s_facts *facts, s_binding *bindings, s_facts_cursor *c, const char *s, const char *p, const char *o)`
+
+---
+
+<a id="s_facts_with_cursor"></a>
+`typedef struct facts_with_cursor s_facts_with_cursor`
+
+---
+
+<a id="facts_with_cursor_destroy"></a>
+`void facts_with_cursor_destroy (s_facts_with_cursor *c)`
+
+---
+
+<a id="facts_with_cursor_next"></a>
+`int facts_with_cursor_next (s_facts_with_cursor *c)`
+
+---
+
+<a id="facts_with"></a>
+`void facts_with (s_facts *facts, s_binding *bindings, s_facts_with_cursor *c, p_spec spec)`
