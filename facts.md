@@ -96,92 +96,167 @@ Frees the database facts which must not be in use.
 <a id="facts_find_symbol"></a>
 `const char * facts_find_symbol (s_facts *facts, const char *string)`
 
+Return an existing symbol from the symbol set associated with **facts**,
+or NULL if not found.
+
 ---
 
 <a id="facts_anon"></a>
 `const char * facts_anon (s_facts *facts, const char *name)`
+
+Return a newly interned anonymous symbol prefixed by **name**-
+for use as an identifier in **facts**.
 
 ---
 
 <a id="facts_intern"></a>
 `const char * facts_intern (s_facts *facts, const char *string)`
 
+Intern a symbol named **string**
+into the set of symbols associated with **facts**.
+
+All facts added to the database are interned first for faster
+comparison.
+
 ---
 
 <a id="facts_add_fact"></a>
 `s_fact * facts_add_fact (s_facts *facts, s_fact *f)`
+
+Add a fact to **facts**.
+The fact **f** is copied and can be stack-allocated.
 
 ---
 
 <a id="facts_add_spo"></a>
 `s_fact * facts_add_spo (s_facts *facts, const char *s, const char *p, const char *o)`
 
+Add a fact to **facts** with given subject, predicate, object.
+
 ---
 
 <a id="facts_add"></a>
 `int facts_add (s_facts *facts, p_spec spec)`
+
+Add facts to **facts** according to **spec**.
+
+See [spec](spec.md).
 
 ---
 
 <a id="facts_remove_fact"></a>
 `int facts_remove_fact (s_facts *facts, s_fact *f)`
 
+Remove a fact from **facts** matching **f** if found.
+
+Returns zero if not found, non-zero otherwise.
+
 ---
 
 <a id="facts_remove_spo"></a>
 `int facts_remove_spo (s_facts *facts, const char *s, const char *p, const char *o)`
+
+Remove a fact from **facts** matching **s**, **p**, **o** if found.
+
+Returns zero if not found, non-zero otherwise.
 
 ---
 
 <a id="facts_get_fact"></a>
 `s_fact * facts_get_fact (s_facts *facts, s_fact *f)`
 
+Return a fact from **facts** matching **f** if found.
+
 ---
 
 <a id="facts_get_spo"></a>
 `s_fact * facts_get_spo (s_facts *facts, const char *s, const char *p, const char *o)`
+
+Return a fact from **facts** matching **s**, **p**, **o** if found.
 
 ---
 
 <a id="facts_count"></a>
 `unsigned long facts_count (s_facts *facts)`
 
+Return the number of facts (triples) in **facts**.
 ---
 
 <a id="s_facts_cursor"></a>
 `typedef struct facts_cursor s_facts_cursor`
+
+A cursor to iterate on facts one by one, setting bindings values.
 
 ---
 
 <a id="facts_cursor_next"></a>
 `s_fact * facts_cursor_next (s_facts_cursor *c)`
 
+Return the next fact from iterating on the given [s_facts_cursor](#s_facts_cursor).
+
 ---
 
 <a id="facts_with_0"></a>
 `void facts_with_0 (s_facts *facts, s_facts_cursor *c, const char **var_s, const char **var_p, const char **var_o)`
+
+Initialize a [s_facts_cursor](#s_facts_cursor) to iterate on all
+triples of **facts**.
+
+Each call to [facts_cursor_next](#facts_cursor_next) will set
+**var_s**, **var_p**, **var_o**.
 
 ---
 
 <a id="facts_with_spo"></a>
 `void facts_with_spo (s_facts *facts, s_binding *bindings, s_facts_cursor *c, const char *s, const char *p, const char *o)`
 
+Initialize a [s_facts_cursor](#s_facts_cursor) to iterate on a given triple
+(**s**, **p**, **o**).
+
+Each member of the triple can be a binding name starting with a `?`
+and defined in **bindings**. See [binding](binding.md). The bindings will be
+set by [facts_cursor_next](#facts_cursor_next).
+
 ---
 
 <a id="s_facts_with_cursor"></a>
 `typedef struct facts_with_cursor s_facts_with_cursor`
+
+A cursor to iterate on facts matching nested patterns with support for
+binding variables.
 
 ---
 
 <a id="facts_with_cursor_destroy"></a>
 `void facts_with_cursor_destroy (s_facts_with_cursor *c)`
 
+Destroy a [facts_with](#facts_with) cursor.
+Must be called after [facts_with](#facts_with).
+
 ---
 
 <a id="facts_with_cursor_next"></a>
 `int facts_with_cursor_next (s_facts_with_cursor *c)`
 
+Iterate on [facts_with](#facts_with) query.
+
+If there is no next iteration the function returns 0.
+
+If there is a next iteration for the query the bindings are set and the
+function returns a non-zero value.
+
 ---
 
 <a id="facts_with"></a>
 `void facts_with (s_facts *facts, s_binding *bindings, s_facts_with_cursor *c, p_spec spec)`
+
+Initialize a [facts with cursor](#s_facts_with_cursor) to iterate according to
+the given **spec** on **facts**. **Bindings** are set for each iteration by
+[facts_with_cursor_next](#facts_with_cursor_next).
+See [binding](binding.md) and [spec](spec.md).
+
+After iteration the cursor must be destroyed using
+[facts_with_cursor_destroy](#facts_with_cursor_destroy).
+
+The query is sorted to match most specific values first thus
+decreasing the number of partial matches.
