@@ -8,6 +8,8 @@ Graph database in C99.
 
 [Facts](facts.md) : indexed facts database.
 
+[Spec](spec.md) : facts (triples) specification.
+
 ## License
 
 See [LICENSE](LICENSE.md).
