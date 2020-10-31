@@ -10,4 +10,4 @@ Graph database in C99.
 
 ## License
 
-See [LICENSE](LICENSE.html).
+See [LICENSE](LICENSE.md).
