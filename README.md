@@ -2,9 +2,7 @@
 
 Graph database in C99.
 
-## Usage :
-
----
+## Documentation
 
 <a id="s_facts"></a>
 > typedef struct facts **s_facts**
