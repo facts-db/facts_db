@@ -7,8 +7,27 @@ Graph database in C99.
 <a id="s_facts"></a>
 `typedef struct facts s_facts`
 
-Facts database. Each fact is a triple consisting of
-subject, predicate, object. See [s_fact](#s_fact).
+Facts database. Contains an unlimited number of facts.
+Each fact is a triple consisting of subject, predicate, object.
+See [s_fact](#s_fact).
+
+The database must be initialized with
+[facts_init](#facts_init)
+or
+[new_facts](#new_facts)
+before usage.
+
+Multiple facts can be added using [facts_add](#facts_add).
+
+A single fact can be added using [facts_add_fact](#facts_add_fact) and
+[facts_add_spo](#facts_add_spo).
+
+Multiple facts can be removed using [facts_remove](#facts_remove).
+
+A single fact can be removed using
+[facts_remove_fact](#facts_remove_fact) and
+[facts_remove_spo](#facts_remove_spo).
+
 
 ---
 
@@ -34,7 +53,7 @@ typedef struct fact {
     const char *s;
     const char *p;
     const char *o;
-} **s_fact**
+} s_fact
 ```
 
 A single fact. A fact consists of a subject, a predicate and an
