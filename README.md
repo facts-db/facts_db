@@ -4,9 +4,9 @@ Graph database in C99.
 
 ## Documentation
 
-[Fact](fact.html) : a single fact.
+[Fact](fact.md) : a single fact.
 
-[Facts](facts.html) : indexed facts database.
+[Facts](facts.md) : indexed facts database.
 
 ## License
 
