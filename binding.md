@@ -17,6 +17,7 @@ value pointer.
 
 Example :
 ```
+{
         const char *s;
         const char *p;
         const char *o;
@@ -24,6 +25,8 @@ Example :
                                 {"?p", &p},
                                 {"?o", &o},
                                 {NULL, NULL}};
+        [...]
+}
 ```
 
 ---
