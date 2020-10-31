@@ -19,31 +19,36 @@ spec :
 
 <a id="spec_clone"></a>
 `p_spec spec_clone (p_spec spec)`
+
 Clone the given spec with malloc. Must be freed after use.
 
 ---
 
 <a id="spec_count_bindings"></a>
 `size_t spec_count_bindings (p_spec spec)`
+
 Count the bindings (strings starting with `?`) in the given spec.
 
 ---
 
 <a id="spec_count_facts"></a>
 `size_t spec_count_facts (p_spec spec)`
+
 Count the facts (triples) in the given spec.
 
 ---
 
 <a id="spec_expand"></a>
 `p_spec spec_expand (p_spec spec)`
-calls malloc to return a new p_spec of the form :
+
+Calls malloc to return a new p_spec of the form :
 > (S P O NULL)* NULL
 
 ---
 
 <a id="spec_print"></a>
 `void spec_print (p_spec spec, FILE *fp)`
+
 Print the spec to open file descriptor fp. The file descriptor must
 be open for writing.
 
@@ -51,6 +56,7 @@ be open for writing.
 
 <a id="spec_sort"></a>
 `p_spec spec_sort (p_spec spec)`
+
 Sort an expanded spec in place. The given spec must be of the form :
 > (S P O NULL)* NULL
 
@@ -58,6 +64,7 @@ Sort an expanded spec in place. The given spec must be of the form :
 
 <a id="s_spec_cursor"></a>
 `typedef struct spec_cursor s_spec_cursor`
+
 A spec cursor for iterating on facts (triples) of a spec.
 
 The cursor must be initialized using
