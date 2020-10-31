@@ -7,7 +7,7 @@ Graph database in C99.
 ---
 
 <a id="s_facts"></a>
-> **typedef struct facts s_facts**
+> typedef struct facts **s_facts**
 >
 > Facts database. Each fact is a triple consisting of
 > subject, predicate, object. See [s_fact](#s_fact).
