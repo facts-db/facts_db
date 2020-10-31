@@ -12,7 +12,7 @@ Multiple bindings can be given in a NULL terminated array.
 Each fact is a triple which consists of subject, predicate, object.
 
 ### [Facts](facts.md) : indexed facts database.
-Facts database.
+Facts database. Operations to add, remove and iterate on multiple facts.
 
 ### [Spec](spec.md) : facts specification.
 Specification for facts grouped by subject.
