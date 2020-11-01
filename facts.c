@@ -453,14 +453,15 @@ void facts_with_spo (s_facts *facts,
                 facts_with_1_2(facts, c, s, p, o, var_s, var_p, var_o);
 }
 
-void facts_with_cursor_init (s_facts *facts, s_binding *bindings,
-                             s_facts_with_cursor *c, p_spec spec,
-                             size_t facts_count)
+
+void facts_with (s_facts *facts, s_binding *bindings,
+                 s_facts_with_cursor *c, p_spec spec)
 {
+        size_t facts_count;
         assert(facts);
         assert(c);
         assert(spec);
-        fprintf(stderr, "facts_with_cursor_init\n");
+        facts_count = spec_count_facts(spec);
         c->facts = facts;
         c->bindings = bindings;
         bindings_nullify(c->bindings);
@@ -573,15 +574,4 @@ int facts_with_cursor_next (s_facts_with_cursor *c)
                 }
         }
         return 1;
-}
-
-void facts_with (s_facts *facts, s_binding *bindings,
-                 s_facts_with_cursor *c, p_spec spec)
-{
-        size_t facts_count;
-        assert(facts);
-        assert(c);
-        assert(spec);
-        facts_count = spec_count_facts(spec);
-        facts_with_cursor_init(facts, bindings, c, spec, facts_count);
 }

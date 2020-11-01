@@ -77,6 +77,9 @@ int               facts_remove_spo (s_facts *facts,
                                     const char *p,
                                     const char *o);
 
+int               facts_remove (s_facts *facts,
+                                p_spec spec);
+
 s_fact *          facts_get_fact (s_facts *facts,
                                   s_fact *f);
 
@@ -148,19 +151,13 @@ typedef struct facts_with_cursor {
         p_spec spec;
 } s_facts_with_cursor;
 
-void              facts_with_cursor_init (s_facts *facts,
-                                          s_binding *bindings,
-                                          s_facts_with_cursor *c,
-                                          p_spec spec,
-                                          size_t facts_count);
-
-void              facts_with_cursor_destroy (s_facts_with_cursor *c);
-
-int               facts_with_cursor_next (s_facts_with_cursor *c);
-
 void              facts_with (s_facts *facts,
                               s_binding *bindings,
                               s_facts_with_cursor *c,
                               p_spec spec);
+
+void              facts_with_cursor_destroy (s_facts_with_cursor *c);
+
+int               facts_with_cursor_next (s_facts_with_cursor *c);
 
 #endif
