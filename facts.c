@@ -281,6 +281,132 @@ int facts_remove_spo (s_facts *facts, const char *s,
         return facts_remove_fact(facts, &f);
 }
 
+typedef struct fact_list s_fact_list;
+struct fact_list {
+        s_fact *fact;
+        s_fact_list *next;
+};
+
+s_fact_list * new_fact_list (s_fact *fact, s_fact_list *next)
+{
+        s_fact_list *fl = malloc(sizeof(s_fact_list));
+        if (fl) {
+                fl->fact = fact;
+                fl->next = next;
+        }
+        return fl;
+}
+
+s_fact_list * fact_list_find (s_fact_list *fl, s_fact *f)
+{
+        while (fl && fl->fact != f)
+                fl = fl->next;
+        return fl;
+}
+
+s_fact_list * fact_list_intern (s_fact_list *fl, s_fact *f)
+{
+        if (fact_list_find(fl, f))
+                return fl;
+        return new_fact_list(f, fl);
+}
+
+void delete_fact_list (s_fact_list *fl)
+{
+        while (fl) {
+                s_fact_list *head = fl;
+                fl = fl->next;
+                free(head);
+        }
+}
+
+int bindings_resolve (s_binding *bindings, const char **pstr)
+{
+        if (bindings && pstr && (*pstr)[0] == '?') {
+                const char **value = bindings_get(bindings, *pstr);
+                if (value) {
+                        *pstr = *value;
+                        return 1;
+                }
+        }
+        return 0;
+}
+
+int fact_bindings_resolve (s_fact *f, s_binding *bindings)
+{
+        int resolved = 0;
+        assert(f);
+        if (f->s && f->s[0] == '?')
+                resolved += bindings_resolve(bindings, &f->s);
+        if (f->p && f->p[0] == '?')
+                resolved += bindings_resolve(bindings, &f->p);
+        if (f->o && f->o[0] == '?')
+                resolved += bindings_resolve(bindings, &f->o);
+        return resolved;
+}
+
+s_binding * spec_bindings (p_spec spec)
+{
+        s_binding *bindings;
+        size_t bindings_size;
+        s_binding *b;
+        const char **vars;
+        size_t vars_size;
+        const char **v;
+        size_t count;
+        if (!spec || !spec[0])
+                return NULL;
+        count = spec_count_bindings(spec);
+        bindings_size = (count + 1) * sizeof(s_binding);
+        vars_size = count * sizeof(char *);
+        bindings = calloc(bindings_size + vars_size, 1);
+        vars = (const char **)(((char *) bindings) + bindings_size);
+        b = bindings;
+        v = vars;
+        while (spec[0] || spec[1]) {
+                if (spec[0] && spec[0][0] == '?') {
+                        b->name = spec[0];
+                        b->value = v;
+                        b++;
+                        v++;
+                }
+                spec++;
+        }
+        return bindings;
+}
+
+int facts_remove (s_facts *facts, p_spec spec)
+{
+        s_facts_with_cursor wc;
+        s_binding *bindings;
+        s_fact_list *fl = NULL;
+        s_fact_list *fli;
+        int found = 0;
+        bindings = spec_bindings(spec);
+        facts_with(facts, bindings, &wc, spec);
+        while (facts_with_cursor_next(&wc)) {
+                s_fact f;
+                s_spec_cursor sc;
+                spec_cursor_init(&sc, spec);
+                while (spec_cursor_next(&sc, &f)) {
+                        s_fact *dbf;
+                        fact_bindings_resolve(&f, bindings);
+                        dbf = facts_get_fact(facts, &f);
+                        fl = fact_list_intern(fl, dbf);
+                }
+        }
+        facts_with_cursor_destroy(&wc);
+        free(bindings);
+        fli = fl;
+        while (fli) {
+                if (facts_remove_fact(facts, fli->fact))
+                        found = 1;
+                fli = fli->next;
+        }
+        delete_fact_list(fl);
+        return found;
+}
+
 s_fact * facts_get_fact (s_facts *facts, s_fact *f)
 {
         s_skiplist_node *node;
