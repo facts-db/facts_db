@@ -18,6 +18,7 @@
 #define SPEC_H
 
 #include <stdio.h>
+#include "binding.h"
 #include "fact.h"
 
 typedef const char **p_spec;
@@ -60,5 +61,7 @@ void spec_cursor_init (s_spec_cursor *c,
 
 int  spec_cursor_next (s_spec_cursor *c,
                        s_fact *f);
+
+s_binding * spec_bindings (p_spec spec);
 
 #endif

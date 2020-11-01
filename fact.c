@@ -15,6 +15,7 @@
  *  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include "fact.h"
@@ -172,4 +173,50 @@ int fact_compare_osp (void *a, void *b)
                 }
         }
         return cmp;
+}
+
+int fact_bindings_resolve (s_fact *f, s_binding *bindings)
+{
+        int resolved = 0;
+        assert(f);
+        if (f->s && f->s[0] == '?')
+                resolved += bindings_resolve(bindings, &f->s);
+        if (f->p && f->p[0] == '?')
+                resolved += bindings_resolve(bindings, &f->p);
+        if (f->o && f->o[0] == '?')
+                resolved += bindings_resolve(bindings, &f->o);
+        return resolved;
+}
+
+s_fact_list * new_fact_list (s_fact *fact, s_fact_list *next)
+{
+        s_fact_list *fl = malloc(sizeof(s_fact_list));
+        if (fl) {
+                fl->fact = fact;
+                fl->next = next;
+        }
+        return fl;
+}
+
+void delete_fact_list (s_fact_list *fl)
+{
+        while (fl) {
+                s_fact_list *head = fl;
+                fl = fl->next;
+                free(head);
+        }
+}
+
+s_fact_list * fact_list_find (s_fact_list *fl, s_fact *f)
+{
+        while (fl && fl->fact != f)
+                fl = fl->next;
+        return fl;
+}
+
+s_fact_list * fact_list_intern (s_fact_list *fl, s_fact *f)
+{
+        if (fact_list_find(fl, f))
+                return fl;
+        return new_fact_list(f, fl);
 }

@@ -155,3 +155,33 @@ int spec_cursor_next (s_spec_cursor *c, s_fact *f)
         c->pos += 2;
         return spec_cursor_next(c, f);
 }
+
+s_binding * spec_bindings (p_spec spec)
+{
+        s_binding *bindings;
+        size_t bindings_size;
+        s_binding *b;
+        const char **vars;
+        size_t vars_size;
+        const char **v;
+        size_t count;
+        if (!spec || !spec[0])
+                return NULL;
+        count = spec_count_bindings(spec);
+        bindings_size = (count + 1) * sizeof(s_binding);
+        vars_size = count * sizeof(char *);
+        bindings = calloc(bindings_size + vars_size, 1);
+        vars = (const char **)(((char *) bindings) + bindings_size);
+        b = bindings;
+        v = vars;
+        while (spec[0] || spec[1]) {
+                if (spec[0] && spec[0][0] == '?') {
+                        b->name = spec[0];
+                        b->value = v;
+                        b++;
+                        v++;
+                }
+                spec++;
+        }
+        return bindings;
+}
