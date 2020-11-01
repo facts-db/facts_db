@@ -140,6 +140,10 @@ Add a fact to **facts** with given subject, predicate, object.
 
 Add facts to **facts** according to **spec**.
 
+If a fact contains a binding (starts with a `?`) it is replaced
+by an anonymous symbol prefixed with the binding name, see
+[facts_anon](#facts_anon).
+
 See [spec](spec.md).
 
 ---
@@ -159,6 +163,25 @@ Returns zero if not found, non-zero otherwise.
 Remove a fact from **facts** matching **s**, **p**, **o** if found.
 
 Returns zero if not found, non-zero otherwise.
+
+---
+
+<a id="facts_remove"></a>
+`int facts_remove (s_facts *facts, p_spec spec)`
+
+Remove all the facts matching **spec** from **facts**.
+
+The facts are collected from the spec using
+[facts_with](#facts_with).
+
+See [spec](spec.md).
+
+Example :
+```
+       facts_remove(facts, (const char *[]){
+                        "?movie", "is a", "movie",
+                        "?p" "?o", NULL, NULL});
+```
 
 ---
 
@@ -261,3 +284,27 @@ After iteration the cursor must be destroyed using
 
 The query is sorted to match most specific values first thus
 decreasing the number of partial matches.
+
+Example :
+```
+{
+        const char *movie;
+        const char *actor;
+        const char *name;
+        s_facts_with_cursor c;
+        s_binding bindings = {{"?movie", &movie},
+                              {"?actor", &actor},
+                              {"?name", &name},
+                              {NULL, NULL}};
+        facts_with(facts, bindings, &c, (const char *[]) {
+                        "?movie", "is a", "movie",
+                                  "actor", "?actor", NULL,
+                        "?actor", "is a", "actor",
+                                  "name", "?name", NULL, NULL});
+        while (facts_with_cursor_next(&c)) {
+                printf("movie %s actor %s name %s\n",
+                       movie, actor, name);
+        }
+        facts_with_cursor_destroy(&c);
+}
+```
