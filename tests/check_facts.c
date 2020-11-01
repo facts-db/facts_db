@@ -478,6 +478,147 @@ START_TEST (test_facts_remove_spo_ten)
 }
 END_TEST
 
+void setup_remove ()
+{
+        g_f = new_facts(NULL, 10);
+        facts_add_spo(g_f, "a", "b", "c");
+        facts_add_spo(g_f, "b", "c", "d");
+        facts_add_spo(g_f, "c", "d", "e");
+        facts_add_spo(g_f, "d", "e", "f");
+        facts_add_spo(g_f, "e", "f", "g");
+        facts_add_spo(g_f, "f", "g", "h");
+        facts_add_spo(g_f, "g", "h", "i");
+        facts_add_spo(g_f, "h", "i", "j");
+        facts_add_spo(g_f, "i", "j", "k");
+        facts_add_spo(g_f, "j", "k", "l");
+}
+
+void teardown_remove ()
+{
+        delete_facts(g_f);
+        g_f = NULL;
+}
+
+START_TEST (test_facts_remove_one)
+{
+        ck_assert(facts_count(g_f) == 10);
+        ck_assert(facts_remove(g_f, (const char *[]){
+                                "a", "b", "c", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 9);
+        ck_assert(!facts_get_spo(g_f, "a", "b", "c"));
+        ck_assert(facts_get_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_get_spo(g_f, "c", "d", "e"));
+        ck_assert(facts_get_spo(g_f, "d", "e", "f"));
+        ck_assert(facts_get_spo(g_f, "e", "f", "g"));
+        ck_assert(facts_get_spo(g_f, "f", "g", "h"));
+        ck_assert(facts_get_spo(g_f, "g", "h", "i"));
+        ck_assert(facts_get_spo(g_f, "h", "i", "j"));
+        ck_assert(facts_get_spo(g_f, "i", "j", "k"));
+        ck_assert(facts_get_spo(g_f, "j", "k", "l"));
+        ck_assert(!facts_remove(g_f, (const char *[]){
+                                "a", "b", "c", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 9);
+        ck_assert(facts_remove(g_f, (const char *[]){
+                                "?b", "c", "?d", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 8);
+        ck_assert(!facts_get_spo(g_f, "a", "b", "c"));
+        ck_assert(!facts_get_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_get_spo(g_f, "c", "d", "e"));
+        ck_assert(facts_get_spo(g_f, "d", "e", "f"));
+        ck_assert(facts_get_spo(g_f, "e", "f", "g"));
+        ck_assert(facts_get_spo(g_f, "f", "g", "h"));
+        ck_assert(facts_get_spo(g_f, "g", "h", "i"));
+        ck_assert(facts_get_spo(g_f, "h", "i", "j"));
+        ck_assert(facts_get_spo(g_f, "i", "j", "k"));
+        ck_assert(facts_get_spo(g_f, "j", "k", "l"));
+        ck_assert(facts_count(g_f) == 8);
+        ck_assert(!facts_remove(g_f, (const char *[]){
+                                "?b", "c", "?d", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 8);
+        ck_assert(facts_remove(g_f, (const char *[]){
+                                "?s", "?p", "?o", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 0);
+        ck_assert(!facts_remove(g_f, (const char *[]){
+                                "?s", "?p", "?o", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 0);
+}
+END_TEST
+
+START_TEST (test_facts_remove_two)
+{
+        ck_assert(facts_count(g_f) == 10);
+        ck_assert(facts_remove(g_f, (const char *[]){
+                                "a", "b", "c", NULL,
+                                "b", "c", "d", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 8);
+        ck_assert(!facts_get_spo(g_f, "a", "b", "c"));
+        ck_assert(!facts_get_spo(g_f, "b", "c", "d"));
+        ck_assert(facts_get_spo(g_f, "c", "d", "e"));
+        ck_assert(facts_get_spo(g_f, "d", "e", "f"));
+        ck_assert(facts_get_spo(g_f, "e", "f", "g"));
+        ck_assert(facts_get_spo(g_f, "f", "g", "h"));
+        ck_assert(facts_get_spo(g_f, "g", "h", "i"));
+        ck_assert(facts_get_spo(g_f, "h", "i", "j"));
+        ck_assert(facts_get_spo(g_f, "i", "j", "k"));
+        ck_assert(facts_get_spo(g_f, "j", "k", "l"));
+        ck_assert(!facts_remove(g_f, (const char *[]){
+                                "a", "b", "c", NULL,
+                                "b", "c", "d", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 8);
+        ck_assert(facts_remove(g_f, (const char *[]){
+                                "c", "?d", "?e", NULL,
+                                "?f", "?g", "f", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 6);
+        ck_assert(!facts_get_spo(g_f, "a", "b", "c"));
+        ck_assert(!facts_get_spo(g_f, "b", "c", "d"));
+        ck_assert(!facts_get_spo(g_f, "c", "d", "e"));
+        ck_assert(!facts_get_spo(g_f, "d", "e", "f"));
+        ck_assert(facts_get_spo(g_f, "e", "f", "g"));
+        ck_assert(facts_get_spo(g_f, "f", "g", "h"));
+        ck_assert(facts_get_spo(g_f, "g", "h", "i"));
+        ck_assert(facts_get_spo(g_f, "h", "i", "j"));
+        ck_assert(facts_get_spo(g_f, "i", "j", "k"));
+        ck_assert(facts_get_spo(g_f, "j", "k", "l"));
+        ck_assert(!facts_remove(g_f, (const char *[]){
+                                "c", "?d", "?e", NULL,
+                                "?f", "?g", "f", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 6);
+        ck_assert(facts_remove(g_f, (const char *[]){
+                                "e", "?f", "?g", NULL,
+                                "?f", "?g", "?h", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 4);
+        ck_assert(!facts_get_spo(g_f, "a", "b", "c"));
+        ck_assert(!facts_get_spo(g_f, "b", "c", "d"));
+        ck_assert(!facts_get_spo(g_f, "c", "d", "e"));
+        ck_assert(!facts_get_spo(g_f, "d", "e", "f"));
+        ck_assert(!facts_get_spo(g_f, "e", "f", "g"));
+        ck_assert(!facts_get_spo(g_f, "f", "g", "h"));
+        ck_assert(facts_get_spo(g_f, "g", "h", "i"));
+        ck_assert(facts_get_spo(g_f, "h", "i", "j"));
+        ck_assert(facts_get_spo(g_f, "i", "j", "k"));
+        ck_assert(facts_get_spo(g_f, "j", "k", "l"));
+        ck_assert(facts_count(g_f) == 4);
+}
+END_TEST
+
+START_TEST (test_facts_remove_ten)
+{
+        ck_assert(facts_count(g_f) == 10);
+        ck_assert(facts_remove(g_f, (const char *[]){
+                                "a", "b", "c", NULL,
+                                "b", "c", "d", NULL,
+                                "c", "d", "e", NULL,
+                                "d", "e", "f", NULL,
+                                "e", "f", "g", NULL,
+                                "f", "g", "h", NULL,
+                                "g", "h", "i", NULL,
+                                "h", "i", "j", NULL,
+                                "i", "j", "k", NULL,
+                                "j", "k", "l", NULL, NULL}));
+        ck_assert(facts_count(g_f) == 0);
+}
+END_TEST
+
 void setup_with_spo ()
 {
         g_f = new_facts(NULL, 100);
@@ -1672,6 +1813,7 @@ Suite * facts_suite(void)
         TCase *tc_add;
         TCase *tc_remove_fact;
         TCase *tc_remove_spo;
+        TCase *tc_remove;
         TCase *tc_with_spo;
         TCase *tc_write;
         TCase *tc_read;
@@ -1720,6 +1862,13 @@ Suite * facts_suite(void)
         tcase_add_test(tc_remove_spo, test_facts_remove_spo_two);
         tcase_add_test(tc_remove_spo, test_facts_remove_spo_ten);
         suite_add_tcase(s, tc_remove_spo);
+        tc_remove = tcase_create("Remove");
+        tcase_add_checked_fixture(tc_remove, setup_remove,
+                                  teardown_remove);
+        tcase_add_test(tc_remove, test_facts_remove_one);
+        tcase_add_test(tc_remove, test_facts_remove_two);
+        tcase_add_test(tc_remove, test_facts_remove_ten);
+        suite_add_tcase(s, tc_remove);
         tc_with_spo = tcase_create("With SPO");
         tcase_add_checked_fixture(tc_with_spo, setup_with_spo,
                                   teardown_with_spo);
