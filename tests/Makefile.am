@@ -24,6 +24,7 @@ GCOV =
 
 check_fact_SOURCES = \
 	check_fact.c \
+	$(top_builddir)/binding.c \
 	$(top_builddir)/fact.c
 check_fact_CFLAGS = @CHECK_CFLAGS@ ${AM_CFLAGS}
 check_fact_LDADD = @CHECK_LIBS@

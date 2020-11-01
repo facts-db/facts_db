@@ -31,4 +31,7 @@ const char ** bindings_get_or_die (s_binding *bindings,
 /* set all bindings values to NULL */
 void bindings_nullify (s_binding *bindings);
 
+int bindings_resolve (s_binding *bindings,
+                      const char **pstr);
+
 #endif

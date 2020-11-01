@@ -54,3 +54,15 @@ void bindings_nullify (s_binding *bindings)
                         bindings++;
                 }
 }
+
+int bindings_resolve (s_binding *bindings, const char **pstr)
+{
+        if (bindings && pstr && (*pstr)[0] == '?') {
+                const char **value = bindings_get(bindings, *pstr);
+                if (value) {
+                        *pstr = *value;
+                        return 1;
+                }
+        }
+        return 0;
+}

@@ -17,22 +17,58 @@
 #ifndef FACT_H
 #define FACT_H
 
+#include "binding.h"
+
 #define P_FIRST ((void*) 0)
 #define P_LAST  ((void*) -1)
 
 typedef struct fact {
-  const char *s;
-  const char *p;
-  const char *o;
+        const char *s;
+        const char *p;
+        const char *o;
 } s_fact;
 
 typedef int (*f_fact) (s_fact *f);
 
-void         fact_init (s_fact *f, const char *s, const char *p, const char *o);
-s_fact * new_fact (const char *s, const char *p, const char *o);
+void         fact_init (s_fact *f,
+                        const char *s,
+                        const char *p,
+                        const char *o);
+
+s_fact * new_fact (const char *s,
+                   const char *p,
+                   const char *o);
+
 void  delete_fact (s_fact *f);
-int          fact_compare_spo (void *a, void *b);
-int          fact_compare_pos (void *a, void *b);
-int          fact_compare_osp (void *a, void *b);
+
+int          fact_compare_spo (void *a,
+                               void *b);
+
+int          fact_compare_pos (void *a,
+                               void *b);
+
+int          fact_compare_osp (void *a,
+                               void *b);
+
+int          fact_bindings_resolve (s_fact *f,
+                                    s_binding *bindings);
+
+typedef struct fact_list s_fact_list;
+
+struct fact_list {
+        s_fact *fact;
+        s_fact_list *next;
+};
+
+s_fact_list * new_fact_list (s_fact *fact,
+                             s_fact_list *next);
+
+void       delete_fact_list (s_fact_list *fl);
+
+s_fact_list *     fact_list_find (s_fact_list *fl,
+                                  s_fact *f);
+
+s_fact_list *     fact_list_intern (s_fact_list *fl,
+                                    s_fact *f);
 
 #endif
