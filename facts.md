@@ -180,7 +180,7 @@ Example :
 ```
        facts_remove(facts, (const char *[]){
                         "?movie", "is a", "movie",
-                                  "?p" "?o", NULL, NULL});
+                                  "?p", "?o", NULL, NULL});
 ```
 
 ---
