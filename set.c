@@ -24,13 +24,12 @@
 s_set_item * new_set_item (size_t len, void *data, size_t hash,
                            s_set_item *next)
 {
-        s_set_item *i = malloc(sizeof(s_set_item));
+        s_set_item *i = calloc(1, sizeof(s_set_item));
         if (i) {
                 i->len = len;
                 i->data = data;
                 i->hash = hash;
                 i->next = next;
-                i->usage = 0;
         }
         return i;
 }

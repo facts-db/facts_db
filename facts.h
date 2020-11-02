@@ -49,8 +49,14 @@ s_facts *     new_facts (s_set *symbols,
 
 void       delete_facts (s_facts *facts);
 
-const char *      facts_find_symbol (s_facts *facts,
+s_set_item *      facts_find_symbol (s_facts *facts,
                                      const char *string);
+
+long              facts_get_long (s_facts *facts,
+                                  const char *string);
+
+double            facts_get_double (s_facts *facts,
+                                    const char *string);
 
 const char *      facts_anon (s_facts *facts,
                               const char *name);

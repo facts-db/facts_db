@@ -65,17 +65,45 @@ void delete_facts (s_facts *facts)
         free(facts);
 }
 
-const char * facts_find_symbol (s_facts *facts, const char *string)
+s_set_item * facts_find_symbol (s_facts *facts, const char *string)
 {
-        s_set_item *i;
         size_t len;
         assert(facts);
         assert(string);
         len = strlen(string);
-        i = set_get(facts->set, string, len);
-        if (i)
-                return i->data;
-        return NULL;
+        return set_get(facts->set, string, len);
+}
+
+long facts_get_long (s_facts *facts, const char *string)
+{
+        s_set_item *i;
+        assert(facts);
+        assert(string);
+        i = facts_find_symbol(facts, string);
+        if (i) {
+                if (!i->long_p) {
+                        i->long_value = atol(string);
+                        i->long_p = 1;
+                }
+                return i->long_value;
+        }
+        return 0;
+}
+
+double facts_get_double (s_facts *facts, const char *string)
+{
+        s_set_item *i;
+        assert(facts);
+        assert(string);
+        i = facts_find_symbol(facts, string);
+        if (i) {
+                if (!i->double_p) {
+                        i->double_value = atol(string);
+                        i->double_p = 1;
+                }
+                return i->double_value;
+        }
+        return 0;
 }
 
 const char * facts_intern (s_facts *facts, const char *string)
@@ -99,11 +127,9 @@ const char * facts_intern (s_facts *facts, const char *string)
 void facts_unintern (s_facts *facts, const char *string)
 {
         s_set_item *i;
-        size_t len;
         assert(facts);
         assert(string);
-        len = strlen(string);
-        i = set_get(facts->set, string, len);
+        i = facts_find_symbol(facts, string);
         if (i) {
                 i->usage--;
                 if (!i->usage)
@@ -136,7 +162,12 @@ const char * facts_anon (s_facts *facts, const char *name)
         char buf[1024];
         char *b = buf;
         int i = 0;
-        assert(facts);
+        assert(facts);int              set_item_get_double (s_set_item *si,
+                                      double *var);
+
+double           set_item_set_double (s_set_item *si,
+                                      double value);
+
         if (name && name[0] == '?')
                 name++;
         if (!name || !name[0])
