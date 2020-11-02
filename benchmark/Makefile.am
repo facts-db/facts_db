@@ -1,9 +1,11 @@
 
 BENCHMARK = \
-	set_insert
+	set_insert \
+	set_insert_overflow
 
 bin_PROGRAMS = \
-	benchmark_set_insert
+	benchmark_set_insert \
+	benchmark_set_insert_overflow
 #	benchmark_set_remove \
 #	benchmark_facts_add \
 #	benchmark_facts_remove
@@ -21,6 +23,13 @@ benchmark: ${BENCHMARK}
 set_insert: benchmark_set_insert
 	time ./benchmark_set_insert
 
-benchmark_set_insert_SOURCES = benchmark_set_insert.c
+benchmark_set_insert_SOURCES = \
+	benchmark_set_insert.c
 
-.PHONY: benchmark set_insert
+set_insert_overflow: benchmark_set_insert_overflow
+	time ./benchmark_set_insert_overflow
+
+benchmark_set_insert_overflow_SOURCES = \
+	benchmark_set_insert_overflow.c
+
+.PHONY: benchmark ${BENCHMARK}

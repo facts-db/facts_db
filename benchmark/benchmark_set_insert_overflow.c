@@ -12,8 +12,8 @@ int main (int argc, char **argv)
         s_set set;
         (void) argc;
         (void) argv;
-        printf("set_init(%li)\n", (long) ITERATIONS);
-        set_init(&set, ITERATIONS);
+        printf("set_init(%li)\n", (long) (ITERATIONS / 2));
+        set_init(&set, ITERATIONS / 2);
         printf("benchmarking %li times set_add(sizeof(long))\n",
                (long) ITERATIONS);
         while (i < ITERATIONS) {
