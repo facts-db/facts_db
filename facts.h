@@ -31,6 +31,7 @@ typedef struct facts
 {
         s_set *symbols;
         size_t symbols_delete;
+        s_set index;
         s_skiplist *index_spo;
         s_skiplist *index_pos;
         s_skiplist *index_osp;
@@ -50,6 +51,9 @@ void       delete_facts (s_facts *facts);
 
 s_set_item *      facts_find_symbol (s_facts *facts,
                                      const char *string);
+
+const char *      facts_find_symbol_str (s_facts *facts,
+                                         const char *string);
 
 const char *      facts_long (s_facts *facts,
                               long l);

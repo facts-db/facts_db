@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "../facts.h"
 
-#define ITERATIONS (1000)
+#define ITERATIONS (1000 * 10)
 
 int main (int argc, char **argv)
 {

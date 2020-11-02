@@ -29,6 +29,7 @@ void facts_init (s_facts *facts, s_set *symbols, unsigned long max)
         assert(facts);
         facts->symbols = symbols ? symbols : new_set(max);
         facts->symbols_delete = !symbols;
+        set_init(&facts->index, max);
         height = log(max) / log(FACTS_SKIPLIST_SPACING);
         facts->index_spo = new_skiplist(height, FACTS_SKIPLIST_SPACING);
         assert(facts->index_spo);
@@ -47,6 +48,7 @@ void facts_destroy (s_facts *facts)
         delete_skiplist(facts->index_spo);
         delete_skiplist(facts->index_pos);
         delete_skiplist(facts->index_osp);
+        set_destroy(&facts->index);
         if (facts->symbols_delete)
                 delete_set(facts->symbols);
 }
@@ -72,6 +74,14 @@ s_set_item * facts_find_symbol (s_facts *facts, const char *string)
         assert(string);
         len = strlen(string);
         return set_get(facts->symbols, string, len);
+}
+
+const char * facts_find_symbol_str (s_facts *facts, const char *string)
+{
+        s_set_item *si = facts_find_symbol(facts, string);
+        if (si)
+                return si->data;
+        return NULL;
 }
 
 const char * facts_long (s_facts *facts, long l)
@@ -218,6 +228,7 @@ s_fact * facts_add_fact (s_facts *facts, s_fact *f)
         skiplist_insert(facts->index_spo, new);
         skiplist_insert(facts->index_pos, new);
         skiplist_insert(facts->index_osp, new);
+        set_add(&facts->index, new, sizeof(s_fact));
         return new;
 }
 
@@ -361,12 +372,18 @@ int facts_remove (s_facts *facts, p_spec spec)
 
 s_fact * facts_get_fact (s_facts *facts, s_fact *f)
 {
-        s_skiplist_node *node;
+        s_fact fact;
+        s_set_item *si;
         assert(facts);
         assert(f);
-        node = skiplist_find(facts->index_spo, f);
-        if (node)
-                return (s_fact*) node->value;
+        if (!(fact.s = facts_find_symbol_str(facts, f->s)))
+                return NULL;
+        if (!(fact.p = facts_find_symbol_str(facts, f->p)))
+                return NULL;
+        if (!(fact.o = facts_find_symbol_str(facts, f->o)))
+                return NULL;
+        if ((si = set_get(&facts->index, &fact, sizeof(s_fact))))
+                return (s_fact *) si->data;
         return NULL;
 }
 
