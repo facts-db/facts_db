@@ -1,13 +1,13 @@
 
 BENCHMARK = \
-	set_insert \
-	set_insert_overflow \
+	set_add \
+	set_add_overflow \
 	set_get \
 	set_remove
 
 bin_PROGRAMS = \
-	benchmark_set_insert \
-	benchmark_set_insert_overflow \
+	benchmark_set_add \
+	benchmark_set_add_overflow \
 	benchmark_set_get \
 	benchmark_set_remove
 #	benchmark_facts_add \
@@ -23,17 +23,17 @@ AM_LDFLAGS = ../libfacts_db.la
 
 benchmark: ${BENCHMARK}
 
-set_insert: benchmark_set_insert
-	time ./benchmark_set_insert
+set_add: benchmark_set_add
+	time ./benchmark_set_add
 
-benchmark_set_insert_SOURCES = \
-	benchmark_set_insert.c
+benchmark_set_add_SOURCES = \
+	benchmark_set_add.c
 
-set_insert_overflow: benchmark_set_insert_overflow
-	time ./benchmark_set_insert_overflow
+set_add_overflow: benchmark_set_add_overflow
+	time ./benchmark_set_add_overflow
 
-benchmark_set_insert_overflow_SOURCES = \
-	benchmark_set_insert_overflow.c
+benchmark_set_add_overflow_SOURCES = \
+	benchmark_set_add_overflow.c
 
 set_get: benchmark_set_get
 	time ./benchmark_set_get
