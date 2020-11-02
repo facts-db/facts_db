@@ -24,8 +24,7 @@
 #include "skiplist.h"
 #include "spec.h"
 
-#define FACTS_SET_INITIAL_SIZE 1000000
-#define FACTS_SKIPLIST_SPACING 2.0
+#define FACTS_SKIPLIST_SPACING 2.7
 #define FACTS_LOAD_BUFSZ (1024 * 1024)
 
 typedef struct facts

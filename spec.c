@@ -50,7 +50,6 @@ p_spec spec_expand (p_spec spec)
 {
         size_t count;
         assert(spec);
-        fprintf(stderr, "spec_expand\n");
         count = spec_count_facts(spec);
         if (count > 0) {
                 s_spec_cursor c;
@@ -102,7 +101,6 @@ p_spec spec_sort (p_spec spec)
         size_t count;
         size_t i;
         assert(spec);
-        fprintf(stderr, "spec_sort\n");
         count = spec_count_facts(spec);
         if (count)
                 for (i = 0; i < count - 1; i++) {
@@ -117,7 +115,6 @@ p_spec spec_sort (p_spec spec)
                                 }
                         }
                 }
-        fprintf(stderr, "spec_sort end\n");
         return spec;
 }
 
