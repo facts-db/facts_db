@@ -19,12 +19,13 @@ int main (int argc, char **argv)
         for (i = 0; i < 10; i++)
                 l[i] = i;
         for (i = 0; i < ITERATIONS; i++) {
-                l[i] = i;
+                l[i + 10] = i + 10;
                 set_add(&set, l + i, 10 * sizeof(long));
         }
-        printf("benchmarking %li times set_get(10 * sizeof(long))\n",
+        printf("benchmarking %li times set_remove\n",
                (long) ITERATIONS);
         for (i = 0; i < ITERATIONS; i++)
-                set_get(&set, l + i, 10 * sizeof(long));
+                set_remove(&set, set_get(&set, l + i,
+                                         10 * sizeof(long)));
         set_destroy(&set);
 }

@@ -2,13 +2,14 @@
 BENCHMARK = \
 	set_insert \
 	set_insert_overflow \
-	set_get
+	set_get \
+	set_remove
 
 bin_PROGRAMS = \
 	benchmark_set_insert \
 	benchmark_set_insert_overflow \
-	benchmark_set_get
-#	benchmark_set_remove \
+	benchmark_set_get \
+	benchmark_set_remove
 #	benchmark_facts_add \
 #	benchmark_facts_remove
 
@@ -39,5 +40,11 @@ set_get: benchmark_set_get
 
 benchmark_set_get_SOURCES = \
 	benchmark_set_get.c
+
+set_remove: benchmark_set_remove
+	time ./benchmark_set_remove
+
+benchmark_set_remove_SOURCES = \
+	benchmark_set_remove.c
 
 .PHONY: benchmark ${BENCHMARK}
