@@ -29,8 +29,8 @@
 
 typedef struct facts
 {
-        s_set *set;
-        size_t set_delete;
+        s_set *symbols;
+        size_t symbols_delete;
         s_skiplist *index_spo;
         s_skiplist *index_pos;
         s_skiplist *index_osp;

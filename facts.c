@@ -27,8 +27,8 @@ void facts_init (s_facts *facts, s_set *symbols, unsigned long max)
 {
         unsigned long height;
         assert(facts);
-        facts->set = symbols ? symbols : new_set(max);
-        facts->set_delete = !symbols;
+        facts->symbols = symbols ? symbols : new_set(max);
+        facts->symbols_delete = !symbols;
         height = log(max) / log(FACTS_SKIPLIST_SPACING);
         facts->index_spo = new_skiplist(height, FACTS_SKIPLIST_SPACING);
         assert(facts->index_spo);
@@ -47,8 +47,8 @@ void facts_destroy (s_facts *facts)
         delete_skiplist(facts->index_spo);
         delete_skiplist(facts->index_pos);
         delete_skiplist(facts->index_osp);
-        if (facts->set_delete)
-                delete_set(facts->set);
+        if (facts->symbols_delete)
+                delete_set(facts->symbols);
 }
 
 s_facts * new_facts (s_set *symbols, unsigned long max)
@@ -71,7 +71,7 @@ s_set_item * facts_find_symbol (s_facts *facts, const char *string)
         assert(facts);
         assert(string);
         len = strlen(string);
-        return set_get(facts->set, string, len);
+        return set_get(facts->symbols, string, len);
 }
 
 const char * facts_long (s_facts *facts, long l)
@@ -126,7 +126,7 @@ s_set_item * facts_add_symbol (s_facts *facts, const char *string,
 {
         char *data = malloc(len + 1);
         memcpy(data, string, len + 1);
-        return set_add(facts->set, data, len);
+        return set_add(facts->symbols, data, len);
 }
 
 const char * facts_intern (s_facts *facts, const char *string)
@@ -136,7 +136,7 @@ const char * facts_intern (s_facts *facts, const char *string)
         assert(facts);
         assert(string);
         len = strlen(string);
-        i = set_get(facts->set, string, len);
+        i = set_get(facts->symbols, string, len);
         if (!i)
                 i = facts_add_symbol(facts, string, len);
         assert(i);
@@ -153,7 +153,7 @@ void facts_unintern (s_facts *facts, const char *string)
         if (i) {
                 i->usage--;
                 if (!i->usage)
-                        set_remove(facts->set, i);
+                        set_remove(facts->symbols, i);
         }
 }
 
