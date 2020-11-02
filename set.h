@@ -33,11 +33,15 @@ struct set_item {
 
 s_set_item * new_set_item (size_t len, void *data, size_t hash, s_set_item *next);
 
+typedef size_t (*f_hash) (const void *data,
+                          size_t len);
+
 typedef struct set {
         size_t max;
         s_set_item *items;
         size_t count;
         size_t collisions;
+        f_hash hash;
 } s_set;
 
 void         set_init (s_set *set,
@@ -48,9 +52,6 @@ void         set_destroy (s_set *set);
 s_set *  new_set (size_t max);
 
 void  delete_set (s_set *set);
-
-size_t       set_hash (void *data,
-                       size_t len);
 
 s_set_item * set_add (s_set *set,
                       void *data,

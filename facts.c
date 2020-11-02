@@ -74,6 +74,21 @@ s_set_item * facts_find_symbol (s_facts *facts, const char *string)
         return set_get(facts->set, string, len);
 }
 
+const char * facts_long (s_facts *facts, long l)
+{
+        char buf[48];
+        snprintf(buf, sizeof(buf), "%li", l);
+        return facts_intern(facts, buf);
+}
+
+const char * facts_double (s_facts *facts,
+                           double d)
+{
+        char buf[32];
+        snprintf(buf, sizeof(buf), "%.16g", d);
+        return facts_intern(facts, buf);
+}
+
 long facts_get_long (s_facts *facts, const char *string)
 {
         s_set_item *i;
@@ -103,7 +118,15 @@ double facts_get_double (s_facts *facts, const char *string)
                 }
                 return i->double_value;
         }
-        return 0;
+        return 0.0;
+}
+
+s_set_item * facts_add_symbol (s_facts *facts, const char *string,
+                               size_t len)
+{
+        char *data = malloc(len + 1);
+        memcpy(data, string, len + 1);
+        return set_add(facts->set, data, len);
 }
 
 const char * facts_intern (s_facts *facts, const char *string)
@@ -114,11 +137,8 @@ const char * facts_intern (s_facts *facts, const char *string)
         assert(string);
         len = strlen(string);
         i = set_get(facts->set, string, len);
-        if (!i) {
-                char *data = malloc(len + 1);
-                memcpy(data, string, len + 1);
-                i = set_add(facts->set, data, len);
-        }
+        if (!i)
+                i = facts_add_symbol(facts, string, len);
         assert(i);
         i->usage++;
         return i->data;

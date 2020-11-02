@@ -130,7 +130,6 @@ START_TEST (test_set_add_one)
         ck_assert(ia == set_add(&g_set, "a", 1));
         ck_assert(g_set.count == 1);
         ck_assert(ia == set_get(&g_set, "a", 1));
-        ck_assert(ia->hash == set_hash("a", 1));
 }
 END_TEST
 

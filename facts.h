@@ -52,6 +52,12 @@ void       delete_facts (s_facts *facts);
 s_set_item *      facts_find_symbol (s_facts *facts,
                                      const char *string);
 
+const char *      facts_long (s_facts *facts,
+                              long l);
+
+const char *      facts_double (s_facts *facts,
+                                double d);
+
 long              facts_get_long (s_facts *facts,
                                   const char *string);
 

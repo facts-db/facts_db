@@ -42,6 +42,7 @@ void set_init (s_set *set, size_t max)
         set->items = calloc(max, sizeof(s_set_item));
         set->count = 0;
         set->collisions = 0;
+        set->hash = (f_hash) farmhash;
 }
 
 void set_destroy (s_set *set)
@@ -81,11 +82,6 @@ void delete_set (s_set *set)
         }
 }
 
-size_t set_hash (void *data, size_t len)
-{
-        return farmhash(data, len);
-}
-
 static s_set_item * set_add_collision (s_set *set, void *data,
                                        size_t len, size_t hash,
                                        s_set_item *i)
@@ -104,7 +100,7 @@ s_set_item * set_add (s_set *set, void *data, size_t len)
         assert(set);
         assert(data);
         assert(len > 0);
-        hash = farmhash(data, len);
+        hash = set->hash(data, len);
         return set_add_h(set, data, len, hash);
 }
 
@@ -184,7 +180,7 @@ s_set_item * set_get (s_set *set, const void *data, size_t len)
         assert(set);
         assert(data);
         assert(len > 0);
-        hash = farmhash(data, len);
+        hash = set->hash(data, len);
         return set_get_h(set, data, len, hash);
 }
 
