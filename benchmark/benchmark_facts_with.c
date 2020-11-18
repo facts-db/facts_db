@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include "../facts.h"
 
-#define ITERATIONS (1000)
+#define ITERATIONS (1000 * 2)
+#define WITH_ITERATIONS (1000)
 
 int main (int argc, char **argv)
 {
@@ -40,8 +41,8 @@ int main (int argc, char **argv)
                "    \"actor\", \"?actor\", NULL,\n"
                "  \"?actor\", \"is a\", \"actor\",\n"
                "    \"value\", \"?value\", NULL, NULL})\n",
-               (long) ITERATIONS);
-        for (i = 0; i < ITERATIONS; i++) {
+               (long) WITH_ITERATIONS);
+        for (i = 0; i < WITH_ITERATIONS; i++) {
                 facts_with(&facts, bindings, &c, (const char *[]) {
                                 "?movie", "is a", "movie",
                                 "actor", "?actor", NULL,
