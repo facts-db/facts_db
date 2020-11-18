@@ -33,7 +33,7 @@ include_HEADERS += \
 	skiplist.h \
 	spec.h
 
-SUBDIRS = tests benchmark
+SUBDIRS = . tests benchmark
 
 benchmark:
 	${MAKE} -C benchmark benchmark
