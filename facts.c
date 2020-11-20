@@ -654,3 +654,36 @@ int facts_with_cursor_next (s_facts_with_cursor *c)
         }
         return 1;
 }
+
+const char * facts_get_prop (s_facts *facts, const char *s,
+                             const char *p)
+{
+        const char *o = NULL;
+        s_binding bindings[] = {{"?o", &o}, {NULL, NULL}};
+        s_facts_cursor c;
+        facts_with_spo(facts, bindings, &c, s, p, "?o");
+        if (facts_cursor_next(&c))
+                return o;
+        return NULL;
+}
+
+long facts_get_prop_long (s_facts *facts, const char *s,
+                          const char *p)
+{
+        const char *o = facts_get_prop(facts, s, p);
+        return facts_get_long(facts, o);
+}
+
+double facts_get_prop_double (s_facts *facts, const char *s,
+                              const char *p)
+{
+        const char *o = facts_get_prop(facts, s, p);
+        return facts_get_double(facts, o);
+}
+
+s_fact * facts_set_prop (s_facts *facts, const char *s,
+                         const char *p, const char *o)
+{
+        facts_remove(facts, (const char *[]) {s, p, "?o", NULL, NULL});
+        return facts_add_spo(facts, s, p, o);
+}

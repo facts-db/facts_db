@@ -175,4 +175,21 @@ void              facts_with_cursor_destroy (s_facts_with_cursor *c);
 
 int               facts_with_cursor_next (s_facts_with_cursor *c);
 
+const char *      facts_get_prop (s_facts *facts,
+                                  const char *s,
+                                  const char *p);
+
+long              facts_get_prop_long (s_facts *facts,
+                                       const char *s,
+                                       const char *p);
+
+double            facts_get_prop_double (s_facts *facts,
+                                         const char *s,
+                                         const char *p);
+
+s_fact *          facts_set_prop (s_facts *facts,
+                                  const char *s,
+                                  const char *p,
+                                  const char *o);
+
 #endif
