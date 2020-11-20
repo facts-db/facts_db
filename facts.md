@@ -241,6 +241,17 @@ Each member of the triple can be a binding name starting with a `?`
 and defined in **bindings**. See [binding](binding.md). The bindings will be
 set by [facts_cursor_next](#facts_cursor_next).
 
+Example :
+```
+        const char *o = NULL;
+        s_binding bindings[] = {{"?o", &o}, {NULL, NULL}};
+        s_facts_cursor c;
+        facts_with_spo(facts, bindings, &c, s, p, "?o");
+        if (facts_cursor_next(&c))
+                return o;
+        return NULL;
+```
+
 ---
 
 <a id="s_facts_with_cursor"></a>
@@ -308,3 +319,41 @@ Example :
         facts_with_cursor_destroy(&c);
 }
 ```
+
+---
+
+<a id="facts_get_prop"></a>
+`const char * facts_get_prop (s_facts *facts, const char *s,
+const char *p)`
+
+Returns the first matching object for a given subject and predicate.
+
+---
+
+<a id="facts_get_prop_long"></a>
+`long facts_get_prop_long (s_facts *facts, const char *s,
+const char *p)`
+
+Returns the first matching object for a given subject and predicate
+as a long value.
+
+---
+
+<a id="facts_get_prop_double"></a>
+`double facts_get_prop_double (s_facts *facts, const char *s,
+const char *p)`
+
+Returns the first matching object for a given subject and predicate
+as a double value.
+
+---
+
+<a id="facts_set_prop"></a>
+`s_fact * facts_set_prop (s_facts *facts, const char *s, const char *p,
+const char *o)`
+
+Sets a property value *o* for subject *s* and predicate *p*.
+Removes all other property values for *s* and *p*.
+
+A property can be at most a single object for a given subject and
+predicate.
