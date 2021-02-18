@@ -45,11 +45,10 @@ for PROG in $PROGS; do
     echo "\t${LIBTOOL} --tag=CC --mode=link \${CC} \${CFLAGS} \${LDFLAGS} $PROG.o -o $PROG" >> ${CONFIG_MK}
 done
 
+TOTAL=$(printf '\e[1mTOTAL\e[0m')
 PASS=$(printf '\e[32mPASS\e[0m')
 FAIL=$(printf '\e[31mFAIL\e[0m')
 
 echo >> ${CONFIG_MK}
 echo "checks: $PROGS" >> ${CONFIG_MK}
-for PROG in $PROGS; do
-    echo "\t@if ./$PROG > $PROG.log; then echo $PASS $PROG; else echo $FAIL $PROG; fi" >> ${CONFIG_MK}
-done
+echo "\t@FAIL=0; PASS=0; for PROG in $PROGS; do if ./\$\$PROG > \$\$PROG.log; then echo $PASS \$\$PROG; PASS=\$\$((\$\$PASS + 1)); else echo $FAIL \$\$PROG; FAIL=\$\$((echo \$\$FAIL + 1)); fi; done; echo $TOTAL: \$\$((\$\$FAIL + \$\$PASS)); echo $PASS:\  \$\$PASS; echo $FAIL:\  \$\$FAIL" >> ${CONFIG_MK}
