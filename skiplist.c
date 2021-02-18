@@ -18,7 +18,6 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <strings.h>
-#include "form.h"
 #include "skiplist.h"
 
 long int random(void);

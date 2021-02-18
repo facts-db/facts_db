@@ -112,6 +112,7 @@ static inline uint32_t bswap32(const uint32_t x) {
   return y;
 }
 
+/*
 static inline uint64_t bswap64(const uint64_t x) {
   uint64_t y = x;
 
@@ -132,6 +133,7 @@ static inline uint64_t bswap64(const uint64_t x) {
 
   return y;
 }
+*/
 
 static inline uint64_t fetch64(const char* p) {
   uint64_t result;

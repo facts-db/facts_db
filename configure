@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+. ./config.subr
+
+LIB=libfacts_db.la
+
+SOURCES="$(ls *.c | tr '\n' ' ')"
+echo "SOURCES = $SOURCES" >> ${CONFIG_MK}
+
+OBJECTS="$(c2lo "$SOURCES")"
+echo "OBJECTS = $OBJECTS" >> ${CONFIG_MK}
+
+if test -d /usr/local/include; then
+    CPPFLAGS="-I/usr/local/include"
+fi
+echo "CPPFLAGS = $CPPFLAGS" >> ${CONFIG_MK}
+
+if [ x"$DEBUG" = x"yes" ]; then
+    CFLAGS="-DDEBUG -O0 -ggdb"
+else
+    CFLAGS="-DNDEBUG -O3"
+fi
+CFLAGS="$CFLAGS -W -Wall -Werror -std=c99 -pedantic"
+echo "CFLAGS = $CFLAGS" >> ${CONFIG_MK}
+
+LDFLAGS=
+echo "LDFLAGS = $LDFLAGS" >> ${CONFIG_MK}
+
+for SRC in $SOURCES; do
+    SRC_O=$(c2lo $SRC)
+    INC="$(includes $SRC)"
+    echo >> ${CONFIG_MK}
+    echo "$SRC_O: $SRC $INC" >> ${CONFIG_MK}
+    echo "\t${LIBTOOL} --tag=CC --mode=compile \${CC} \${CPPFLAGS} \${CFLAGS} -c $SRC -o $SRC_O" >> ${CONFIG_MK}
+done
+
+LIBPATH=/usr/local/lib
+echo >> ${CONFIG_MK}
+echo "$LIB: $OBJECTS" >> ${CONFIG_MK}
+echo "\t${LIBTOOL} --tag=CC --mode=link \${CC} \${LDFLAGS} $OBJECTS -o $LIB -rpath ${LIBPATH}" >> ${CONFIG_MK}
+
+cd tests && ./configure

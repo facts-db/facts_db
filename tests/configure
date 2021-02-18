@@ -1,0 +1,55 @@
+#!/bin/sh
+set -e
+
+CC=gcc
+. ../config.subr
+
+if test -d /usr/local/include; then
+    CPPFLAGS="-I/usr/local/include"
+fi
+echo "CPPFLAGS = $CPPFLAGS" >> ${CONFIG_MK}
+
+if [ x"$DEBUG" = x"no" ]; then
+    CFLAGS="-DNDEBUG -O3"
+else
+    CFLAGS="-DDEBUG -O0 -ggdb"
+fi
+CFLAGS="$CFLAGS -W -Wall -Werror -std=c99 -pedantic"
+CFLAGS="$CFLAGS -fprofile-arcs -ftest-coverage"
+echo "CFLAGS = $CFLAGS" >> ${CONFIG_MK}
+
+if test -d /usr/local/lib; then
+    LDFLAGS="-L/usr/local/lib"
+fi
+LDFLAGS="$LDFLAGS -lcheck ../libfacts_db.la"
+echo "LDFLAGS = $LDFLAGS" >> ${CONFIG_MK}
+
+SOURCES="$(ls *.c | tr '\n' ' ')"
+echo "SOURCES = $SOURCES" >> ${CONFIG_MK}
+
+for SRC in $SOURCES; do
+    SRC_O=$(c2o $SRC)
+    INC="$(includes $SRC)"
+    echo >> ${CONFIG_MK}
+    echo "$SRC_O: $SRC $INC" >> ${CONFIG_MK}
+    echo "\t\${CC} \${CPPFLAGS} \${CFLAGS} -c $SRC -o $SRC_O" >> ${CONFIG_MK}
+done
+
+PROGS="$(c2prog $SOURCES)"
+echo >> ${CONFIG_MK}
+echo "PROGS = $PROGS" >> ${CONFIG_MK}
+
+for PROG in $PROGS; do
+    echo >> ${CONFIG_MK}
+    echo "$PROG: $PROG.o" >> ${CONFIG_MK}
+    echo "\t${LIBTOOL} --tag=CC --mode=link \${CC} \${CFLAGS} \${LDFLAGS} $PROG.o -o $PROG" >> ${CONFIG_MK}
+done
+
+PASS=$(printf '\e[32mPASS\e[0m')
+FAIL=$(printf '\e[31mFAIL\e[0m')
+
+echo >> ${CONFIG_MK}
+echo "checks: $PROGS" >> ${CONFIG_MK}
+for PROG in $PROGS; do
+    echo "\t@if ./$PROG > $PROG.log; then echo $PASS $PROG; else echo $FAIL $PROG; fi" >> ${CONFIG_MK}
+done

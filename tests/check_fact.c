@@ -17,7 +17,7 @@
 
 #include <check.h>
 #include <stdlib.h>
-#include "fact.h"
+#include "../fact.h"
 
 START_TEST (test_fact_init)
 {

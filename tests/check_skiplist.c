@@ -18,7 +18,7 @@
 #include <check.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "skiplist.h"
+#include "../skiplist.h"
 
 s_skiplist *g_sl = NULL;
 

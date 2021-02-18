@@ -17,8 +17,8 @@
 
 #include <check.h>
 #include <stdlib.h>
-#include "facts.h"
-#include "rw.h"
+#include "../facts.h"
+#include "../rw.h"
 
 s_facts *g_f;
 

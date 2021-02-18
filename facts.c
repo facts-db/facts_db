@@ -410,6 +410,7 @@ void facts_cursor_init (s_facts *facts,
                         s_fact *end)
 {
         s_skiplist_node *pred;
+        (void) facts;
         assert(facts);
         assert(c);
         assert(tree);

@@ -16,7 +16,7 @@
  */
 
 #include <check.h>
-#include "spec.h"
+#include "../spec.h"
 
 START_TEST (test_spec_cursor_empty)
 {

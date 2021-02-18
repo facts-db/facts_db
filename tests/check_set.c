@@ -17,7 +17,7 @@
 
 #include <check.h>
 #include <stdlib.h>
-#include "set.h"
+#include "../set.h"
 
 s_set g_set;
 
