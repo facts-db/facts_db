@@ -1,0 +1,45 @@
+#!/bin/sh
+set -e
+
+. ../config.subr
+
+CPPFLAGS=
+echo "CPPFLAGS = $CPPFLAGS" >> ${CONFIG_MK}
+
+if [ x"$DEBUG" = x"no" ]; then
+    CFLAGS="-DNDEBUG -O3"
+else
+    CFLAGS="-DDEBUG -O0 -ggdb"
+fi
+CFLAGS="$CFLAGS -W -Wall -Werror -std=c99 -pedantic"
+echo "CFLAGS = $CFLAGS" >> ${CONFIG_MK}
+
+LDFLAGS="../libfacts_db.la"
+echo "LDFLAGS = $LDFLAGS" >> ${CONFIG_MK}
+
+SOURCES="$(ls *.c | tr '\n' ' ')"
+echo "SOURCES = $SOURCES" >> ${CONFIG_MK}
+
+for SRC in $SOURCES; do
+    SRC_O=$(c2o $SRC)
+    INC="$(includes $SRC)"
+    echo >> ${CONFIG_MK}
+    echo "$SRC_O: $SRC $INC" >> ${CONFIG_MK}
+    echo "\t\${CC} \${CPPFLAGS} \${CFLAGS} -c $SRC -o $SRC_O" >> ${CONFIG_MK}
+done
+
+PROGS="$(c2prog $SOURCES)"
+echo >> ${CONFIG_MK}
+echo "PROGS = $PROGS" >> ${CONFIG_MK}
+
+for PROG in $PROGS; do
+    echo >> ${CONFIG_MK}
+    echo "$PROG: $PROG.o" >> ${CONFIG_MK}
+    echo "\t${LIBTOOL} --tag=CC --mode=link \${CC} \${CFLAGS} \${LDFLAGS} $PROG.o -o $PROG" >> ${CONFIG_MK}
+done
+
+echo >> ${CONFIG_MK}
+echo "benchmark: $PROGS" >> ${CONFIG_MK}
+echo -n "\t@for PROG in $PROGS; do" >> ${CONFIG_MK}
+echo -n " time ./\$\$PROG;" >> ${CONFIG_MK}
+echo -n "done" >> ${CONFIG_MK}

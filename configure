@@ -24,7 +24,7 @@ fi
 CFLAGS="$CFLAGS -W -Wall -Werror -std=c99 -pedantic"
 echo "CFLAGS = $CFLAGS" >> ${CONFIG_MK}
 
-LDFLAGS=
+LDFLAGS="-lm"
 echo "LDFLAGS = $LDFLAGS" >> ${CONFIG_MK}
 
 for SRC in $SOURCES; do
@@ -40,4 +40,5 @@ echo >> ${CONFIG_MK}
 echo "$LIB: $OBJECTS" >> ${CONFIG_MK}
 echo "\t${LIBTOOL} --tag=CC --mode=link \${CC} \${LDFLAGS} $OBJECTS -o $LIB -rpath ${LIBPATH}" >> ${CONFIG_MK}
 
-cd tests && ./configure
+(cd tests && ./configure)
+(cd benchmark && ./configure)

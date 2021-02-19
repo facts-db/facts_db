@@ -1,5 +1,13 @@
 .libs/
 /benchmark/benchmark_set
+/benchmark/benchmark_facts_add
+/benchmark/benchmark_facts_with
+/benchmark/benchmark_set_add
+/benchmark/benchmark_set_add_overflow
+/benchmark/benchmark_set_get
+/benchmark/benchmark_set_insert
+/benchmark/benchmark_set_insert_overflow
+/benchmark/benchmark_set_remove
 /benchmark/fixtures/
 config.mk
 /libfacts_db.la
