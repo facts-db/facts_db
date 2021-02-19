@@ -51,4 +51,15 @@ FAIL=$(printf '\e[31mFAIL\e[0m')
 
 echo >> ${CONFIG_MK}
 echo "checks: $PROGS" >> ${CONFIG_MK}
-echo "\t@FAIL=0; PASS=0; for PROG in $PROGS; do if ./\$\$PROG > \$\$PROG.log; then echo $PASS \$\$PROG; PASS=\$\$((\$\$PASS + 1)); else echo $FAIL \$\$PROG; FAIL=\$\$((echo \$\$FAIL + 1)); fi; done; echo $TOTAL: \$\$((\$\$FAIL + \$\$PASS)); echo $PASS:\  \$\$PASS; echo $FAIL:\  \$\$FAIL" >> ${CONFIG_MK}
+echo -n "\t@FAIL=0; PASS=0; for PROG in $PROGS; do" >> ${CONFIG_MK}
+echo -n " if ./\$\$PROG > \$\$PROG.log; then" >> ${CONFIG_MK}
+echo -n "  echo $PASS \$\$PROG;" >> ${CONFIG_MK}
+echo -n "  PASS=\$\$((\$\$PASS + 1));" >> ${CONFIG_MK}
+echo -n " else" >> ${CONFIG_MK}
+echo -n "  echo $FAIL \$\$PROG;" >> ${CONFIG_MK}
+echo -n "  FAIL=\$\$((echo \$\$FAIL + 1));" >> ${CONFIG_MK}
+echo -n " fi;" >> ${CONFIG_MK}
+echo -n "done;" >> ${CONFIG_MK}
+echo -n "echo $TOTAL: \$\$((\$\$FAIL + \$\$PASS));" >> ${CONFIG_MK}
+echo -n "echo $PASS:\  \$\$PASS;" >> ${CONFIG_MK}
+echo -n "echo $FAIL:\  \$\$FAIL" >> ${CONFIG_MK}
