@@ -57,7 +57,7 @@ echo -n "  echo $PASS \$\$PROG;" >> ${CONFIG_MK}
 echo -n "  PASS=\$\$((\$\$PASS + 1));" >> ${CONFIG_MK}
 echo -n " else" >> ${CONFIG_MK}
 echo -n "  echo $FAIL \$\$PROG;" >> ${CONFIG_MK}
-echo -n "  FAIL=\$\$((echo \$\$FAIL + 1));" >> ${CONFIG_MK}
+echo -n "  FAIL=\$\$((\$\$FAIL + 1));" >> ${CONFIG_MK}
 echo -n " fi;" >> ${CONFIG_MK}
 echo -n "done;" >> ${CONFIG_MK}
 echo -n "echo $TOTAL: \$\$((\$\$FAIL + \$\$PASS));" >> ${CONFIG_MK}
