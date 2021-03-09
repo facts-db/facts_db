@@ -33,3 +33,11 @@ if test -x /usr/local/bin/libtool; then
 else
     LIBTOOL=libtool
 fi
+echo "LIBTOOL = $LIBTOOL" >> ${CONFIG_MK}
+
+if test -z "$INSTALL"; then
+    if test -x "$(which install)"; then
+        INSTALL=install
+    fi
+fi
+echo "INSTALL = $INSTALL" >> ${CONFIG_MK}

@@ -1,18 +1,20 @@
-all: libfacts_db.la
+LIB = libfacts_db.la
+
+all: ${LIB}
+
+benchmark: ${LIB}
+	${MAKE} -C benchmark
 
 clean:
 	rm -rf .libs *.o *.lo *.la *.gcno
 	${MAKE} -C tests clean
 	${MAKE} -C benchmark clean
 
-check:
-	${MAKE} -C tests
+test: ${LIB}
 
-tests: check
+install: ${LIB}
+	${LIBTOOL} --mode install ${INSTALL} -o root -g wheel -m 0755 ${LIB} ${LIBDIR}
 
-benchmark:
-	${MAKE} -C benchmark
-
-.PHONY: all clean tests benchmark
+.PHONY: all benchmark clean install tests
 
 .include <config.mk>

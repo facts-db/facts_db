@@ -27,6 +27,10 @@ echo "CFLAGS = $CFLAGS" >> ${CONFIG_MK}
 LDFLAGS="-lm"
 echo "LDFLAGS = $LDFLAGS" >> ${CONFIG_MK}
 
+LIBDIR=/usr/local/lib
+echo >> ${CONFIG_MK}
+echo "LIBDIR = $LIBDIR" >> ${CONFIG_MK}
+
 for SRC in $SOURCES; do
     SRC_O=$(c2lo $SRC)
     INC="$(includes $SRC)"
@@ -35,10 +39,9 @@ for SRC in $SOURCES; do
     echo "\t${LIBTOOL} --tag=CC --mode=compile \${CC} \${CPPFLAGS} \${CFLAGS} -c $SRC -o $SRC_O" >> ${CONFIG_MK}
 done
 
-LIBPATH=/usr/local/lib
 echo >> ${CONFIG_MK}
 echo "$LIB: $OBJECTS" >> ${CONFIG_MK}
-echo "\t${LIBTOOL} --tag=CC --mode=link \${CC} \${LDFLAGS} $OBJECTS -o $LIB -rpath ${LIBPATH}" >> ${CONFIG_MK}
+echo "\t${LIBTOOL} --tag=CC --mode=link \${CC} \${LDFLAGS} $OBJECTS -o $LIB -rpath ${LIBDIR}" >> ${CONFIG_MK}
 
 (cd tests && ./configure)
 (cd benchmark && ./configure)
