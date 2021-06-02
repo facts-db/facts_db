@@ -19,7 +19,7 @@ echo "CPPFLAGS = $CPPFLAGS" >> ${CONFIG_MK}
 if [ x"$DEBUG" = x"yes" ]; then
     CFLAGS="-DDEBUG -O0 -ggdb"
 else
-    CFLAGS="-DNDEBUG -O3"
+    CFLAGS="-DNDEBUG -Os"
 fi
 CFLAGS="$CFLAGS -W -Wall -Werror -std=c99 -pedantic"
 echo "CFLAGS = $CFLAGS" >> ${CONFIG_MK}
